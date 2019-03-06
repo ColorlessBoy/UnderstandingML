@@ -20,13 +20,13 @@
 
    $ L_{\mathcal{D}, f}(h) := \underset{x \thicksim \mathcal{D}}{\mathbb{P}}[h(x)\ne f(x)]:=\mathcal{D}(\{x : h(x)\ne f(x)\})​$ 
 
-5. The learner is blind to $\mathcal{D}$ and $f​$ 
+5. The learner is blind to $\mathcal{D}​$ and $f​$ 
 
 ### 2.2 EMPIRICAL RISK MINIMIZATION
 
 1. **Empirical Risk Minimization(ERM)** , training error instead of true error:
 
-   $L_s(h) := \frac{|\{ i \in [m] : h(x_i)\ne y_i\}|}{m}, [m]=\{1, ...,m\}$ 
+   $L_s(h) := \frac{|\{ i \in [m] : h(x_i)\ne y_i\}|}{m}, [m]=\{1, ...,m\}​$ 
 
 2. ERM rule causes overfitting
 
@@ -48,7 +48,7 @@
 
    5. Let $S|_x=(x_1, ..., x_m)​$ be the training set,  then :
 
-      the upper bound : $\mathcal{D}^m(\{S|_x : L_{(\mathcal{D}, f)}(h_s)>\epsilon\})$, 改符号对应的结果是一个概率值
+      the upper bound : $\mathcal{D}^m(\{S|_x : L_{(\mathcal{D}, f)}(h_s)>\epsilon\})$, 该符号对应的结果是一个概率值
 
       the set of "bad" hypotheses : $\mathcal{H}_B=\{h\in \mathcal{H}:L_{(\mathcal{D}, f)}(h)>\epsilon\}$ 
 
@@ -82,21 +82,17 @@
 
 2. $m_{\mathcal{H}}(\epsilon, \delta) = {\lceil {\frac{\log{(|\mathcal{H}|/\delta)}}{\epsilon}}\rceil}​$ 
 
-3. infinite hypothesis classes $\mathcal{H}$ 
+3. infinite hypothesis classes $\mathcal{H}​$ 
 
-   ![exercise3_3](pic\exercise3_3.png)
+   ![exercise3_3](/pic/exercise3_3.png)
 
    **solution**：
 
-   $\mathbb{P}(\frac{r^2-max(x_i^2+ y_i^2)}{r^2}>\epsilon) < \delta$
+   $\mathbb{P}(\frac{r^2-max(x_i^2+ y_i^2)}{r^2}>\epsilon) \le \delta$ 
 
-   $\mathbb{P}(max(x_i^2+y_i^2)<(1-\epsilon)r^2)<\delta$
+   $\mathbb{P}(max(x_i^2+y_i^2)<(1-\epsilon)r^2)\le\delta$ 
 
-   $[\mathbb{P}(x_i^2+y_i^2<(1-\epsilon)r^2)]^m<\delta$
-
-   $(1-\epsilon)^m < \delta$
-
-   $e^{-\epsilon m}<\delta$
+   $[\mathbb{P}(x_i^2+y_i^2<(1-\epsilon)r^2)]^m=(1-\epsilon)^m\le e^{-\epsilon m}\le\delta$ 
 
    $m \ge {\lceil \frac{log(1/\delta)}{\epsilon}\rceil}\ and\ m_{\mathcal{H}}(\epsilon, \delta) \le {\lceil \frac{log(1/\delta)}{\epsilon}\rceil}$
 
@@ -119,7 +115,7 @@
 
       $L_{\mathcal D}(g) = \underset{(x,y)\thicksim \mathcal{D}}{\mathbb P}[g\ne y|x]= \mathbb{P}[g=1,y=0|x]+\mathbb{P}[{g=0, y=1}|x]\\=p(y=0|x)p(g=1|x)+p(y=1|x)p(g=0|x)​$ 
 
-      $L_{\mathcal{D}}(f)-L_{\mathcal{D}}(g)=p(y=0|x)[p(f=1|x)-p(g=1|x)]+p(y=1|x)[p(f=0|x)-p(g=0|x)]\\=[1-2p(y=0|x)][p(f=0|x)-p(g=0|x)] < 0$ 
+      $L_{\mathcal{D}}(f)-L_{\mathcal{D}}(g)=p(y=0|x)[p(f=1|x)-p(g=1|x)]+p(y=1|x)[p(f=0|x)-p(g=0|x)]\\=[1-2p(y=1|x)][p(f=1|x)-p(g=1|x)] < 0​$ 
 
    4. **definition** 
 
@@ -302,7 +298,7 @@
    $VCdim(\mathcal{H}) = max\{|C|:C\subset\mathcal{X}, 2^{|C|}=|\mathcal{H}_C|\}$
 
    - $VCdim(\mathcal{H})=\infty \Rightarrow \mathcal{H}$ is not PAC learnable.
-   - $\exists N, VCdim(\mathcal{H})\le N \Rightarrow \mathcal{H}$ is PAC learnable.
+   - $VCdim(\mathcal{H})=d<\infty \Rightarrow \mathcal{H}$ is PAC learnable.
 
 ### 6.3 EXAMPLES
 
@@ -330,7 +326,117 @@
 
    **proof** : 
 
-   1. If $x \in (0, 1)$ and its binary expansion is $0.x_1x_2x_3...$ ,  then $\forall m, \lceil 0.5sin(2^m\pi x) \rceil = (1-x_m) $ , provided that $\exists k > m, s.t. x_k = 1$ .
+   1. If $x \in (0, 1)​$ and its binary expansion is $0.x_1x_2x_3...​$ ,  then $\forall m, \lceil 0.5sin(2^m\pi x) \rceil = (1-x_m) ​$ , provided that $\exists k > m, s.t. x_k = 1​$ .
    2. $ C = \{2^1\pi, 2^2\pi, ..., 2^d\pi\}$ is shattered by $\mathcal{H}$.
 
-7. 
+
+### 6.4 THE FUNDAMENTAL THEOREM OF PAC LEARNING
+
+1. **The Fundamental Theorem of Statistical Learning** 
+
+   $w.r.t\ \mathcal{H} = \{h:h:\mathcal{X}\rightarrow \{0, 1\}\}​$, the loss function is 0-1 loss. Then the following are equivalent:
+
+   1. $\mathcal{H}$ has the uniform convergence propperty.
+   2. Any ERM rule is a successful agnostic PAC learning.
+   3. $\mathcal{H}​$ is agnostic PAC learnable.
+   4. $\mathcal{H}$ is PAC learnable.
+   5. Any ERM rule is a successful PAC learner for $\mathcal{H}$.
+   6. $\mathcal{H}​$ has a finite VC-dimension.
+
+   **Proof** is given in **6.5**.
+
+2. **The Fundamental Theorem of Statistical Learning - Quantitative Version**
+
+   $w.r.t\ \mathcal{H} = \{h:h:\mathcal{X}\rightarrow \{0, 1\}\}​$, the loss function is 0-1 loss. If $VCdim(\mathcal{H})=d<\infty​$. Then there are absolute constants $C_1​$, $C_2​$ such that
+
+   1. $\mathcal{H}$ has the uniform convergence property with sample complexity:
+      $$
+      C_1\frac{d+log(1/\delta)}{\epsilon^2}\le m^{UC}_\mathcal{H}(\epsilon, \delta)\le C_2\frac{d+log(1/\delta)}{\epsilon^2}
+      $$
+
+   2. $\mathcal{H}$ is agnostic PAC learnable with sample complexity
+      $$
+      C_1\frac{d+log(1/\delta)}{\epsilon^2}\le m_{H}(\epsilon, \delta)\le C_2\frac{d+log(1/\delta)}{\epsilon^2}
+      $$
+
+   3. $\mathcal{H}$ is PAC learnable with sample complexity
+      $$
+      C_1\frac{d+log(1/\delta)}{\epsilon}\le m_\mathcal{H}(\epsilon, \delta)\le C_2\frac{dlog(1/\epsilon)+log(1/\delta)}{\epsilon}
+      $$
+
+   **Proof** is given in **Chapter 28**.
+
+3. **Remark**
+   - The fundamental theorem holds for some other learning problems such as regression with absolute loss or the squared loss.
+   - It does not hold for all learning tasks.
+   - Learnable even though without the uniform convergence property.
+   - In some situations, the ERM rule fails but learnability is possible with other learning rules.
+
+### 6.5 PROOF OF THEOREM 6.7 (In this note 6.4.1)
+
+$1\rightarrow 2$ in Ch.4.  $2\rightarrow 3, 3\rightarrow 4$ are trivial $\Rightarrow 2\rightarrow 5$. **No-Free-Lunch** $\Rightarrow$ $4\rightarrow 6, 5\rightarrow 6$. So the difficult part is to $6\rightarrow 1​$. 
+
+The proof is based on two main claims:
+
+- If $VCdim(\mathcal{H})=d​$, $|\mathcal{H}_C| \thicksim O(|C|^d)​$ 
+- The uniform convergence holds whenever$|\mathcal{H}_C|\thicksim O(|C|^d)​$
+
+1. **Sauer's Lemma and the Growth Function** 
+
+   1. **Growth Function** : $r_\mathcal{H}(m)=\underset{C\subset\mathcal{X}:|C|=m}{max}{|\mathcal{H}_C|}​$ 
+
+   2. **Lemma Sauer-Shelah-Perles** 
+
+      If $\ VCdim(\mathcal{H})\le d < \infty$, then$\tau_\mathcal{H}(m)\le\sum^d_{i=0}\mathbb{C}^i_m$. In particular,  if  $m > d + 1$ then $\tau_\mathcal{H}(m)\le(em/d)^d​$(see Lemma A.5 in Appendix A).
+
+      **proof** $\tau_\mathcal{H}(m)\le\sum^d_{i=0}C^i_m​$ inductive argument
+
+      1. We proof a stronger claim : $\forall C=\{c_1,...,c_m\}, \forall \mathcal{H}, |\mathcal{H}_C|\le |\{B\subseteq C:\mathcal{H}\ shatters\ B\}| \le \underset{i=0}{\overset{d}{\sum}}\mathbb{C}^i_m​$ (这里的$C^i_m​$是排列组合数).
+
+      2. **m=1**: $\mathcal{H}_C=\{0\}, \{1\}, or\ \{\{0\}, \{1\}\}​$, $B=\emptyset\ or\ {c_1}​$, the left equation always holds.
+
+      3. **If the left equation holds when** $k<m​$:
+
+         1. **define** 
+            $$
+            \begin{align}
+            C&=\{c_1,...,c_m\}, C'=\{c_2, ...,c_m\}\\
+            Y_0&=\{(y_2, ...,y_m):(0, y_2, ...,y_m)\vee (1, y_2, ...,y_m)\in \mathcal{H}_C\}\\
+            Y_1&=\{(y_2, ...,y_m):(0, y_2, ...,y_m)\wedge (1, y_2, ...,y_m)\in \mathcal{H}_C\}\\
+            \mathcal{H}'&=\{h\in\mathcal{H}:\exists h'\in\mathcal{H} s.t.(1-h'(c_1),h'(c_2),...,h'(c_m))\\&=(h(c_1),h(c_2),...,h(c_m))\}
+            \end{align}
+            $$
+
+         2. It is easy to verify that $|\mathcal{H}_C|=|Y_0|+|Y_1|​$ (P.S. 韦恩图，重点是理解这三个集合的含义。)
+         3. $|Y_0|=|\mathcal{H}_{C'}|\le|\{B\subseteq C':\mathcal{H}shattersB\}|=|\{B\subseteq C':c_1\notin B \wedge \mathcal{H}shattersB\}|​$
+         4. $|Y_1|=|\mathcal{H}'_{C'}|\le| \{B\subseteq C':\mathcal{H}'shattersB\} |=| \{B\subseteq C':\mathcal{H}'shatters B\cup \{c_1\}\} |\\
+            =| \{B\subseteq C:c_1\in B \wedge\mathcal{H}'shattersB\} |\le| \{B\subseteq C : c_1 \in B \wedge \mathcal{H}shattersB\} |$
+         5. $|\mathcal{H}_C|=|Y_0|+|Y_1|\le | \{B\subseteq C : \mathcal{H}shattersB\} |$ 
+
+2. **Uniform Convergence for Classes of Small Effective Size**
+
+   1. **Theorem** : $w.r.t.\mathcal{H}, \tau_{\mathcal{H}}​$ 
+
+      $\underset{S\thicksim \mathcal{D}^m}{\mathbb{E}}[\underset{h\in \mathcal{H}}{sup}|L_\mathcal{D}(h)-L_S(h)|]\le \frac{4+\sqrt{log(\tau_\mathcal{H}(2m))}}{\sqrt{2m}}​$, by using **MARKOV'S INEQUALITY,** we can get$\underset{S\thicksim \mathcal{D}^m}{\mathbb{P}} [\underset{h\in \mathcal{H}}{sup}|L_\mathcal{D}(h)-L_S(h)| \ge \frac{4+\sqrt{log(\tau_\mathcal{H}(2m))}}{\delta\sqrt{2m}}] \le \delta​$ 
+
+   2. **proof** $6\rightarrow 1 ​$ : we will prove that $m^{UC}_{\mathcal{H}}(\epsilon, \delta)\le 4\frac{16d}{(\delta\epsilon)^2}log(\frac{16d}{(\delta\epsilon)^2})+\frac{16d\log(2e/d)}{(\delta\epsilon)^2}​$
+
+      1. $m>d, \tau_{\mathcal{H}}(2m)\le(2em/d)^d, assume \sqrt{d\log(2em/d)}\ge4, then$
+
+         $|L_\mathcal{D}(h)-L_S(h)| \le \frac{4+\sqrt{log(\tau_\mathcal{H}(2m))}}{\delta\sqrt{2m}}\le\frac{1}{\delta}\sqrt{\frac{2d\log(2em/d)}{m}}\le \epsilon$
+
+         $m\ge \frac{2dlog(m)}{(\delta\epsilon)^2}+\frac{2dlog(2e/d)}{(\delta\epsilon)^2}\Leftarrow m\ge4\frac{2d}{(\delta\epsilon)^2}\log(\frac{2d}{(\delta\epsilon)^2})+\frac{4d\log(2e/d)}{(\delta\epsilon)^2}$
+
+      2. To proof pre-equation, we can proof:
+
+         - Let $a > 0$. Then: $x\ge 2a\log(a) \Rightarrow x\ge a\log(x)$.
+
+            (分类讨论$a\in(0, \sqrt{e}], a\in(\sqrt{e}, \infty))$
+
+         - Let $a\ge 1$ and $b > 0$. Then : $ x\ge4a\log(2a)+2b \Rightarrow x \ge a\log(x)+b$
+
+           
+
+      
+
+      
