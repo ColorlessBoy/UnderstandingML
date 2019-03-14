@@ -137,9 +137,11 @@
 
 ### 4.1 UNIFORM CONVERGENCE IS SUFFICIENT FOR LEARNABILITY
 
+​	$(\mathcal X, \mathcal Y) = Z$
+
 1. $\epsilon​$**-representative sample **: 
 
-   A training set S is called $\epsilon​$-representative(w.r.t. domain $Z​$, hypothesis class $\mathcal{H}​$, loss function $l​$ and distribution $\mathcal{D}​$) if $\forall h \in \mathcal{H}, |L_S(h)-L_D(h)|\le \epsilon​$
+   A training set S is called $\epsilon$-representative(w.r.t. domain $Z$, hypothesis class $\mathcal{H}$, loss function $l$ and distribution $\mathcal{D}$) if $\forall h \in \mathcal{H}, |L_S(h)-L_D(h)|\le \epsilon$
 
 2. Any output of $ERM_{\mathcal{H}}(S)$,namely, any $h_S \in argmin_{h\in \mathcal{H}}(h)$, satisfies $L_{\mathcal{D}}(h_S)\le\underset{h\in\mathcal{H}}{min}L_{\mathcal{D}}(h)+\epsilon$
 
@@ -159,7 +161,39 @@
 
    w.r.t. $\{\theta_1, ...,\theta_m\}$is i.i.d,  $\mathbb{E}[\theta_i]=\mu$ , $\mathcal{P}[a\le\theta_i\le b] = 1$,  $\epsilon>0$ 
 
-   then $\mathbb{P}[|\frac{1}{m}\sum\theta_i-\mu|>\epsilon]\le2exp(-2m\epsilon^2/(b-a)^2)​$ 
+   then $\mathbb{P}[|\frac{1}{m}\sum\theta_i-\mu|>\epsilon]\le2exp(-2m\epsilon^2/(b-a)^2)$ 
+
+   **proof**:
+
+   Step 1: **MARKOV'S INEQUALITY** 
+
+   $\mathbb{P}[Z\ge a] \le \frac{\mathbb{E}[Z]}{a}​$ 
+
+   $\because Z\ge0, \int^\infty_{x=0}\mathbb{P}[Z\ge x]dx = \int^\infty_{0}\int^\infty_xp(z)dzdx=\int^\infty_0\int^z_0p(z)dxdz=\int^\infty_0zp(z)dz=\mathbb{E}[Z]$ 
+
+   $\therefore \forall a\ge 0, \mathbb{E}[Z]\ge\int^a_{x=0}\mathbb{P}[Z\ge x]dx\ge\int^a_{x=0}\mathbb{P}[Z\ge a]dx\ge a\mathbb{P}[Z\ge a]$ 
+
+   Step 2: $\mathbb{E}[e^{\lambda X}] \le e^{\frac{\lambda ^2 (b-a)^2}{8}}, s.t. \mathbb{E}(X) = 0$ 
+
+   $\because e^{\lambda x} \le \frac{b-x}{b-a}e^{\lambda a} + \frac{x-a}{b-a}e^{\lambda b}​$
+
+   $\therefore \mathbb E({e^{\lambda x}}) \le \frac{b-\mathbb E({x})}{b-a}e^{\lambda a} + \frac{\mathbb E({x})-a}{b-a}e^{\lambda b}  = e^{L(h)}, L(h) = -hp+log(1-p+pe^h), h = \lambda (b-a), p=\frac{-a}{b-a}$
+
+   $\because L(0)=L'(0)=0, L''(h) \le 1/4, \therefore L(h) \le \frac{h^2}{8}$
+
+   Step 3: 
+
+   $X_i = Z_i - \mathbb{E}[Z_i], X = \frac{1}{m}\sum X_i$
+
+   $\mathbb{P}[X \ge \epsilon] = \mathbb{P}[e^{\lambda X} \ge e^{\lambda \epsilon}] \le e^{-\lambda \epsilon} \mathbb{E}(e^{\lambda X}) $
+
+   $\mathbb{E}[e^{\lambda X}] = \mathbb{E}[\prod e^{\lambda X_i/m}] = \prod \mathbb{E}[e^{\lambda X_i/m}] \le \prod e^{\frac {\lambda^2(b-a)^2}{8m^2}} = e^{\frac {\lambda^2(b-a)^2}{8m}}​$ 
+
+   $\mathbb P[X \ge \epsilon] \le e^{-\lambda \epsilon + \frac {\lambda^2(b-a)^2}{8m}} \le e^{- \frac{2m\epsilon^2}{(b-a)^2} }​$ 
+
+   Similarly, $\mathbb{P}[X\le -\epsilon] \le e^{- \frac{2m\epsilon^2}{(b-a)^2}}​$
+
+   Then, $\mathbb{P}[|X| \le \epsilon] \le e^{- \frac{2m\epsilon^2}{(b-a)^2}}$ 
 
 2. **proof**:
 
@@ -174,6 +208,8 @@
    $\therefore m_{\mathcal{H}}(\epsilon, \delta)\le m^{UC}_{\mathcal{H}}(\epsilon/2, \delta)\le{\lceil \frac{ 2log(2|\mathcal{H}|/\delta) }{\epsilon^2} \rceil}​$ 
 
 3. **The "Discretization Trick" in infinite size hypothesis classes**
+
+   $ h_\theta = sign(x-\theta), \mathcal{X}\rightarrow \{-1, 1\}$
 
    64 bits floating point number, d parameters $\rightarrow |\mathcal{H}|\le2^{64d}$ 
 
@@ -210,11 +246,11 @@
 
       - Let $S$ be sample data set,$|S| = m$, so sequences set is $\{S_1,...,S_k\}, k = (2m)^m$, 
 
-        and $S^i_j=((x_1, f_i(x_1)), ..., (x_m, f_i(x_m)))$ .
+        and $S_j = (x_1, \dots, x_m), S^i_j=((x_1, f_i(x_1)), ..., (x_m, f_i(x_m)))$.
 
-      - Let $v_1,...,v_p$ be the examples in C that do not appear in $S_j$, so $p\ge m$ .
+      - Test Set. Let $v_1,...,v_p$ be the examples in C that do not appear in $S_j$, so $p\ge m$ . 
 
-   2. **key step1** :  $\forall A, \underset{i\in[T]}{max}\underset{S\thicksim\mathcal{D}^m_i}{\mathbb{E}}[L_{\mathcal{D}_i}(A(S^i))]\ge1/4​$
+   2. **key step1** :  $\forall A, \underset{i\in[T]}{max}\underset{S\thicksim\mathcal{D}^m_i}{\mathbb{E}}[L_{\mathcal{D}_i}(A(S^i))]\ge1/4​$ 
 
       1. $\underset{i\in[T]}{max}\underset{S\thicksim\mathcal{D}^m_i}{\mathbb{E}}[L_{\mathcal{D}_i}(A(S^i))] =\underset{i\in[T]}{max}\frac{1}{k} {\overset{k}{ \underset{j=1}{\sum}}}L_{\mathcal{D}_i}(A(S^i_j)) \ge \frac{1}{T}{\overset{T}{ \underset{i=1}{\sum} }}\frac{1}{k}{\overset{k}{ \underset{j=1}{\sum} }}L_{\mathcal{D}_i}(A(S^i_j)) \\ = \frac{1}{k}{\overset{k}{ \underset{j=1}{\sum} }}\frac{1}{T}{\overset{T}{ \underset{i=1}{\sum} }}L_{\mathcal{D}_i}(A(S^i_j)) \ge \underset{j\in[k]}{min}\frac{1}{T}{\overset{T}{ \underset{i=1}{\sum} }}L_{\mathcal{D}_i}(A(S^i_j)) ​$
 
@@ -232,13 +268,13 @@
 
       1. **MARKOV'S INEQUALITY** 
 
-         $\mathbb{P}[Z\ge a] \le \frac{\mathbb{E}[Z]}{a}$
+         $\mathbb{P}[Z\ge a] \le \frac{\mathbb{E}[Z]}{a}$ 
 
          **proof** :
 
-         $\because Z\ge0, \int^\infty_{x=0}\mathbb{P}[Z\ge x]dx = \int^\infty_{0}\int^\infty_xp(z)dzdx=\int^\infty_0\int^z_0p(z)dxdz=\int^\infty_0zp(z)dz=\mathbb{E}[Z]$ 
+         $\because Z\ge0, \int^\infty_{x=0}\mathbb{P}[Z\ge x]dx = \int^\infty_{0}\int^\infty_xp(z)dzdx=\int^\infty_0\int^z_0p(z)dxdz=\int^\infty_0zp(z)dz=\mathbb{E}[Z]​$ 
 
-         $\therefore \forall a\ge 0, \mathbb{E}[Z]\ge\int^a_{x=0}\mathbb{P}[Z\ge x]dx\ge\int^a_{x=0}\mathbb{P}[Z\ge a]dx\ge a\mathbb{P}[Z\ge a]$ 
+         $\therefore \forall a\ge 0, \mathbb{E}[Z]\ge\int^a_{x=0}\mathbb{P}[Z\ge x]dx\ge\int^a_{x=0}\mathbb{P}[Z\ge a]dx\ge a\mathbb{P}[Z\ge a]​$ 
 
       2. **Lemma** : If $Z\in[0,1]​$ $\mathbb{E}[Z]=\mu​$, then $\forall a\in(0,1), \mathbb{P}[Z>1-a]=1-\mathbb{P}[Z\le 1-a]=\mathbb{P}[{1-a\ge Z}] \ge1-\frac{\mathbb{E}[1-Z]}{a}=1-\frac{1-\mu}{a}​$
 
@@ -339,7 +375,7 @@
    1. $\mathcal{H}$ has the uniform convergence propperty.
    2. Any ERM rule is a successful agnostic PAC learning.
    3. $\mathcal{H}​$ is agnostic PAC learnable.
-   4. $\mathcal{H}$ is PAC learnable.
+   4. $\mathcal{H}​$ is PAC learnable.
    5. Any ERM rule is a successful PAC learner for $\mathcal{H}$.
    6. $\mathcal{H}​$ has a finite VC-dimension.
 
@@ -435,8 +471,75 @@ The proof is based on two main claims:
 
          - Let $a\ge 1$ and $b > 0$. Then : $ x\ge4a\log(2a)+2b \Rightarrow x \ge a\log(x)+b$
 
-           
+## 7 Nonuniform Learnability
 
-      
+### 7.1 NONUNIFORM LEARNABILITY
 
-      
+1. $h$ is $(\epsilon, \delta)$-competitive with another hypothesis $h'$ if $\mathbb{P}\{ L_\mathcal{D}(h) \le L_\mathcal{D}(h') + \epsilon \} \ge 1- \delta$ 
+
+2. **nonuniformly learnable** :
+
+   $ \exists A, m^{NUL}_{\mathcal{H}}:(0,1)^2\times\mathcal{H}\rightarrow\mathbb{N}, \forall \epsilon,\delta \in (0, 1), \forall h \in \mathcal{H} :\\ \mathcal{D}^m\{ S : L_\mathcal{D} (A(S)) \le L_\mathcal{D}(h) + \epsilon , |S| > m^{NUL}_{\mathcal{H}}(\epsilon, \delta, h) \} \ge 1-\delta $
+
+3. The difference between aPAC and NL is the question of whether the sample size m may depend on h.
+
+4. NL is a relaxation of aPAC.
+
+5. **theorem** A hypothesis class $\mathcal{H}$ of binary classifiers is nonuniformly learnable if and only if it is a countable union of agnostic PAC learnable hypothesis classes.
+
+   **proof** 
+
+   necessity: use following theorem;
+
+   sufficiency: let $\mathcal{H}_n = \{ h\in\mathcal{H} : m^{NUL}_{\mathcal{H}}(1/8,1/7, h) \le n \}$ . Then $\mathcal{H} = \cup_{n\in\mathbb{N}}\mathcal{H}_n$, using the fundamental of  statistical learning, $VC(\mathcal{H}_n) < \infty$, and therefore $\mathcal{H}_n$ is agnostic PAC learnable.
+
+6. **theorem** Let $\mathcal{H}$ be a countable union of hypothesis class $\mathcal{H}=\cup _{n\in \mathcal{N}} \mathcal{H}_n$ , where each $\mathcal{H}_n$ enjoys the uniform convergence property. Then, $\mathcal{H}$ is nonuniformly learnable.
+
+### 7.2 STRUCTURAL RISK MINIMIZATION
+
+1. **denote** $\epsilon _n(m, \epsilon) = min\{\epsilon \in (0,1) : m^{UC}_{\mathcal{H_n}} (\epsilon, \delta) \le m\}$
+
+2. **weight function** :  $\omega : \mathbb{N} \rightarrow [0,1], \sum^{\infty}_{n=1}\omega(n) \le 1$
+
+3. **theorem** : $ \mathcal{H} = \cup \mathcal{H}_n, \mathcal{H}_n\ has\ m^{UC}_{\mathcal{H_n}}. \forall \delta, \mathcal{D}, n, h$
+
+   $\mathcal{D}^m \{ S : |L_\mathcal{D}(h) - L_S(h) | \le  \epsilon_n(m, \omega(n) \cdot \delta)\} \ge 1-\delta​$ 
+
+   **proof** :
+
+   $\forall h\in \mathcal{H}_n, |L_\mathcal{D}(h) - L_S(h) | \le \epsilon_n(m, \delta_n)$ 
+
+   $\forall h \in \mathcal{H}, \mathcal{D}^m \{ S : |L_\mathcal{D}(h) - L_S(h) | \le  \epsilon_n(m, \omega(n) \cdot \delta)\} \ge 1-\sum \delta_n \ge 1-\delta$ 
+
+4. **denote** $n(h) = min\{n : h \in \mathcal{H}_n\}$ 
+
+5. $L_\mathcal{D}(h) \le L_S(h) + \epsilon_{n(h)}(m, \omega(n(h))\cdot h)​$ 
+
+6. **Structural Risk Minimizaiton(SRM)** :
+
+   - **prior knowledge** : $\mathcal{H} = \cup _n \mathcal{H}_n , \mathcal{H}_n\ has\ m^{UC}_{\mathcal{H}_n}, \sum \omega(n) \le 1$ 
+   - **input** : training set $ S \thicksim \mathcal{D}^m $, confidence $\delta$ 
+   - **output** : $h \in argmin_{h\in\mathcal{H}}[L_S(h) + \epsilon_{n(h)}(m, \omega(n(h))\cdot \delta)]$ 
+
+7. **theorem** $\omega(n) = \frac{6}{n^2\pi^2}$, $m^{NUL}_\mathcal{H}(\epsilon, \delta, h) \le m^{UC}_{\mathcal{H}_{n(h)}}(\epsilon /2, \frac{6\delta}{(\pi n(h))^2})$ 
+
+   **proof** :
+
+   $L_\mathcal{D}(h) \le L_S(h) + \epsilon_{n(h)}(m, \omega(n(h))\cdot h)​$ 
+
+   if $ m \ge m^{UC}_{\mathcal{H}_{n(h)}}(\epsilon/2, \omega(n(h))\delta)$ , then $\epsilon_{n(h)}(m, \omega(n(h))\cdot h) \le \epsilon/2$
+
+   $L_\mathcal{D}(h) \le L_S(h) + \epsilon_{n(h)}(m, \omega(n(h))\cdot h) \le \epsilon/2 \le L_\mathcal{D}(h) + \epsilon$ 
+
+8.  *No-Free-Lunch-for-Nonuniform-Learnability* 
+
+   $\forall \{\mathcal{X} , |\mathcal{X} | = \infty \}$ , the class of all binary valued functions over $\mathcal{X}$ is not a countable union of classes of finite VC-dimension.(Exercise 7.5)
+
+9. $\forall\{\mathcal X, |\mathcal X| = \infty\}$ , there exists no nonuniform learner w.r.t. the class of all deterministic binary classifiers.
+
+10. Assume $VCdim(\mathcal{H}_n) = n$, then $m^{UC}_\mathcal{H_n}(\epsilon, \delta) = C\frac{n+log(1/\delta)}{\epsilon^2}$ (Ch6)
+
+    If $\omega(n) = \frac{6}{n^2\pi^2}$ , then $m^{NUL}_{\mathcal{H}}(\epsilon, \delta, h) - m^{UC}_{\mathcal{H}_n}(\epsilon/2, \delta) \le 4C\frac{2log(2n)}{\epsilon^2}$ 
+
+    The gap between $m^{NUL}_{\mathcal{H}}$ and $m ^{UC}_{\mathcal{H}_n}$  increases with the index of the class, which reflecting the value of knowing a good priority order on the hypotheses in $\mathcal{H}$.
+
