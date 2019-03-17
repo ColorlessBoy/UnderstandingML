@@ -533,7 +533,7 @@ The proof is based on two main claims:
 
 8.  *No-Free-Lunch-for-Nonuniform-Learnability* 
 
-   $\forall \{\mathcal{X} , |\mathcal{X} | = \infty \}$ , the class of all binary valued functions over $\mathcal{X}$ is not a countable union of classes of finite VC-dimension.(Exercise 7.5)
+   $\forall \{\mathcal{X} , |\mathcal{X} | = \infty \}​$ , the class of all binary valued functions over $\mathcal{X}​$ is not a countable union of classes of finite VC-dimension.(Exercise 7.5)
 
 9. $\forall\{\mathcal X, |\mathcal X| = \infty\}$ , there exists no nonuniform learner w.r.t. the class of all deterministic binary classifiers.
 
@@ -543,3 +543,102 @@ The proof is based on two main claims:
 
     The gap between $m^{NUL}_{\mathcal{H}}$ and $m ^{UC}_{\mathcal{H}_n}$  increases with the index of the class, which reflecting the value of knowing a good priority order on the hypotheses in $\mathcal{H}$.
 
+### 7.3 MINIMUM DESCRIPTION LENGTH AND OCCAM'S RAZOR
+
+1. Let $\mathcal{H}$ be a countable hypothesis class. Then $\mathcal{H}$ can be rewrited as $\mathcal{H} = \cup_{n\in\mathbb{N}}\{ h_n \}$ , each singleton classes has the uniform convergence property with rate $m^{UC}(\epsilon, \delta) = \frac{log(2/\delta)}{2\epsilon^2}$, and $\epsilon_n(m, \delta) = \sqrt{\frac{log(2/\delta)}{2m}}$. SRM rule becomes:
+
+   - $argmin_{h_n\in \mathcal{H}}[L_S(h) + \sqrt\frac{{-log(\omega(n))+log(2/\delta)}}{2m}]​$
+   - $argmin_{h_n\in \mathcal{H}}[L_S(h) + \sqrt\frac{{-log(\omega(h))+log(2/\delta)}}{2m}]$
+
+2. **the description of h ** : Fix some finite set $\Sigma$ of symbols, the description function $d = \mathcal{H} \rightarrow \Sigma^* \subseteq \Sigma$ , its length is denoted by $|h|$.
+
+   - $\sigma$ is always used to represent $d(h)$
+   - prefix-free
+3. **Kraft Inequality** : If $S \subseteq \{0, 1\} ^* $ is a prefix-free set of strings, then $\underset{\sigma\in S} {\sum}\frac{1}{2^{|\sigma|}} \le 1$
+
+4. $\omega(h) = \frac{1}{2^{|h|}}$ 
+
+5. **theorem** : $\mathcal{H}$, prefix-free description language $d:\mathcal{H}\rightarrow \{0, 1\}^*$, then
+
+   $\mathcal{D}^m \{ \forall h \in \mathcal{H}, L_\mathcal{D}(h) \le L_S{(h) + \sqrt\frac{|h|+ln(2/\delta)}{2m}} \} \ge 1-\delta​$   
+
+6. **Minimum Description Length (MDL)** 
+   - **prior knowledge** :
+     - $\mathcal{H}​$ is a countable bypothesis class
+     - $\mathcal{H}​$ is described by a prefix-free language over $\{0, 1\}​$
+     - For every $h\in \mathcal{H}​$ , $|h|​$ is the length  of the representation of $h​$ 
+   - **input** : A training set $S\thicksim D^m​$, confidence $\delta​$
+   - **output** : $h \in argmin_{h\in\mathcal{H}} [L_S(h) + \sqrt {\frac{|h| + ln(2/\delta)}{2m}}]​$ 
+
+7. Pre theorem conveys a philosophical message : A short explanation (that is, a hypothesis that has a short length) tends to be more valid than a long explanation.
+8. The more complex a hypothesis $h$ is , the larger the sample size it has to fit to guarantee that it has a small true risk $L_\mathcal{D}(h)$.
+9. Choosing a description language (or, equivalently, some weighting of hypotheses) is a weak form of committing to a hypothesis. 
+10. Rather than committing to a single hypothesis, we spread out our commitment among many.
+11.  As long as it is done independently of the training sample, our generalization bound holds. 
+12. Just as the choice of a single hypothesis to be evaluated by a sample can be arbitrary, so is the choice of description language. 
+
+### 7.4 OTHER NOTIONS OF LEARNABLITY-CONSISTENCY
+
+1. Weak consistency : convergence in probablity
+
+2. Strong consistency: sure convergence
+
+3. **Definition** (Consistency) : A learning rule $A$ is consistent w.r.t. $\mathcal{H}$ and $\mathcal{P}$
+
+   domain set $Z$,  probability distributions set $\mathcal{P}$,
+
+   $\exists m^{CON}_{\mathcal{H}}:(0, 1)^2\times \mathcal{H}\times\mathcal{P}\rightarrow \mathbb{N}$ such that, $\forall \epsilon,\delta\in(0, 1), \forall h\in\mathcal{H}, \forall \mathcal{D} \in \mathcal{P}$, if $m \ge m^{NUL}_{\mathcal{H}}(\epsilon, \delta, h, \mathcal{D})$ then $\mathcal{D}^m\{S| L_\mathcal{D}(A(S)) \le L_\mathcal{D}(h) + \epsilon \} \ge 1-\delta$ 
+
+4. If $\mathcal{P}$ is the set of all distributions, then $A$ is universally consistent w.r.t. $\mathcal{H}$.
+
+5. **Memory algorithm** : memorize the training examples, and, given a test point x, it predicts the majority label among all labeled instances of x that exist in the training sample. 
+
+   Not nonuniformly learnable, but universally consistent for every countable domain $\mathcal{X}$ and a finite label set $\mathcal{Y}$ .(exercise 7.6)
+
+### 7.5 DISCUSSING THE DIFFERENT NOTIONS OF LEARNABLITY
+
+1. What Is The Risk of the Learned Hypothesis?
+
+   - PAC learning and nonuniform learning gives us an upper bound on the true risk of the learned hypothesis based on its empirical risk.
+   - Consistency guarantees do not provide such a bound, but estimate the risk of the output predictor using a validation set.(Ch11)
+
+2. How Many Examples Are Required to Be as Good as the Best Hypothesis in $\mathcal{H}$?
+
+   - PAC learning gives a crisp answer
+   - nonuniform learning this number depends on the best hypothesis in $\mathcal{H}$ 
+   - consistency it also depends on the underlying distribution
+   - In this sense, PAC learning is the only useful definition of learnability
+   - If $\mathcal{H}$ has a large approximation error,  PAC's risk may still be large. This reflects the fact that the usefulness of PAC learning relies on the quality of our prior knowledge.
+   - If PAC fails, we change the $\mathcal{H}$.
+   - If nonuniform algorithm fails, we change a different weighting function.
+
+3. How to Learn? How to Express Prior Knowledge?
+
+   - The definition of PAC learning yields the limitation of learning(via the No-Free-Lunch theorem) and the necessity of prior knowledge.
+     - Choose $\mathcal{H}$ by prior knowledge.
+     - $ERM_\mathcal{H}$ 
+   - nonuniform learnability
+     - Encode prior knowledge by specifying weights over(subsets of) hypothesis of $\mathcal{H}$. 
+     - $SRM$ (pays *estimation error* and  *do not know the low bound of m*).
+   - consistent algorithm
+     - Does not yield a natural learning paradigm or a way to encode prior knowledge.
+     - In fact, in many cases there is no need for prior knowledge at all.(*Memorize algorithm*).
+     - Weak requirement
+
+4. Which Learning Algorithm Should We Prefer?
+
+   - w.r.t. the set of all functions from $\mathcal{X} \rightarrow \mathcal{Y}$, which gives us a guarantee that for enough training examples, we will always be as good as the Bayes Optimal predictor.
+
+   - problems:
+
+     - the sample complexity of the consistent algorithm, non enough examples
+
+     - it's not very hard to make any PAC or nonuniform learner consistent:
+
+       Firstly, we run nonuniform learned predictor, obtain the bound on the true risk;
+
+       Then, if the bound is small enough we are done, otherwise, we revert to Memorize algorithm.
+
+5. The "contradiction" between "No-Free-Lunch" and "Memory algorithm"
+   - **No-Free-Lunch** : Let $\mathcal{X}$ be a countable infinite domain and let $\mathcal{Y} = \{ \pm 1\}$, then for $\forall A$, and a training set size, m, $\exists \mathcal{D}, h^*:\mathcal{X} \rightarrow \mathcal{Y}$, A is likely to return a classifier with a large error.
+   - **Memorize algorithm** : $\forall \mathcal{D}, h^*:\mathcal{X} \rightarrow \mathcal{Y}, then\ \exists m$, memorize algorithm is likely to return a classifier with a small error.
