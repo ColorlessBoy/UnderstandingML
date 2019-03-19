@@ -641,4 +641,86 @@ The proof is based on two main claims:
 
 5. The "contradiction" between "No-Free-Lunch" and "Memory algorithm"
    - **No-Free-Lunch** : Let $\mathcal{X}$ be a countable infinite domain and let $\mathcal{Y} = \{ \pm 1\}$, then for $\forall A$, and a training set size, m, $\exists \mathcal{D}, h^*:\mathcal{X} \rightarrow \mathcal{Y}$, A is likely to return a classifier with a large error.
-   - **Memorize algorithm** : $\forall \mathcal{D}, h^*:\mathcal{X} \rightarrow \mathcal{Y}, then\ \exists m$, memorize algorithm is likely to return a classifier with a small error.
+   - **Memorize algorithm** : $\forall \mathcal{D}, h^*:\mathcal{X} \rightarrow \mathcal{Y}, then\ \exists m​$, memorize algorithm is likely to return a classifier with a small error.
+
+## 8 The Runtime of Learning
+
+Key words : samples,  computational resources,  sample complexity,  computational complexity.
+
+ERM implementation is computationally hard. It follows that hardness of implementing ERM does not imply hardness of learning.
+
+### 8.1 COMPUTATIONAL COMPLEXITY OF LEARNING
+
+1. Abstract machine, Turning machine : there exists a constant c such that any such "operation" can be performed on the machine using c seconds.
+2. For problem "rectangles learning", we can fix $\epsilon$,$\delta$ and varying the dimension, we also can fix the dimension $\delta$ and varying the $\epsilon$.Then, we can analyze the asymptotic runtime as a function of variables of that sequence.
+3. "Cheating" : training easy but predict hard.
+4. **Definition 8.1 ** *The Computational Complexity of a Learning Algorithm*.
+   - $f:(0,1)^2\rightarrow\mathbb{N}$, a learning task$(Z, H, \mathcal{l})$, learning algorithm $\mathcal{A}$. $\forall \mathcal{D}, \epsilon, \delta$.We say $\mathcal{A}$ solves the learning task in time $O(f)$ for:
+     - $\mathcal{A}$ terminates after performing at most $cf(\epsilon, \delta)$ operations
+     - The output of $\mathcal{A}$, denoted $h_\mathcal{A}$, can predict the label of a new example while performing at most $cf(\epsilon, \delta)$ operations
+     - $\mathcal{A}$ is PAC learnable.
+   - Consider a sequence of learning problems, $(Z_n, \mathcal{H}_n, l_n)^\infty_{n=1}$,$\exists g : \mathbb{N}\times(0, 1)^2 \rightarrow \mathbb{N}$, for $\forall n$, $\mathcal{A}$ solves the problem $(Z_n, \mathcal{H}_n, l_n)$ in time $O(g(n, \epsilon, \delta))$ 
+
+5. $\mathcal{A}$ is efficient algorithm w.r.t. a sequence $(Z_n, \mathcal{H}_n, l_n)$ if its runtime is $O(p(n, 1/\epsilon, 1/\delta))$ for some polynomial p.
+
+### 8.2 IMPLEMENTING THE ERM RULE
+
+1. $ERM_\mathcal{H}$ rule
+
+2. **Finite Classes** :
+
+   1. $m_\mathcal{H}(\epsilon, \delta) = c\log(c|\mathcal{H}|/\delta)/\epsilon^c$, where $c=1$ in the realizable case and $c = 2$ in the nonrealizable case.
+   2. If $\mathcal{H}$ can be the set of all predictors that can be implemented by a C++ program written in at most 10000 bits of code, then $|\mathcal{H}|\le 2^{10000}$ and the sample complexity is only $c(10000+log(c/\delta))/\epsilon^c$.
+   3. exhaustive search : the runtime of exhaustive search is $k|\mathcal{H}|/m$,  not efficient.
+
+3. **Axis Aligned Rectangles** 
+
+   1. $\mathcal{H}_n = \{ h_{(a_1, \dots, a_n, b_1, \dots, b_n)} : \forall i, a_i \le b_i \}$ 
+
+      $h_{(a_1, \dots, a_n, b_1, \dots, b_n)} = 1\{ \forall i, x_i \in [a_i, b_i] \}$ 
+
+      Let $S = \{ (x_1, y_1), \dots, (x_m, y_m) \}$ , then the total runtime is $O(mn)$
+
+   2. Solving the ERM problem for many common hypothesis classes in the agnostic setting is NP-hard.
+
+   3. There exist efficient learning algorithms on specific hypothesis classes.
+
+   4. If m is fixed, but n is not fixed in axis aligned rectangles, then the runtime of the procedure is $m^{O(n)} $.
+
+4. **Boolean Conjunctions** 
+
+   1. $\mathcal{X} = \{0, 1\}^n, \mathcal{Y} = \{0, 1\}, h(x) = 1\{ x_{i1}\wedge \dots \wedge x_{ik}\wedge \neg x_{j1}\wedge\dots\wedge\neg x_{jr} \}$
+   2. The sample complexity of learning $\mathcal{H}^n_C$ is $O(d\log(3/\delta)/\epsilon)$ 
+   3. Efficiently Learnable in the Realizable Case: $O(mn)$
+   4. Agnostic Case : NP hard
+
+5. **learning 3-Term DNF**
+
+   1. 3-term disjunctive normal form formulae
+   2. $h(x) = A_1(x) \vee A_2(x) \vee A_3(x)$, $A_1, A_2, A_3$ are Boolean conjunctions.
+   3. the sample complexity of learning $\mathcal{H}^n_{3DNF}$ is $O(3n\log(3/\delta)/\epsilon)$ 
+   4. From the computational perspective, this learning problem is hard, unless $RP=NP$ (Execise 8.4)
+
+### 8.3 EFFICIENTLY LEARNABLE, BUT NOT BY A PROPER ERM
+
+1. $A_1 \vee A_2 \vee A_3 = \underset{u\in A_1, v\in A_2, w \in A_3}{\bigwedge} (u\vee v \vee w)$
+2. The basic idea is to replace the original hypothesis class of 3-term DNF formula with a larger hypothesis class so that the new class is easily learnable.
+3. *representation independent* : The learning algorithm might return a hypothesis that does not belong to the original hypothesis class.
+4. $\psi : \{ 0, 1 \}^n \rightarrow \{ 0, 1 \}^{(2n)^3}$  
+
+5. 3-term-DNF formulae over $\{ 0, 1 \}^n$ $\subset$ Conjunctions over $\{ 0,1 \}^{(2n)^3}$ 
+
+### 8.4 HARDNESS OF LEARNING
+
+1. cryptographic assumptions :
+
+   $f : \{ 0,1 \}^n \rightarrow \{ 0, 1 \}^n$, polynomial $p(\cdot)$, $\forall A$, $\mathbb{P}[f(A(f(x))) = f(x)]\le \frac{1}{p(n)}$ 
+
+2. *trapdoor one way function* : secret key
+
+   for some polynomial function $p$, $\forall n, \exists s_n, |s_n| \le p(n), \forall x, input(f(x), s_n)\ outputs\ x$.
+
+3. Let $F_n$ be a family of trapdoor functions over $\{ 0, 1 \}^n$, then $\mathcal{H}^n_F = \{ f^{-1} : f \in F_n \}$ has no efficient learner for this class.
+
+   (Kearns and Vazirani 1994, Ch6)
+
