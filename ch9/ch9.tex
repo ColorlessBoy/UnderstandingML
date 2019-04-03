@@ -1,0 +1,238 @@
+% note of ch9 Linear Predictors, Understanding Machine Learning
+
+\section{Linear Predictors}
+
+This chapter is focused on learning linear predictors using the ERM approach; however,
+in later chapters we will see alternative paradigms for learning these hypothesis classes.
+
+The class of affine fuctions :
+\[
+	L_d = \{ h_{\vec{w},b} = \langle \vec{w},\vec{x} \rangle + b
+	: \vec{w}\in\mathbb{R}^d, b\in\mathbb{R}\}
+.\]
+
+Rewrite into homogeneous linear function.
+Let $\vec{w}' = (b, w_1, \dots, w_d) \in \mathbb{R}^{d+1}, 
+\vec{x}' = (1, x_1, \dots, x_d) \in \mathbb{R}^{d+1}$. Therefore,
+\[
+	h_{\vec{w},b}(\vec{x}) = \langle \vec{w},\vec{x}\rangle + b
+	= \langle \vec{w}', \vec{x}' \rangle
+.\]
+
+
+\subsection{HALFSPACES}
+
+The class of \emph{Halfspaces} is :
+\[
+	HS_d = sign \circ L_d = \{ \vec{x}\mapsto sign(h_{\vec{w},b}(\vec{x}) :
+	h_{\vec{w},b} \in L_d \}
+.\]
+The $VCdim(HS_d) = d+1$, and the sample size is 
+$\Omega \left( \frac{d+\log(1/\delta)}{\epsilon} \right)$.
+
+In the cotext of halfspaces, the realizable case is often referred to as the "separable" case.
+
+Implementing the ERM rule in the nonseparable case is known to be computationally hard.
+(Ben-David and Simon, 2001).
+
+The most popular approach of learning nonseparable data is use 
+\emph{surrogate loss fucntions}(ch12),
+namely, to learn a halfspace that does not necessarily minimize the empirical risk with
+the 0-1 loss, but rather with respect to a different loss function.
+
+\subsubsection{Linear Programming for the Class of Halfspaces}
+
+\emph{Linear programs} : 
+\[
+	\underset{\vec{w}\in\mathbb{R}^d}{\max} \langle \vec{u},\vec{w} \rangle, 
+	\quad s.t.\ \vec{Aw}\ge \vec{v}
+.\]
+
+Change the ERM problem for halfspaces in the realizable case can be expressed as a LP:
+\begin{equation}
+	\underset{\vec{w}\in\mathbb{R}^d}{\max} \langle \vec{u},\vec{w} \rangle,\quad
+	s.t.\quad \vec{u} = \vec{0},\quad A \vec{w} \ge \vec{v}, \{A_{i,j}\} = y_ix_{i,j},\quad \vec{v}=(1,\dots,1)\in \mathcal{R}^m
+\end{equation}
+
+\subsubsection{Perception for Halfspaces}
+
+\[
+	y_i\langle \vec{w}^{(t+1)},x_i\rangle 
+	= y_i\langle \vec{w}^{(t)}+y_i \vec{x_i}, \vec{x_i} \rangle
+	= y_i\langle \vec{w}^{(t)}, \vec{x_i} \rangle + \Arrowvert \vec{x_i} \Arrowvert ^2
+.\]
+Because $\Arrowvert \vec{x}_i \Arrowvert \ge 0$, so the Perception guides the solution
+to be "more correct" on i'th example. "More correct" doesn't mean make i'th example exactly correct.
+
+\begin{algorithm}[h!]
+	\caption{Batch Perception}
+	\begin{algorithmic}
+		\Require A training set $(\vec{x_1},y_1),\dots,(\vec{x_m},y_m)$
+		\Ensure $\vec{w}^{(1)} = (0, \dots, 0)$
+		\For{t=1,2,\dots}
+			\If{($\exists i$ s.t.  $y_i \langle \vec{w}^{(1)},\vec{x}_i \rangle \le 0$)}
+				\State $\vec{w}^{(t+1)} = \vec{w}^{(t)} + y_i \vec{x_i}$
+			\Else
+				\State \Return $\vec{w}^{(t)}$
+			\EndIf
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{thm}
+	Assume that $(\vec{x_1},y_1), \dots,(\vec{x_m},y_m)$ is saperable,
+	let $B=\min \{ \Arrowvert \vec{w} \Arrowvert : \forall i \in [m], 
+		y_i \langle \vec{w}, \vec{x_i} \rangle \ge 1 \}$,
+	and let $R = \max_i \Arrowvert \vec{x_i} \Arrowvert$.
+	Then, the Perception algorithm stops after at most $(RB)^2$ iterations.
+\end{thm}
+\begin{proof}
+	let $\vec{w}^*=\arg\min_{\vec{w}} \{ \Arrowvert \vec{w} \Arrowvert : \forall i \in [m], 
+		y_i \langle \vec{w}, \vec{x_i} \rangle \ge 1 \}$.Our mean goal is to proof:
+	\begin{equation}
+		\frac{\sqrt{T}}{RB} \le 
+		\frac{ \langle \vec{w}^*, \vec{w}^{(T+1)} \rangle}
+		{\Arrowvert \vec{w}^* \Arrowvert \Arrowvert \vec{w}^{(T+1)} \Arrowvert}		
+		\le 1
+	\end{equation}
+	\[
+		\vec{w}^{(1)} = (0, \dots, 0) \Rightarrow \langle \vec{w}^*, \vec{w}^{(1)} \rangle = 0
+	.\]
+	\begin{equation}
+		\langle \vec{w}^*, \vec{w}^{(t+1)} \rangle
+		- \langle \vec{w}^*, \vec{w}^{(t)} \rangle
+		= \langle \vec{w}^*, y_i \vec{x_i} \rangle \ge 1
+		\Rightarrow
+		\langle \vec{w}^*, \vec{w}^{(T+1)} \rangle \ge T
+	\end{equation}
+	\begin{equation}
+			\Arrowvert \vec{w}^{(t+1)} \Arrowvert^2
+			= \Arrowvert \vec{w}^{(t)} + y_i \vec{x_i} \Arrowvert ^2
+			\le \Arrowvert \vec{w}^{(t)} \Arrowvert ^2 + R^2
+	\end{equation}
+	\begin{equation}
+		\Arrowvert \vec{w}^{(T+1)} \Arrowvert^2 \le TR^2 
+	\end{equation}	
+\end{proof}
+
+\subsubsection {The VC Dimension of Halfspaces}
+
+\begin{thm}
+	The VC dimension of the class of homogenous halfspaces in $\mathbb{R}^{d+1}$ is d+1.
+\end{thm}
+\begin{proof}
+	First, consider the set of vectors $\vec{e_1}, \dots, \vec{e}_{d+1} \in \mathbb{R}_{d+1}$,
+	then,$\forall \{y_1, \dots, y_{d+1} \}$, set $\vec{w} = (y_1, \dots, y_{d+1})$, we get
+	$\forall i, \langle \vec{w}, \vec{e_i} \rangle = y_i$. So $VCdim(HS_d) \ge d+1$.\\
+	Second, suppose that $\exists X = (\vec{x_1}, \dots, \vec{x}_{d+2})$ are shattered by $HS_d$.
+	We can get none zero vector $\vec{a} = (a_1, \dots, a_{d+2})$ s.t. $a^TX = \vec{0}$.
+	Let $I=\{ i : a_i > 0  \}$ and $J = \{ j : a_j < 0 \}$, then
+	$\sum_{i \in I} a_i \vec{x_i} = -\sum_{j \in J} a_j \vec{x_j}$.\\
+	Because X is shattered by $HS_d$, so $\exists \vec{w}$ such that 
+	$\forall i \in I, \langle \vec{w}, \vec{x_i} \rangle > 0$ and
+	$\forall j \in J, \langle \vec{w}, \vec{x_j} \rangle < 0$. It follows that
+	\[
+		0 < \sum\limits_{i\in I} a_i \langle \vec{x_i}, \vec{w} \rangle
+		= -\sum\limits_{j \in J} a_j \langle \vec{x_j}, \vec{w} \rangle < 0
+	.\]
+	which leads to a contradiction.
+\end{proof}
+
+\begin{thm}
+	The VC dimension of the class of nonhomogeneous halfspaces in $\mathbb{R}^d$ is $d+1$.
+\end{thm}
+\begin{proof}
+	 First, the set of vectors $\vec{0},\vec{e_1},\dots,\vec{e_d}$ is shattered by the class
+	 of nonhomogeneous halfspaces.\\
+	 Second, if $\exists \vec{x_1}, \dots, \vec{x}_{d+2}$ are shattered by the class of
+	 nonhomogeneous halfspaces, it will contradict former theorem.
+\end{proof}
+
+\subsection{LINEAR REGRESSION}
+
+The hypothesis class of linear regression predictors is simply the set of linear function
+\[
+	\mathcal{H}_{reg} = L_d = \{ \vec{x}\mapsto \langle \vec{w}, \vec{x} \rangle + b :
+	\vec{w} \in \mathbb{R}^d, b\in \mathbb{R}\}
+.\]
+
+\emph{Squared-loss function}
+\[
+	l_{sq}(h, (\vec{x},y)) = (h(\vec{x}) - y)^2
+.\]
+
+\emph{Mean Squared Error}
+\[
+	L_S(h) = \frac{1}{m}\sum\limits^m_{i=1}(h(\vec{x_i}) - y_i)^2
+.\]
+
+\emph{Absolute value loss function}
+\[
+	l(h,(\vec{x},y) = |h(\vec{x})-y|
+.\]
+
+Note that since linear regression is not a binary prediciton task,
+we cannot analyse its sample complexity using the VC-dimension.
+One possible analysis of the sample complexity of linear regression is by relying on the
+"discretization trick"(namely, use 64 bits floating point representation to represent $\vec{w}$, $b$.)
+But we also need that the loss function will be bounded.
+
+The rigorous means to analyze the sample complexity of regression problems is coming later.
+
+\subsubsection{Least Squares}
+
+Let $\mathbf A = \mathbf X \mathbf X^T$ and $\vec{b} = \mathbf X \vec{y}$.
+
+If A is invertible then the solution to the ERM algorithm is 
+\[
+	\vec{w} = \mathbf A^{-1}\vec{b}
+.\]
+
+Otherwise,
+\[
+	\hat{\vec{w}} = \mathbf A^{+}\vec{b} 
+.\]
+
+\subsubsection{Linear Regression for Polynomial Regression Tasks}
+
+\[
+	p(x) = a_0 + a_1x + a_2x^2+ \dots + a_nx^n
+.\]
+
+ \[
+	 \mathcal{H}^n_{poly} = \{x \mapsto p(x) \}
+.\]
+
+Let $\Psi(x) = (1, x, x^2, \dots, x^n)$
+ \[
+	 p(x) = \langle \vec{a}, \Psi(x) \rangle
+.\]
+
+\subsection{LOGISTIC REGRESSION}
+
+\emph{logistic function} :
+\begin{equation}
+	\Phi_{sig}(z) = \frac{1}{1+exp(-z)}	
+\end{equation}
+
+\emph{Sigmoid hypothesis class}
+ \[
+	 \mathcal{H}_{sig} = \phi_{sig} \circ L_d = 
+	 \{\vec{x}\mapsto \phi_{sig}(\langle \vec{w},\vec{x} \rangle):\vec{w}\in\mathbb{R}^d \}
+.\]
+
+\emph{Sigmoid loss function}:
+\[
+	l_{sig}(h_{\vec{w}},(\vec{x},y)) = \log(1+exp(-y\langle \vec{w}, \vec{x} \rangle))
+.\]
+
+The ERM problem associated with logistic regression is
+\begin{equation}
+	\underset{\vec{w}\in\mathcal{R}^d}{\arg\min}
+	\frac{1}{m} \sum\limits^m_{i=1}\log(1+exp(-y_i \langle \vec{w},\vec{x_i} \rangle ))
+\end{equation}
+which is identical to the problem of finding a \emph{Maximum Likelihood Estimator}.
+
+
+
+
