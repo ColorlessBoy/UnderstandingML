@@ -1,0 +1,317 @@
+% notes of Ch13 Regularization and Stability, Understanding ML
+
+\section{Regularization and Stability}
+
+\emph{Regularized Loss Minimization} will learn all convex-Lipschitz-bounded and convex-smooth-bounded learning problems.
+
+An algorithm is considered stable if a slight change of its input does not change its output much.It's closed to 
+learnability.
+
+\subsection{REGULARIZED LOSS MINIMIZATION} \emph{Regularized Loss Minimization} (RLM):
+\[ \underset{\mathbf{w}}{\arg\min} \left( L_S(\mathbf{w}) + R(\mathbf{w}) \right).\]
+
+Tikhonov regularization: $ \lambda \Arrowvert \mathbf{w} \Arrowvert^2 $
+
+A learning rule: $ A(S) = \underset{\mathbf{w}}{\arg\min} \left( L_S(\mathbf w) + \lambda 
+\Arrowvert \mathbf{w} \Arrowvert^2 \right) $ has two interpretation:
+\begin{itemize}
+	\item Structural risk minimization. We define $ \mathcal{H} = \cup \mathcal{H}_n $,
+		which satisfies: $ \mathcal{H}_1 \subset \mathcal{H}_2 \subset \mathcal{H}_3 \dots $,
+		where $ \mathcal{H}_i = \{ \mathbf{w}: \Arrowvert \mathbf{w} \Arrowvert \le i \} $.
+	\item Stabilizer.
+\end{itemize}
+
+\subsubsection{Ridge Regression}
+
+\begin{defn}
+	(ridge regression).
+	Performing linear regression using following equation:
+	\begin{equation}
+		\underset{\mathbf{w} \in \mathbb{R}^d}{\arg\min}
+		\left( 
+			\lambda \Arrowvert \mathbf{w} \Arrowvert^2
+			+ \frac{1}{m} \sum\limits^m_{i=1}\frac{1}{2}
+			{(\langle \mathbf{w}, \mathbf{x}_i \rangle - y_i)}^2
+		\right)
+	\end{equation}
+\end{defn}
+
+The solution to ridge regression becomes:
+
+\begin{equation}
+	\mathbf{w} = {(2\lambda m I + A)}^{-1} \mathbf{b}
+\end{equation}
+
+in which, A is a positive semidefinite matrix.
+
+\begin{thm}
+	\label{thm_13_1}
+	Let $ \mathcal{X}\times [-1,1] \sim \mathcal{D} $, 
+	where $ \mathcal{X} = \{ \mathbf{x} \in \mathbb{R}^d : \Arrowvert \mathbf{x} \Arrowvert \le 1 \} $, 
+	and $ \mathcal{H} = \{ \mathbf{w} \in \mathbb{R}^d : \Arrowvert \mathbf{w} \Arrowvert \le B \} $.
+	$ \forall \epsilon \in (0,1) $, let $ m \ge 150B^2/\epsilon^2 $. Then, applying the ridge regression algorithm
+	with parameter $ \lambda = \epsilon/(3B^2) $ satisfies
+	\[ \underset{S\sim\mathcal{D}^m} {\mathbb{E}} [L_\mathcal{D}(A(S))] 
+	\le \min\limits_{\mathbf{w}\in\mathcal{H}}L_\mathcal{D}(\mathbf{w}) + \epsilon.\]
+	\begin{proof}
+		The proof is in the next section.
+	\end{proof}
+\end{thm}
+
+Exercise~\ref{exm_13_1} tells us how an algorithm with a bounded expected risk can be used to construct an agnostic PAC learner.
+\begin{exm}
+	\label{exm_13_1}
+	empty
+\end{exm}
+
+\subsection{STABLE RULES DO NOT OVERFIT}
+
+Symbols in following sections:
+\begin{itemize}
+	\item Training set: $ S = (z_1, \dots, z_m) $.
+	\item An additional example $ z' $.
+	\item Replacing training set: $ S^{(i)} = (z_1, \dots, z_{i-1}, z', z_{i+1}, \dots, z_m) $.
+	\item Uniform distribution over $ [m] $: $ U(m) $.
+\end{itemize}
+
+\begin{thm}
+	\label{thm_13_2}
+	\begin{equation}
+		\label{equ_13_6}
+		\underset{S \sim \mathcal{D}^m} {\mathbb{E}}
+		[L_{\mathcal{D}}(A(S)) - L_S(A(S))]
+		= \underset{(S,z') \sim \mathcal{D}^{m+1}, i \sim U(m)} {\mathbb{E}}
+		[l(A(S^{(i)}, z_i)) - l(A(S), z_i)]
+	\end{equation}	
+	\begin{proof}
+		The proof is trivial.
+	\end{proof}
+\end{thm}
+When the right-hand side of Equation~\ref{equ_13_6} is small, we say that A is a stable algorithm.
+In light of Theorem~\ref{thm_13_2}, the algorithm should both fit the training set and at the same time be stable.
+
+\begin{defn}
+	(On-Average-Replace-One-Stable).
+	Let $ \epsilon(m): \mathbb{N} \rightarrow \mathbb{R} $ be a monotonically decreasing function.
+	We say that a learning algorithm A is on-average-replace-one-stable with rate $ \epsilon(m) $
+	if for every distribution $ \mathcal{D} $
+	\begin{equation}
+		\underset{(S,z') \sim \mathcal{D}^{m+1}, i \sim U(m)} {\mathbb{E}}
+		[l(A(S^{(i)}, z_i)) - l(A(S), z_i)] \le \epsilon(m)
+	\end{equation}
+\end{defn}
+
+\subsection{TIKHONOV REGULARIZATION AS A STABILIZER}
+
+Tikhonov regularization leads to a stable algorithm.
+\begin{defn} (Strongly Convex Functions).For $ \alpha \in (0, 1) $
+	\begin{equation}
+		f( \alpha \mathbf{w} + (1-\alpha) \mathbf{u}) \le
+		\alpha f(\mathbf{w}) + (1-\alpha) f(\mathbf{u})
+		- \frac{\lambda}{2} \alpha (1-\alpha) \Arrowvert \mathbf{w} - \mathbf{u} \Arrowvert^2
+	\end{equation}
+\end{defn}
+
+We have
+\[ f(\mathbf{w}) - f(\mathbf{w}^*) \ge \frac{\lambda}{2} \Arrowvert \mathbf{w} - \mathbf{w}^* \Arrowvert^2.\]
+($\mathbf{w}^*$ is minimum point).
+
+Let $ A(S) = \underset{\mathbf{w}}{\arg\min} \left( L_S(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 \right) $,
+and $ f_S(\mathbf{w}) = L_S(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 $.Then
+\begin{equation}
+	\label{equ_13_7}
+	f_S(\mathbf{v}) - f_S(A(S)) \ge \lambda \Arrowvert \mathbf{v} - A(S) \Arrowvert^2
+\end{equation}
+
+We also have:
+\begin{equation}
+	\begin{aligned}
+		f_S(\mathbf{v}) - f_S(\mathbf{u}) =&
+		L_S(\mathbf{v}) + \lambda \Arrowvert \mathbf{v} \Arrowvert^2 
+		- (L_S(\mathbf{u})+\lambda \Arrowvert \mathbf{u} \Arrowvert^2) \\
+		=& L_{S^{(i)}}(\mathbf{v}) + \lambda \Arrowvert \mathbf{v} \Arrowvert^2 
+		- (L_{S^{(i)}}(\mathbf{u}) + \lambda \Arrowvert \mathbf{u} \Arrowvert^2) \\
+		 & + \frac{l(\mathbf{v}, z_i)-l(\mathbf{u}, z_i)}{m}
+		 + \frac{l(\mathbf{u}, z') - l(\mathbf{v}, z')}{m}
+	\end{aligned}
+\end{equation}
+
+which means:
+\begin{equation}
+	f_S(A(S^{(i)})) - f_S(A(S)) \le
+	\frac{l(A(S^{(i)}),z_i) - l(A(S), z_i)}{m}
+	+ \frac{l(A(S), z')-l(A(S^{(i)}),z')}{m}
+\end{equation}
+Combining this with Equation~\ref{equ_13_7}, we obtain that:
+\begin{equation}
+	\label{equ_13_10}
+	\lambda \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2 \le
+	\frac{l(A(S^{(i)}),z_i) - l(A(S), z_i)}{m}
+	+ \frac{l(A(S), z')-l(A(S^{(i)}),z')}{m}
+\end{equation}
+
+
+\subsubsection{Lipschitz Loss}
+
+Let loss function $ l(\cdot, z_i) $ be $ \rho-Lipschitz $, then:
+\[
+	l(A(S^{(i)}),z_i) - l(A(S), z_i) \le \rho \Arrowvert A(S^{(i)}) - A(S) \Arrowvert \\
+\]
+\[
+	l(A(S), z')-l(A(S^{(i)}),z') \le \rho \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+\]
+\[
+\lambda \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2 \le \frac{2\rho \Arrowvert A(S^{(i)}) - A(S) \Arrowvert}{m}
+\]
+\[
+	l(A(S^{(i)}),z_i) - l(A(S), z_i) \le \frac{2\rho^2}{\lambda m}
+\]
+Finally, we get
+\begin{equation}
+	\underset{S \sim \mathcal{D}^m}{\mathbb{E}}
+	[L_\mathcal{D}(A(S)) - L_S(A(S))] \le \frac{2\rho^2}{\lambda m}
+\end{equation}
+
+\begin{thm}
+	Assume that the loss function is convex and $ \rho-Lipschitz $. Then, the RLM rule with the regularizer
+	$ \lambda \Arrowvert \mathbf{w} \Arrowvert^2 $ is \emph{on-average-replace-one-stable} 
+	with rate $ \frac{2\rho^2}{\lambda m} $.
+\end{thm}
+
+\subsubsection{Smooth and Nonnegative Loss}
+
+If the loss is $ \beta-smooth $ and nonnegative then it is also self-bounded:
+$ \Arrowvert \nabla f(\mathbf{w}) \Arrowvert^2 \le 2 \beta f(\mathbf{w}) $.
+
+\begin{equation}
+	\label{equ_13_10}
+	\begin{aligned}
+		& l( A(S^{(i)}), z_i) - l( A(S), z_i) \\
+		\le & \Arrowvert \nabla l ( A(S), z_i) \Arrowvert \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+		+ \frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2 \\
+		\le & \sqrt{2\beta l(A(S), z_i)} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+		+ \frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2
+	\end{aligned}
+\end{equation}
+We also have:
+\begin{equation}
+	l( A(S), z') - l( A(S^{(i)}), z')
+	\le \sqrt{2\beta l( A( S^{(i)} ), z')}	\Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+	+\frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+\end{equation}
+Put these two equation into Equation~\ref{equ_13_10}, we can get:
+\[ 
+	\Arrowvert A(S^{(i)}) - A(S) \Arrowvert \le
+	\frac{\sqrt{2\beta}}{\lambda m - \beta}
+	\left( \sqrt{l(A(S), z_i)} + \sqrt{l(A(S^{(i)}), z')}\right)
+\]
+We assume $ \lambda \ge 2\beta/m $, we have
+\[ 
+	\Arrowvert A(S^{(i)}) - A(S) \Arrowvert \le
+	\frac{\sqrt{8\beta}}{\lambda m}
+	\left( \sqrt{l(A(S), z_i)} + \sqrt{l(A(S^{(i)}), z')}\right)
+\]
+Combining the preceding with Equation~\ref{equ_13_10}, we have
+
+\begin{equation}
+	\begin{aligned}
+		l(A(S^{(i)}), z_i) - l(A(S), z_i)
+		\le & \sqrt{2\beta l(A(S), z_i)} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert 
+		+ \frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2 \\
+		\le & \left( \frac{4\beta}{\lambda m} + \frac{4\beta^2}{{(\lambda m)}^2} \right)
+		{\left( \sqrt{l(A(S), z_i)} + \sqrt{l(A(S^{(i)}), z')} \right)}^2 \\
+		\le & \frac{6\beta}{\lambda m}
+		{\left( \sqrt{l(A(S), z_i)} + \sqrt{l(A(S^{(i)}), z')} \right)}^2 \\
+		\le & \frac{12\beta}{\lambda m}
+		{\left( {l(A(S), z_i)} + {l(A(S^{(i)}), z')} \right)}
+	\end{aligned}
+\end{equation}
+This proves the following theorem.
+\begin{thm}
+	\begin{equation}
+		\mathbb{E} [l(A(S^{(i)}), z_i) - l(A(S), z_i)] \le
+		\frac{24\beta}{\lambda m} \mathbb{E}[L_S(A(S))]
+	\end{equation}
+\end{thm}
+If $\forall z, l(\mathbf{0}, z) \le C $, then we have
+$ L_S(A(S)) \le  L_S(\mathbf{0}) \le C $, which means
+\[ 
+	\mathbb{E} [l(A(S^{(i)}), z_i) - l(A(S), z_i)] \le \frac{24\beta C}{\lambda m}
+\]
+
+\subsection{CONTROLLING THE FITTING-STABLITY TRADEOFF}
+
+\begin{equation}
+	\mathbb{E}_S[L_\mathcal{D}(A(S))] = 
+	\mathbb{E}_S[L_S(A(S))] + \mathbb{E}_S[L_\mathcal{D}(A(S))-L_S(A(S))]
+\end{equation}
+\begin{itemize}
+	\item The first term is empirical risks of $ A(S) $.
+	\item The second term is the stability of $ A(S) $.
+	\item There is trade-off between these two terms.
+\end{itemize}
+
+Then we derive bounds on the empirical risk term for the RLM rule.
+\[ 
+	L_S(A(S)) \le L_S(A(S)) + \lambda \Arrowvert A(S) \Arrowvert^2 
+	\le L_S(\mathbf{w}^*) + \lambda \Arrowvert \mathbf{w}^* \Arrowvert^2
+\] 
+Taking expectation of both sides w.r.t. S, we obtain that
+\[ 
+	\mathbb{E}_S[L_S(A(S))] \le L_\mathcal{D}(\mathbf{w}^*)+\lambda \Arrowvert \mathbf{w}^* \Arrowvert^2
+\]
+
+\begin{thm}
+	\[ 
+		\forall \mathbf{w}, \mathbb{E}_S [L_\mathcal{D}(A(S))] \le L_\mathcal{D}(\mathbf{w}) + 
+		\lambda \Arrowvert \mathbf{w} \Arrowvert^2 + \frac{2\rho^2}{\lambda m}
+	\]
+\end{thm}
+In practice, we usually do not know the norm of $ \mathbf{w}^* $, we usually tune $ \lambda $
+on the basis of a validation set, as described in Chapter 11.
+
+If $\forall \mathbf{w}, \Arrowvert \mathbf{w} \Arrowvert \le B $, we have
+\[ 
+	\forall \mathbf{w}, \mathbb{E}_S [L_\mathcal{D}(A(S))] \le 
+	\underset{\mathbf{w} \in \mathcal{H}}{\min} L_\mathcal{D}(\mathbf{w}) + 
+	\rho B \sqrt{\frac{8}{m}} \quad
+	\left(\lambda = \sqrt{\frac{2\rho^2}{B^2 m}}\right)
+\]
+
+Now we consider the loss function is smooth and nonnegative, then we get
+\[ 
+	\forall \mathbf{w}, 
+	\mathbb{E}_S[L_\mathcal{D}(A(S))]
+	\le \left( 1+\frac{24\beta}{\lambda m} \right) \mathbb{E}_S [L_S(A(S))]
+	\le \left( 1+\frac{24\beta}{\lambda m} \right) 
+	(L_\mathcal{D}(\mathbf{w})+\lambda \Arrowvert \mathbf{w} \Arrowvert^2)
+\]
+Let us play with this equation:
+\[
+	\begin{aligned}
+		&\mathbb{E}_S[L_\mathcal{D}(A(S))] \le \left( 1 + \frac{24\beta}{\lambda m} \right)
+		\left( L_\mathcal{D}(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 \right)\\
+		=& L_\mathcal{D}(\mathbf{w}) + 
+		\frac{24 \beta L_\mathcal{D}(\mathbf{w})}{\lambda m} + \lambda \Arrowvert \mathbf{w} \Arrowvert^2
+		+ \frac{24\beta \Arrowvert \mathbf{w} \Arrowvert^2}{m} \\
+		\le& L_\mathcal{D}(\mathbf{w}) + 
+		\frac{24 \beta L_\mathcal{D}(\mathbf{w})}{\lambda m} + \lambda B^2
+		+ \frac{24\beta B^2}{m} \\
+		\le& L_\mathcal{D}(\mathbf{w}) + 
+		\frac{24 \beta C}{\lambda m} + \lambda B^2
+		+ \frac{24\beta B^2}{m} \quad (L_\mathcal{D}(\mathbf{w}) \le C) \\
+		\le& L_\mathcal{D}(\mathbf{w}) + 
+		\frac{24 \beta C B^2}{\alpha \epsilon m} + \alpha \epsilon
+		+ \frac{24\beta B^2}{m} \quad \left(\lambda = \frac{\alpha\epsilon}{B^2}, \alpha \in (0,1)\right)
+	\end{aligned}
+\]
+If we want to get
+$ \mathbb{E}_S [L_\mathcal{D}(A(S))] \le \min\limits_{\mathbf{w} \in \mathcal{H}} L_\mathcal{D}(\mathbf{w}) + \epsilon $, 
+we need
+\[ 
+	m \ge \frac{C + \alpha \epsilon}{ (1-\alpha)\alpha \epsilon^2} \cdot 24 \beta B^2
+	\quad or \quad
+	m \ge \frac{2C + \epsilon}{\epsilon^2} \cdot 48 \beta B^2 \quad ( \alpha = 1/2)
+\]
+
+

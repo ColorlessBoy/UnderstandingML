@@ -1,0 +1,156 @@
+% note of chapter11 Model Selection and Validation, UnderstandingML
+
+\section{Model Selection and Validation}
+
+In this Chapter we will present two approaches for model selection.
+\begin{itemize}
+	\item Structural Risk Minimization;
+	\item Validation.
+\end{itemize}
+
+{In this Chapter, we also consider WHAT TO DO IF LEARNING FAILS.}
+
+\subsection{MODEL SELECTION USING SRM}
+
+The SRM paradigm has been described and analyzed in Section 7.2.
+
+Consider a countable sequence of hypothesis classes $\mathcal{H}_1, \mathcal{H}_2, \mathcal{H}_3, \dots$.
+$\forall d$, the $\mathcal{H}_d$ enjoys the uniform convergence property
+\begin{equation}
+	m^{UC}_{\mathcal{H}_d}(\epsilon,\delta)(\epsilon, \delta) \le 
+	\frac{g(d)\log(1/\delta)}{\epsilon^2}
+\end{equation}
+
+We reuse $w(n) = \frac{6}{n^2 \pi^2}$ in chapter 7, we get
+\begin{equation}
+	\label{equ11_2}
+	L_\mathcal{D} (h) \le L_S(h) + \sqrt{\frac{g(d)( \log(1/\delta) + 2\log(d) + \log(\pi^2/6) )}{m} }
+\end{equation}
+
+The upper bound given in Equation (\ref{equ11_2}) is pessimistic.
+
+\subsection{VALIDATION}
+
+\subsubsection{Hold Out Set}
+
+Formally, let $V = \{ (\mathbf{x}_1, y_1), \dots, (\mathbf{x}_{m_v}, y_{m_v}) \} $ be a set of validation set.
+We have
+\begin{thm}
+	\label{thm11_1}
+	Let h be some predictor and assume that the loss function is in $[0,1]$. Then, $\forall \delta \in (0, 1)$,
+	we have,
+	\[ \mathbb{P} \left\{ | L_V(h)-L_\mathcal{D}(h) | \le \sqrt{ \frac{\log(2/\delta)}{2m_v} } \right\} \ge 1- \delta.\]
+\end{thm}
+This is tighter than the usual bounds we have seen so far. The reason for the tightness of this bound is that
+it is in terms of an estimate on a fresh validation set that is independent of the way h was generated. (Compare with theorem 6.8)
+\[ L_\mathcal {D} (h) \le L_S (h) + \sqrt {C \frac{d+\log(1/\delta)}{m}}.\]
+
+For validation set can be seen as partitioning random set into two parts, so we often refer it as a \emph{hold out set}.
+
+\subsubsection{Validation for Model Selection}
+
+Validatiun can be naturally used for model selection.
+
+\begin{thm}
+	Let $ \mathcal{H} = {h_1, \dots, h_r}  $ be an arbitrary set of predictors and assume that the loss function is in $ [0, 1]  $ 
+	be arbitrary set of predictors and assume that the loss function is in $ [0, 1]  $. Assume that a validation set V of size $ m_v $ 
+	is sampled independent of $ \mathcal{H} $. Then, 
+	\[ \forall h\in\mathcal{H}, \mathbb{P} \left\{ |L_\mathcal{D} - L_V(h)| \le 
+	\sqrt {\frac{\log(2|\mathcal{H}/\delta)}{2m_v}}  \right\} \ge 1-\delta.\]
+\end{thm}
+
+\subsubsection{The Model-Selection Curve}
+
+In polynomial fitting problem, the training error is monotonically decreasing as we increase the polynomial degree.
+On the other hand, the validation error first decreases but then starts to increase, 
+which indicates that we are starting to suffer from overfitting.
+
+\subsubsection{k-Fold Cross Validation}
+
+\emph{leave-one-out} (LOO).
+k-Fold cross validation is often used for model selection (or parameter tuning).
+
+\begin{algorithm}[h!]
+	\caption{k-Fold Cross Validation for Model Selection} 
+	\begin{algorithmic}
+		\Require{training set $S$ = $ \{ (\textbf{x}_1, y_1) , \dots, (\textbf{x}_m, y_m)  \}  $,
+			set of parameter values $ \Theta $, learning algorithm $A$, integer $k$} 
+		\State{\textbf{partition} S into $ S_1, S_2, \dots, S_k $ }
+		\For{$ \theta \in \Theta $ }
+			\For{i=1 \dots k}
+				\State{$ h_i, \theta = A(S\S_i;\theta) $} 
+			\EndFor.
+			\State{$ error(\theta) = \frac{1}{k} \sum^k_{i=1} L_{S_i} (h_{i,\theta}) $ }
+		\EndFor.
+		\State{\Return$ \theta^* = \arg\min_\theta[error(\theta)], h_{\theta^*} = A(S;\theta^*) $ }
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{itemize}
+	\item Rigorously understanding the exact behavior of cross validation is still an open problem;
+	\item Rogers and Wagner have shown that for k local rules (kNN) the cross validation gives a very good estimate of the true error;
+	\item Other paper show that cross validation works for stable algorithms.
+\end{itemize}
+
+\subsubsection{Train-Validation-Test Split}
+
+In most practical applications, we split the avaliable examples into three sets.
+\begin{itemize}
+	\item Training set
+	\item Validation set
+	\item Test set
+\end{itemize}
+
+\subsection{WHAT TO DO IF LEARNING FAILS}
+
+Main approaches for fixing:
+\begin{itemize}
+	\item Get a larger sample
+	\item Change the hypothesis class: enlarging it; reducing it; completely changing it; changing the parameters you consider.
+	\item Change the feature representation of the data
+	\item Change the optimization algorithm used to apply your learning rule
+\end{itemize}
+
+\emph{Approximation error}: $ L_\mathcal{D}(h^*) $, for $ h^* \in \arg\min_{h\in\mathcal{H}} L_\mathcal{D} (h) $
+
+\emph{Estimation error}: $ L_\mathcal{D}(h_S) - L_\mathcal{D} (h^*) $ 
+
+Large approximation error: enlarge the hypothesis class or completely change it; change the feature representation of the data.
+
+Large estimation error: enlarge sample set; reducing the hypothesis class.
+
+A different error decomposition.
+\[ L_\mathcal{D}(h_S) = (L_\mathcal{D}(h_S)-L_V(h_S)) + (L_V(h_S) - L_S(h_S)) + L_S(h_S).\]
+\begin{itemize}
+	\item $ (L_\mathcal{D}(h_S)-L_V(h_S)) $ can be bounded quite tightly using Theorem~\ref{thm11_1}.
+	\item $ (L_V(h_S)-L_S(h_S)) $ is large we say that our algorithm suffers from ``overfitting''. (note good estimate)
+	\item $ L_S(h_S) $ is large we say that our algorithm suffers from ``underfitting''. (not good estimate)
+\end{itemize}
+
+We write
+\[ L_S(h_S) = (L_S(h_S)-L_S(h^*)) + (L_S(h^*)-L_\mathcal{D}(h^*)) + L_\mathcal{D}(h^*).\]
+\begin{itemize}
+	\item $ L_S(h_S)-L_S(h^*) \le 0 $ for $ ERM_\mathcal{H} $ hypothesis.
+	\item $ (L_S(h_S) - L_\mathcal{D}(h^*)) $ can be bounded quite tightly (as in Theorem~\ref{thm11_1}).
+	\item $ L_\mathcal{D}(h^*) $ is approximation error.
+\end{itemize}
+So $ L_S(h_S) $ is a necessary but not sufficient estimator for $ L_\mathcal{D}(h^*) $.
+For example, when $ m < VCdim(\mathcal{H}) $, we have $ L_S(h_S) $ is 0, but $ L_\mathcal{D}(h^*) $ is high.
+
+By learning curve:
+\begin{itemize}
+	\item If we see that the validation error is high and decreases with the training set but training error is zero, 
+		we increase the number of examples or decrease the complexity of the hypothesis class.
+	\item If the validation error is kept around 1/2 then we have no evidence that the approximation error of $ \mathcal{H} $ is good.\
+		so we need increase the complexity of the hypothesis class or completely change it.
+\end{itemize}
+
+\subsection{SUMMARY}
+
+\begin{enumerate}
+	\item Plot the model-selection curve for parameter tuning.
+	\item Large training error: enlarging the hypothesis class, completely change it, or change the feature representation of the data.
+	\item Training error is small: plot learning curves and try to deduce from them whether the problem is estimation error or approximation error.
+	\item Large estimation error and small approximation error: more training data or reducing the complexity of the hypothesis class.
+	\item Large approximation error: change the hypothesis class or the feature representation of the data completely.
+\end{enumerate}

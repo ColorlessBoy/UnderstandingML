@@ -1,0 +1,350 @@
+% Note of ch10 Boosting, Understanding ML.
+\section{Boosting}
+
+Boosting is an algorithm that grew out of a theoretical question and became a vary practical
+machine learning tool. The boosting approach uses a generalization linear approach to address
+two major issues:
+\begin{itemize}
+	\item Bias-complexity tradeoff.
+	\item Computational complexity of learning.The boosting algorithm amplifies the accuracy
+		of weak learners.
+\end{itemize}
+
+AdaBoost(Adaptive Boost) stemmed from the theoretical question of whether an efficient weak
+learner can be "boosted" into an efficient strong learner.
+
+\subsection{WEAK LEARNABILITY}
+
+The fundamental theorem of learning theory characterizes the family of learnable classes and
+states that every PAC learnable class can be learned using any ERM algorithm by ignoring
+the computational aspect of learning.
+
+\begin{defn}
+	($\gamma$-Weak-Learnability).\\
+	\begin{itemize}
+		\item \emph{$\gamma$-weak-learner}, A : 
+			$\exists m_\mathcal{H}:(0,1)\rightarrow\mathbb{N}$,such that,
+			$\forall \delta \in (0,1), \forall$ distribution $\mathcal{D}$ over $\mathcal{X}$,
+			$\forall f:\mathcal{X}\rightarrow\{ \pm 1 \}$,
+			if $m \ge m_{\mathcal{H,D},f}(\delta)$,we have,
+			\[
+					\mathbb{P}(L_{\mathcal{D},f}(A(S)) \le 1/2-\gamma) \ge 1-\delta
+			.\]
+		\item $\gamma-weak-learnable$, $\mathcal{H}$ :
+			$\exists \gamma-weak-learner$, A for $\mathcal{H}$.
+	\end{itemize}
+\end{defn}
+
+In chapter6, we have $m_\mathcal{H}(\epsilon, \delta) \ge C_1\frac{d+log(1/\delta)}{\epsilon}$,
+so when $d=\infty$ then $\mathcal{H}$ is not $\gamma-weak-learnbale$.
+This implies that from the statistical perspective, weak learnbality is also characterized
+by the VC dimension of $\mathcal{H}$ and therefore is just as hard as PAC learning.
+(Ignoring computational complexity).
+
+Considering computational complexity, we can get efficiently implemented weak learning.
+One possible approach is to take a "simple" hypothesis class, denoted B, and to apply
+ERM with respect to B as the weak learning algorithm.For this to work, we nned B with 
+two properties:
+\begin{itemize}
+	\item $ERM_B$ is efficiently implementable.
+	\item For every sample taht is labeled by some hypothesis from $\mathcal{H}$, any
+		$ERM_B$ hypothesis will have an error of at most $1/2-\gamma$.
+\end{itemize}
+
+\begin{exam}
+	\emph{Weak Learning of 3-Piece Classfiers Using Decision Stumps}
+	\begin{itemize}
+		\item \emph{3-Piece Classifiers} $\mathcal{H} = \{ h_{\theta_1,\theta_2,b:\theta_1, \theta_2 \in \mathbb{R}},
+			\theta_1 < \theta_2, b\in\{ \pm 1 \} \}$\\
+			$h_{\theta_1,\theta_2,b}(x) = b \cdot {1} \{ x<\theta_1 \vee x>\theta_2 \}$	
+		\item \emph{Decision Stumps} : 
+			$B = \{ x \mapsto b \cdot sign(x-\theta) : \theta \in \mathbb{R}, b \in \{ \pm 1 \} \}$
+		\item
+			\begin{proof}
+				($ERM_B$ is a $\gamma-weak-learner$ for $\mathcal{H}$)\\
+				Since $\forall \mathcal{D}, \exists h \in B, L_\mathcal{D}(h) \le 1/3$,\\
+				In ch6, we have that when $m \ge \log\frac{2/\delta}{\epsilon}$ : 
+				\[
+					\mathbb{P}\{L_\mathcal{D}(ERM_B(S)) \le min L_\mathcal{D}(h) + \epsilon\} \ge 1-\delta
+				.\]
+				We set $\epsilon = 1/12$, then we obtain that the error of $ERM_B$ is at most
+				$1/3+1/12 = 1/2-1/12$.
+			\end{proof}
+	\end{itemize}
+\end{exam}
+
+\begin{thm}
+	\textbf{Boosting the Confidence}.
+	Let A be an algorithm that guarantees the following:
+	There exist some constant $\delta_0 \in (0,1)$ and a function $m_\mathcal{H}\rightarrow \mathbb{N}$ 
+	suchtaht for every $\epsilon \in (0, 1)$, if $m \ge m_\mathcal{H}(\epsilon)$ then for
+	every distribution $D$ it holds that with probability of at least $1-\delta_0$,
+	$L_D(A(S)) \le \min_{h\in\mathcal{H}} L_D(h) + \epsilon$.We have
+	\[
+		m_\mathcal{H}(\epsilon, \delta) \le k m_\mathcal{H}(\epsilon / 2) + 
+		\left\lceil \frac{8 \log (4k/\delta) }{ \epsilon^2 } \right\rceil
+	.\]
+	where $k = \lceil \log(\delta) / \log (\delta_0) \rceil$.
+\end{thm}
+\begin{proof}
+	Pick k "chunks" of size $m_\mathcal{H}(\epsilon/2)$. Apply A on each of these chunks, to
+	obtain $\hat{h_1},\dots, \hat{h_k}$. Note that the probability that
+	$min_{i\in[k]} L_D(\hat{h_i}) \le min L_D(h) + \epsilon/2$ is at least 
+	$1-\delta^k_0 \ge 1-\delta/2$.Then, we need $k > \log(\delta) / \log (\delta_0)$ \\
+
+	Now, apply an ERM over the class $\hat{\mathcal{H}} := \{ \hat{h}_1, \dots, \hat{h}_k \} $
+	with the training data being the last chunk of size 
+	$m_\mathcal{H}(\epsilon/2, \delta/2) =
+		\left\lceil \frac{8 \log (4k/\delta) }{ \epsilon^2 } \right\rceil$
+
+	Then we can guarantee that
+	\[
+		\mathbb{P} \left\{ L_D(\hat{h}) \le \min\limits_{i\in[k]} L_D(h_i) + \frac{\epsilon}{2}
+		\le \min\limits_{h\in\mathcal{H}} L_D(h) + \epsilon \right\} \ge 1-\delta
+	.\]
+\end{proof}
+
+\subsubsection{Efficient Implementation of ERM for Decision Stumps}
+
+Let $\mathcal{X} = \mathbb{R}^d$ and consider the base hypothesis class of decision stumps
+over $\mathbb{R}^d$, namely,
+\[
+	\mathcal{H}_{DS} = \{ \mathbf{x} \mapsto sign(\theta - x_i) \cdot b : 
+	\theta \in \mathbb{R}, i \in [d], b \in \{ \pm 1 \} \}
+.\]
+
+Let $\mathbf{D}$ be a probability vector in $\mathbb{R}^m$ ($\sum_i D_i = 1$ ).
+ \[
+	 L_{\mathbf{D}}(h) = \sum\limits^m_{i=1} D_i \mathbf{1} \{ h( \mathbf{x}_i \ne y_i ) \}
+.\]
+
+ERM:
+\begin{equation}
+	\label{equ10_1}
+	 \underset{j\in[d]}{\min}\ \underset{\theta \in \mathbb{R}} {\min} 
+	 \left(
+	 \sum\limits_{i:y_i=1} D_i \mathbf{1} \{ x_{i,j} > \theta \}
+ + \sum\limits_{i:y_i=-1} D_i \mathbf{1} \{  x_{i,j} \le \theta \}
+	 \right)
+\end{equation}
+
+Let training set is $x_{1,j} - 1 = x_{0,j} \le x_{1,j} \le x_{2,j} \le \dots \le x_{m,j} \le x_{m+1, j} = x_{m,j} + 1$,
+then define $\Theta$: 
+\[
+	\theta \in 
+	\Theta_j = \left\{
+		\frac{x_{i,j}+x_{x+1,j}}{2} : i \in x_{\cdot, j}
+	\right\}
+.\]
+
+We use following equation to calculate Equ(\ref{equ10_1}) in $O(dm)$ instead of $O(dm^2)$.
+\[
+	F(\theta') = F(\theta) - D_i \mathbf{1} \{ y_i=1 \} + D_i \mathbf{1} \{ y_i = -1 \} 
+	= F(\theta) - y_i D_i
+.\]
+
+\begin{algorithm}[h!]
+	\caption{ERM for Decision Stumps}	
+	\begin{algorithmic}
+		\Require S = $\{ (\mathbf{x}_1, y_1), \dots, (\mathbf{x}_m, y_m) \}$,
+		distribution vector $\mathbf{D}$
+		\Ensure $F^* = \infty$ 
+		\For {$j = 1, \dots, d$ }
+			\State sort S using the j'th coordinate, and denote
+			\State $x_{1,j} \le x_{2,j} \le \dots \le x_{m,j} \le x_{m+1,j}
+			\overset{def}{=} x_{m,j} + 1$
+			\State $F = \sum_{i:y_i=1}D_i$
+			\If{$F < F^*$}
+				\State $F^* = F, \theta^* = x_{1,j}-1,j^*=j$
+			\EndIf
+			\For{i=1,\dots,m}
+				\State $F = F - y_i D_i$
+				\If{ $F < F^*$ and $x_{i,j} \ne x_{i+1,j}$ }
+				\State  $F^*=F, \theta^* = (x_{i,j}+x_{i+1,j}), j^* = j$	
+				\EndIf
+			\EndFor
+		\EndFor
+		\State\Return $j^*, \theta^*$
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{ADABOOST}
+
+AdaBoost constructs $\mathbf{D}^{(t)}$.The weak learner is assumed to return a "weak"
+hypothesis, $h_t$, whose error,
+\[
+	\epsilon_t \overset{def}{=} L_{\mathbf{D}^{(t)}}(h_t) \overset{def}{=}
+	\sum\limits^m_{i=1} D^{(t)}_i \mathbf{1} \{ h_t(\mathbf{x}_i) \ne y_i \}
+.\]
+is at most $\frac{1}{2}-\gamma$.
+
+\begin{algorithm}[h!]
+	\caption{AdaBoost}
+	\begin{algorithmic}
+		\Require S = $\{ (\mathbf{x}_1, y_1), \dots, (\mathbf{x}_m, y_m) \}$,
+			weak learner WL, number of rounds T.
+		\Ensure $\mathbf{D}^{(1)} = (\frac{1}{m},\dots,\frac{1}{m})$
+		\For{$t = 1, \dots, T$ }
+			\State $h_t = WL(\mathbf{D}^{(1)},S)$
+			\State $\epsilon_t = \sum^m_{i=1} D^{(t)}_i \mathbf{1} \{ y_i \ne h_t( \mathbf{x}_i) \}$
+			\State $w_t = \frac{1}{2} \log (\frac{1}{\epsilon_t}-1)$
+			\For{$i = 1, \dots, T$ }
+			\State $D^{(t+1)}_i = 
+			\frac{D^{(t)}_i exp(-w_t y_i h_t(\mathbf{x}_i))}
+			{\sum^m_{j=1} D^{(t)}_j exp(-w_t y_j h_t(\mathbf{x}_j))}$	
+			\EndFor
+		\EndFor
+		\State \Return $h_s(\mathbf(x)) = sign \left( \sum^T_{t=1} w_t h_t(\mathbf{x}) \right)$
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{thm}
+	\label{thm10_2}
+	w.r.t. training set S, iteration of AdaBoost T, weak learner B with $\epsilon_t \le 1/2 - \gamma$. Then,
+	\[
+		L_S(h_s) = \frac{1}{m} \sum\limits^m_{i=1}
+		\mathbf{1} \{ h_S(\mathbf{x}_i \ne y_i) \}
+		\le exp(-2 \gamma^2 T).
+	.\]
+\end{thm}
+\begin{proof}
+	Let $f_t(x) = \sum\limits^t_{i=1} w_i h_i (x)$
+	\begin{align*}
+		D^{(T+1)}_{i} =& D^{(1)}_{i} \times \frac{e^{-y_i w_1 h_1(x_i)}}{Z_1}
+		\times \dots \times \frac{e^{-y_i w_T h_T(x_i)}}{Z_T} \\
+		=& \frac{D^{(1)}_{i}exp(-y_i \sum^T_{t=1}w_t h_t(x_i))}{\prod^T_{t=1} Z_t} \\
+		=& \frac{D^{(1)}_{i}exp(-y_if_T(x_i))}{\prod^T_{t=1}Z_t}
+	\end{align*}
+	\begin{align*}
+		L_S(h_s) = L_{\textbf{D}^{(1)}}(h_s)
+		=& \sum\limits^m_{i=1}D^{(1)}_{i} \textbf{1} \{ h_s(x_i) \ne y_i \} \\
+		\le& \sum\limits^m_{i=1} D^{(1)}_i exp(-y_i f_T(x_i)) \\
+		=& \sum\limits^m_{i=1}D^{(T+1)}_i \prod\limits^T_{t=1} Z_t \\
+		=& \prod\limits^T_{t=1} Z_t
+	\end{align*}
+	\begin{align*}
+		Z_t =& \sum\limits^m_{i=1} D^{(t)}_i e^{-w_t y_i h_t(x_i)} \\
+		=& \sum\limits_{i:y_i = h_t(x_i)} D^{(t)}_i e^{-w_t}
+		+ \sum\limits_{i:y_i \ne h_t(x_i)} D^{(t)}_i e^{w_t} \\
+		=& e^{-w_t}(1-\epsilon_t) + e^{w_t}\epsilon_t \\
+		=& 2\sqrt{\epsilon_t(1-\epsilon_t)} \le \sqrt{1-4\gamma^2} \le e^{-2\gamma^2}
+	\end{align*}
+\end{proof}
+Theorem\ref{thm10_2} assumes that at each iteration of AdaBoost, the weak learner returns
+a hypothesis with weighted sample error of at most $1/2-\gamma$ with probability greater
+than $1-\delta$. Using the union bound, the probability that the weak learner will not fail at all
+is at least $1-\delta T$, so we need small $\delta$ and large sample complexity.
+
+\subsection{LINEAR COMBINATIONS OF BASE HYPOTHESES}
+The output of AdaBoost will be a member of the following class:
+\begin{equation}
+	\label{equ10_4}
+	 L(B,T) = \left\{ x \mapsto sign \left( \sum^T_{t=1}w_th_t(x) \right) : 
+	 w \in \mathbb{R}^T, \forall t, h_t \in B \right\}
+\end{equation}
+
+\begin{exam}
+	\label{exam10_2}
+	Consider the base class is Decision Stumps,
+	\[
+		\mathcal{H}_{DS1}=\{ x\mapsto sign(x-\theta) \cdot b : \theta \in \mathbb{R}, b\in \{ \pm 1 \}  \} 
+	.\]
+	Let $g_r$ be a piece-wise constant function with at most r pieces; that is, there
+	exist thresholds $-\infty = \theta_0 < \theta_1 < \theta_2 < \dots < \theta_r = \infty$
+	such that:
+	 \[
+		 g_r(x) = \sum\limits^r_{i=1}\alpha_i \textbf{1} \{ x \in (\theta_{i-1}, \theta_i \} 
+		 \quad \forall i, \alpha_i \in \{ \pm 1 \} 
+	.\]
+	Let $\mathcal{G}_r = \{ g_r : \alpha_t = (-1)^t \} $, we will show that
+	$\mathcal{G}_T \subset L(\mathcal{H}_{DS1},T)$.\\
+	Now, the function
+	\[
+		h(x) = sign \left( \sum\limits^T_{t=1} w_t sign(x - \theta_{t-1}) \right)
+	.\]
+	where $w_1 = -0.5$ and for $t > 1, w_t = (-1)^t$, is in $L(\mathcal{H}_{DS1}, T)$ and
+	is equal to $g_r \in \mathcal{G}$.
+\end{exam}
+The example \ref{exam10_2} shows that $L(\mathcal{H}_{DS1},T)$ can shatter any set of $T+1$ 
+instances in $\mathbb{R}$ ; hence the VC-dimension of $L(\mathcal{H}_{DS1},T)$ is at least
+$T+1$.
+
+\subsubsection{The VC-Dimension of $L(B,T)$ }
+
+\begin{lem}
+	Let $L(B,T)$ be as defined in Equation(\ref{equ10_4}).Assume that both T and
+	VCdim(B) are at least 3. Then,
+	\[
+		VCdim(L(B,T)) \le T(VCdim(B) + 1) (3log(T(VCdim(B)+1)) + 1)
+	.\]
+\end{lem}
+\begin{proof}
+	Denote $d = VCdim(B)$. Let $C = \{ x_1, \dots, x_m \} $ be a set that is shattered by
+	$L(B,T)$. So $|B_C| \le (em/d)^d$. We choose $h_1,\dots, h_T \in B$, then there are
+	at most $(em/d)^{dT}$ ways to do it. Next, for each such choice, we apply a linear
+	predictor, which yields at most $(em/T)^T$ dichotomies.Therefore, the overall number
+	number of dichotomies we can construct is upper bounded by
+	\[
+		(em/d)^{dT} (em/T)^T < m^{(d+1)T} \quad (d,T \ge 3)
+	.\]
+	We assume C is shattered by $L(B,T)$, which yields
+	\begin{align*}
+		& 2^m \le m^{(d+1)T}\\
+		\Rightarrow& m \le log(m) \frac{(d+1)T}{log2}\\
+		\Rightarrow& m \le 2 \frac{(d+1)T}{log2} \log \frac{(d+1)T}{log2}\\
+		\Rightarrow& m \le (d+1)T(3log((d+1)T) + 2)
+	\end{align*}
+\end{proof}
+
+\begin{thm}
+	\label{exec6_11}
+	\textbf{VC of union}. Let $\mathcal{H}_1,\dots, \mathcal{H}_r$ be the hypothesis classes
+	over some fixed domain set $\mathcal{X}$. Let $d=max_iVCdim(\mathcal{H}_i)$ and
+	assume for simplicity that $d \ge 3$.Then,
+	\begin{equation}
+		VCdim(\cup^r_{i=1}\mathcal{H}_i) \le 4d\log(2d) + 2\log(r)
+	\end{equation}
+\end{thm}
+\begin{proof}
+	Let $C = \{ c_1, \dots, c_m \} $ is shattered by $\mathcal{H}$, then 
+	$\tau_\mathcal{H}(m) = 2^k$ and  
+	\[
+		\tau_\mathcal{H}(m) \le \sum\limits^r_{i=1} \mathcal{H}_i(m)
+		\le rm^d
+	.\]
+	by using Sauer's lemma and $d \ge 3$. Then, we have 
+	\[
+		2^m \le rm^d \Rightarrow m \le d \ln m + \ln r \Rightarrow m \le 4d\log(2d)+2\log(r)	
+	.\]
+\end{proof}
+
+\begin{lem}
+	Let $L(B,T)$ be as defined in Equation(\ref{equ10_4}).Assume that both T and
+	VCdim(B) are at least 3. Then,
+	\[
+		VCdim(L(B,T)) \ge 0.5T \log(d)
+	.\]	
+\end{lem}
+\begin{proof}
+	Firstly, we prove that when $B_d$ be the class of decision stumps over $\mathbb R^d$,
+	we have $log(d) \le VCdim(B_d) \le 16 + 2log(d)$.
+
+	Let, $B_d = \{ h_{j,d,\theta} : j \in [d], b\in \{ -1,1 \} , \theta \in \mathcal{R} \} $, where
+	$h_{j,b,\theta}(\mathbf x) = b \cdot sign(\theta - x_j)$.
+	For $B^j_d = \{ h_{b,\theta} : b \in \{ -1, 1 \} , \theta \in \mathbb{R} \} $, where
+	$h_{b, \theta}(\mathbf{x}) = b \cdot sign(\theta - x_j)$\\
+	Note that $VCdim(B^j_d) = 2$, so $VCdim(B_d) = VCdim(\cup^d_{j=1} B_d^j) \le 16 + 2\log d$.
+	(Not really used).
+	The lower bound is trivial($log(d) \le d$ ).
+
+	Secondly, we prove that $VCdim(L(B_d,T)) \ge 0.5T \log(d)$.
+
+	We pick every k instances in each  $A, 2A, \dots, \frac{T}{2}A$. So we have $\frac{T}{2}k$ 
+	instances, we can easily proof that these instances are shattered by $L(B_d,T)$ using :
+	\[
+		h(x) = sign\left( h_{j_1,-1,1/2}(x) + h_{j_1, 1,3/2}(x) + 
+		h_{j_2, -1, 3/2}(x) + h_{j_2, 1, 5/2}(x) + \dots \right)
+	.\]
+\end{proof}
+
+

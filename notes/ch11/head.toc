@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {11}Model Selection and Validation}{1}
+\contentsline {subsection}{\numberline {11.1}MODEL SELECTION USING SRM}{1}
+\contentsline {subsection}{\numberline {11.2}VALIDATION}{2}
+\contentsline {subsubsection}{\numberline {11.2.1}Hold Out Set}{2}
+\contentsline {subsubsection}{\numberline {11.2.2}Validation for Model Selection}{2}
+\contentsline {subsubsection}{\numberline {11.2.3}The Model-Selection Curve}{2}
+\contentsline {subsubsection}{\numberline {11.2.4}k-Fold Cross Validation}{2}
+\contentsline {subsubsection}{\numberline {11.2.5}Train-Validation-Test Split}{3}
+\contentsline {subsection}{\numberline {11.3}WHAT TO DO IF LEARNING FAILS}{3}
+\contentsline {subsection}{\numberline {11.4}SUMMARY}{4}

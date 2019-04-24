@@ -1,0 +1,6 @@
+\contentsline {section}{\numberline {10}Boosting}{1}
+\contentsline {subsection}{\numberline {10.1}WEAK LEARNABILITY}{1}
+\contentsline {subsubsection}{\numberline {10.1.1}Efficient Implementation of ERM for Decision Stumps}{3}
+\contentsline {subsection}{\numberline {10.2}ADABOOST}{4}
+\contentsline {subsection}{\numberline {10.3}LINEAR COMBINATIONS OF BASE HYPOTHESES}{5}
+\contentsline {subsubsection}{\numberline {10.3.1}The VC-Dimension of $L(B,T)$ }{6}

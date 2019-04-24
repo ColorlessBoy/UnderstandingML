@@ -1,0 +1,209 @@
+% Notes of ch12 Convex Learning Problems, Understanding ML
+
+\section{Convex Learning Problem}
+
+\emph{Convex learning problems} can be learn efficiently.
+$ 0-1 $ loss function is nonconvex function, and is computationally hard to learn in the unrealizable case.
+
+\subsection{CONVEXITY,LIPSCHITZNESS,AND SMOOTHNESS}
+
+\subsubsection{Convexity}
+
+\begin{defn}
+	(Convex Set). $ \forall \mathbf{u},\mathbf{v}$, then $ \forall \alpha \in [0,1] $, 
+	we have  
+	\[ \alpha \mathbf{u} + (1-\alpha) \mathbf{v} \in C.\]
+\end{defn}
+
+\begin{defn}
+	(Convex Function). Let $ C $ be a convex set.
+	A function $ f:C \rightarrow \mathbb{R} $ is convex if 
+	$ \forall \mathbf{u},\mathbf{v} \in C $ and $ \alpha \in [0,1] $,
+	\[ f(\alpha\mathbf{u}+(1-\alpha)\mathbf{v}) \le \alpha f(\mathbf{u}) + (1-\alpha) f(\mathbf{v}).\]
+\end{defn}
+
+For convex differentiable functions,
+\[ \forall f(\mathbf{u}) \ge f(\mathbf{w}) + \langle \nabla f(\mathbf{w}),\mathbf{u}-\mathbf{w} \rangle.\]
+
+Keep Convexity:
+\begin{itemize}
+	\item $ g(x) = \max_{ i \in [r] } f_i(x) $ 
+	\item $ g(x) = \sum^r_{i=1} w_i f_i(x) $, where for all $ i, w_i \ge 0 $ 
+\end{itemize}
+
+\subsubsection{Lipschitzness}
+
+\begin{defn}
+	(Lipschitzness).Let $ C \subset \mathbb{R}^d $. A function $ f:\mathbb{R}^d \rightarrow \mathbb{R}^k $ is $ \rho-Lipschitz $ 
+	over $ C $ if $ \forall \mathbf{w}_1, \mathbf{w}_2 \in C $, we have
+	\[ \Arrowvert f(\mathbf{w}_1) - f(\mathbf{w}_2) \Arrowvert \le \rho \Arrowvert \mathbf{w}_1 - \mathbf{w}_2 \Arrowvert.\]
+\end{defn}
+Intuitively, Lipschitzness constrains $ f'(u) $. 
+
+Let $ f(\mathbf{x})=g_1(g_2(\mathbf{x})) $, where $ g_1 $ is $ \rho_1-Lipschitz $ and $ g_2 $ is $ \rho_2-Lipschitz $.
+Then, f is $ (\rho_1 \rho_2)-Lipschitz $.
+
+\subsubsection{Smoothness}
+
+\begin{defn}
+	(Smoothness).A differentiable function $ f:\mathbb{R}^d \rightarrow \mathbb{R} $ at $ \mathbf{w} $
+	is $ \beta-smooth $ if its gradient is $ \beta-Lipschitz $; namely, $ \forall \mathbf{v}, \mathbf{w} $ we have
+	\[ \Arrowvert \nabla f(\mathbf v) - \nabla f(\mathbf w) \Arrowvert \le \beta \Arrowvert \mathbf{v}-\mathbf{w} \Arrowvert.\] 
+\end{defn}
+$ \beta-Smoothness $ implies that
+\[ f(\mathbf{v}) \le f(\mathbf{w}) + \langle \nabla f(\mathbf w), \mathbf v - \mathbf w \rangle
++ \frac{\beta}{2}\Arrowvert \mathbf v - \mathbf w \Arrowvert^2.\]
+
+Setting $ \mathbf{v} = \mathbf{w} - \frac{1}{\beta} \nabla f(\mathbf w) $, we have
+\[ \frac{1}{2\beta} \Arrowvert \nabla f(\mathbf{w}) \Arrowvert^2 \le f(\mathbf{w})-f(\mathbf{v}).\]
+If we assume that $ \forall \mathbf v, f(\mathbf v) \ge 0 $, we conclude that smoothness implies \emph{self-bounded}:
+\[ \Arrowvert \nabla f(\mathbf w) \Arrowvert^2 \le 2 \beta f(\mathbf w).\]
+
+Let $ f(\mathbf w) = g( \langle \mathbf w, \mathbf x \rangle + b) $, where $ g \rightarrow \mathbb R \rightarrow \mathbb R $ 
+is a $ \beta-smooth $ function, then $ f $ is $ (\beta \Arrowvert \mathbf x \Arrowvert^2)-smooth $.
+
+\subsection{CONVEX LEARNING PROBLEMS}
+
+Symbols: a hypothesis classes set $ \mathcal{H} $, a set of examples $ Z $, 
+and a loss function $ l:\mathcal{H} \times Z \rightarrow \mathbb{R}_+ $
+
+$ \mathcal{H} $ can be an arbitrary set. In this chapter, we consider hypothesis classes set $ \mathcal{H} = \mathbb{R}^d $.
+
+\begin{defn}
+	(Convex Learning Problem). A learning problem, $ (\mathcal{H}, Z, l) $, is called convex if the hypothesis class $ \mathcal{H} $
+	is convex set and $ \forall z \in Z $, the loss function, $ l(\cdot, z) $, is a convex function
+	(which means $ f:\mathcal{H} \rightarrow \mathbb{R}, f(\mathbf{w}) = l(\mathbf{w},z) $).
+\end{defn}
+
+\begin{lem}
+	If $ l $ is a convex loss function and the class $ \mathcal{H} $ is convex, then the $ ERM_{\mathcal{H}} $ problem,
+	of minimizing the empirical loss over $ \mathcal{H} $, is a convex optimization problem.
+\end{lem}
+
+\subsubsection{Learnability of Convex Learning Problems}
+
+Is convexity a sufficient condition for the learnability of a problem?
+The answer is \textbf{NO}.
+
+\begin{exm}
+	(Nonlearnability of Linear Regression Even If $ d=1 $).
+	Let $ \mathcal{H} = \mathbb{R} $,
+	and the loss be the squared loss: $ l(w,(x,y))={(wx-y)}^2 $.
+	We assume A is a successful PAC learner for this problem.
+
+	Choose $ \epsilon = 1/100 $, $ \delta = 1/2 $, let $ m \ge m(\epsilon, \delta) $ and set $ \mu = \frac{\ln(100/99)}{2m} $.
+	We get two points $ z_1 = (1,0) $ and $ z_2 = (\mu, -1) $, then we construct two distributions:
+	$ \mathcal{D}_1 = \{ (z_1, \mu), (z_2, 1-\mu) \} $, and $ \mathcal{D}_2 = \{ (z_2, 1) \} $
+
+	The probability that all examples of the training set will be $ z_2 $ is at least 99\%.
+	\[ {(1-\mu)}^m \ge e^{-2\mu m}=0.99.\]
+
+	If $ \hat{w} < -1/(2\mu) $, then $ L_{\mathcal{D}_1} (\hat{w}) = \mu {(\hat{w})}^2 + (1-\mu){(\hat{w}\mu+1)}^2
+	\ge \mu {(\hat{w})}^2 \ge 1/(4\mu)$. However, $ \min\limits_w L_{\mathcal{D}_1}(w) \le L_{\mathcal{D_1}(0)} = (1-\mu) $,
+	it follows that, 
+	$ L_{\mathcal{D_1}}(\hat{w}) - \min\limits_w L_{\mathcal{D}_1}(w) \ge \frac{1}{4\mu}-(1-\mu) > \epsilon $.
+	($ \mu < 0.0051 $, which means $ 1/(4\mu) - (1-\mu) > 48 \gg \epsilon $).
+
+	If $ \hat{w} \ge -1/(2\mu) $, then $ L_{\mathcal{D}_2} = {(\hat{w} \mu + 1)}^2 \ge 1/4 > \epsilon $.
+	
+	All in all, the problem is not PAC learnable.
+\end{exm}
+
+In addition to the convexity requirement, we also need $ \mathcal{H} $ will be bounded.
+But the above example is still not PAC learnble.
+This motivate a definition of two families of learning problems, convex-Lipschitz-bounded and convex-smooth-bounded.
+
+\subsubsection{Convex-Lipschitz/Smooth-Bounded Learning Problems}
+
+\begin{defn}
+	(Convex-Lipschitz-Bounded Learning Problem).
+	A learning problem, $ (\mathcal{H}, Z, l) $, is called Convex-Lipschitz-Bounded, with parameters $ \rho, B $ if:
+	\begin{itemize}
+		\item The hypothesis class $ \mathcal{H} $ is a convex set and bounded (parameter is B).
+		\item For all $ z \in Z $, the loss function, $ l(\cdot, z) $, is a convex and $ \rho-Lipschitz $ function.
+	\end{itemize}
+\end{defn}
+
+\begin{exm}
+	Let $ \mathcal{X} = \{ x \in \mathbb{R}^d : \Arrowvert \mathbf{x} \Arrowvert \le \rho \} $ and $ \mathcal{Y} = \mathbb{R} $.
+	Let $ \mathcal{H} = \{ \mathbf{w} \in \mathbb{R}^d : \Arrowvert \mathbf{w} \Arrowvert \le B \} $ and
+	let the loss function be $ l(\mathbf{w},(\mathbf{x},y)) = | \langle \mathbf{w}, \mathbf{x} \rangle - y | $.
+	\begin{proof}
+		$ |l(\mathbf{w}_1, (\mathbf{x},y)) - l(\mathbf{w}_2, (\mathbf{x},y))|
+		\le |\langle \mathbf{w}_1 - \mathbf{w}_2, \mathbf{x} \rangle|
+		\le \Arrowvert \mathbf{x} \Arrowvert \cdot \Arrowvert \mathbf{w}_1 - \mathbf{w}_2 \Arrowvert$
+	\end{proof}
+\end{exm}
+
+\begin{defn}
+	(Convex-Smooth-Bounded Learning Problem).
+	A learning problem, $ (\mathcal{H}, Z, l) $, is called Convex-Smooth-Bounded, with parameters $ \beta, B $ if:
+	\begin{itemize}
+		\item The hypothesis class $ \mathcal{H} $ is a convex set and bounded (parameter is B).
+		\item For all $ z \in Z $, the loss function, $ l(\cdot, z) $, is a convex,nonnegative and $ \beta-Smooth $ function.
+	\end{itemize}
+\end{defn}
+
+\begin{exm}
+	Let $ \mathcal{X} = \{ x \in \mathbb{R}^d : \Arrowvert \mathbf{x} \Arrowvert^2 \le \beta/2 \} $ and $ \mathcal{Y} = \mathbb{R} $.
+	Let $ \mathcal{H} = \{ \mathbf{w} \in \mathbb{R}^d : \Arrowvert \mathbf{w} \Arrowvert \le B \} $ and
+	let the loss function be $ l(\mathbf{w},(\mathbf{x},y)) = {(\langle \mathbf{w}, \mathbf{x} \rangle - y)}^2 $.
+	\begin{proof}
+		$ \Arrowvert \nabla l(\mathbf{w}_1, (\mathbf{x},y)) - \nabla l(\mathbf{w}_2, (\mathbf{x},y)) \Arrowvert
+		= 2 \Arrowvert \mathbf{x} \langle \mathbf{w}_1 - \mathbf{w}_2, \mathbf{x} \rangle \Arrowvert
+		= 2 \Arrowvert \mathbf{x} \Arrowvert^2 \Arrowvert \mathbf{w}_1 - \mathbf{w}_2 \Arrowvert  
+		$
+	\end{proof}	
+\end{exm}
+
+\subsection{SURROGATE LOSS FUNCTIONS}
+
+The $ 0-1 $ loss function is not convex.
+\[ l^{0-1}(\mathbf{w},(\mathbf{x},y))=\mathbf{1}\{ y \langle \mathbf{w}, \mathbf{x} \rangle \le 0 \}.\]
+\begin{proof}
+	Let $ \mathcal{H} $ be the class of homogeneous halfspaces in $ \mathbb{R}^d $.
+	Let $ \mathbf{x} = \mathbf{e}_1, y = 1 $, and consider the sample $ S = \{ \mathbf{x}, y \} $.
+	Let $ \mathbf{w} = -\mathbf{e}_1 $.
+	Then, $ \langle \mathbf{w}, \mathbf{x} \rangle = -1 $ and $ L_S(h_{\mathbf{w}}) = 1 $.
+	Let $ \mathbf{w}',s.t.\epsilon \in (0,1) and \Arrowvert \mathbf{w}' - \mathbf{w} \Arrowvert \le epsilon $.
+	Then,$ \langle \mathbf{w}',\mathbf{x} \rangle = \langle \mathbf{w}, \mathbf{x} \rangle 
+	- \langle \mathbf{w}'-\mathbf{w}, x \rangle = -1 - \langle \mathbf{w}'-\mathbf{w}, x \rangle
+	\le -1 + \epsilon \Arrowvert \mathbf{x} \Arrowvert \le -1+\epsilon < 0$, which means
+	$ L_S(\mathbf{w}')=1 $.
+\end{proof}
+
+The requirements from a convex surrogate loss are as follows:
+\begin{itemize}
+	\item It should be convex.
+	\item It should be upper bound th original loss.
+\end{itemize}
+
+\begin{defn}
+	(hinge loss).
+	\[ l^{hinge}(\mathbf{w}, (\mathbf{x},y)) = \max \{ 0, 1-y \langle \mathbf{w}, \mathbf{x} \rangle \}.\]
+\end{defn}
+
+Then, we have:
+
+\[ L^{hinge}_{\mathcal{D}}(A(S)) \le \min\limits_{\mathbf{w} \in \mathcal{H}} 
+L^{hinge}_{\mathcal{D}}(\mathbf{w})+\epsilon.\]
+
+\[ L^{0-1}_{\mathcal{D}}(A(S)) \le \min\limits_{\mathbf{w} \in \mathcal{H}}
+L^{hinge}_{\mathcal{D}}(\mathbf{w})+\epsilon.\]
+
+We can further rewrite the upper bound as follows:
+\[ L^{0-1}_{\mathcal{D}} \le \min\limits_{\mathbf{w}\in\mathcal{H}} L^{0-1}_{\mathcal{D}}(\mathbf{w})
+	+
+	\left(
+		\min\limits_{\mathbf{w}\in\mathcal{H}} L^{hinge}_{\mathcal{D}}(\mathbf{w})
+		- \min\limits_{\\mathbf{w}\in\mathcal{H}} L^{0-1}_{\mathcal{D}}(\mathbf{w})
+	\right)
++\epsilon.\]
+The $ 0-1 $ error of the learned predictor is upper bounded by three terms:
+\begin{itemize}
+	\item Approximation error: the first term.
+	\item Optimization error: the second term.
+	\item Estimation error: the third term.
+\end{itemize}
+
+
