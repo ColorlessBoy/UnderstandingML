@@ -1,1 +1,372 @@
 % notes of Chapter14 Stochastic Gradient Descent, Understanding ML
+
+\section{Stochastic Gradient Descent}
+
+The simplicity of SGD also allows us to use it in situations when it is not possible to apply method
+that based on the empirical risk.
+
+\subsection{GRADIENT DESCENT}
+
+\subsubsection{Analysis of GD for Convex-Lipschitz Functions}
+
+We are interested in: $ \bar{\mathbf{w}} = \frac{1}{T} \sum^T_{t=1} \mathbf{w}^{(t)} $.
+By using Jensen's inequality,
+\begin{align*}
+	f(\bar{\mathbf{w}}) - f(\mathbf{w}^*)
+	=& f \left( \frac{1}{T} \sum\limits^T_{t=1} \mathbf{w}^{(t)} \right) - f(\mathbf{w}^*) \\
+	\le& \frac{1}{T} \sum\limits^T_{t=1} f \left( \mathbf{w}^{(t)} \right) - f(\mathbf{w}^*) \\
+	=& \frac{1}{T} \sum\limits^T_{t=1} f \left( \mathbf{w}^{(t)} - f(\mathbf{w}^*) \right) \\
+	\le& \frac{1}{T} \sum\limits^T_{t=1} \langle \mathbf{w}^{(t)} - \mathbf{w}^*, \nabla f(\mathbf{w}^{(t)}) \rangle
+\end{align*}
+
+\begin{lem}
+	$ \forall \mathbf{v}_1, \dots, \mathbf{v}_T $, s.t. $ \mathbf{w}^{(1)} = 0 $, 
+	$ \mathbf{w}^{(t+1)} = \mathbf{w}^{(t)}-\eta \mathbf{v}_t $, we have:
+	\begin{equation}
+		\sum\limits^T_{t=1} \langle \mathbf{w}^{(t)} - \mathbf{w}^*, \mathbf{v}_t \rangle
+		\le \frac{\Arrowvert \mathbf{w}^* \Arrowvert^2}{2\eta} + \frac{\eta}{2}
+		\sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2
+	\end{equation}
+	\begin{proof}
+		First, key step:
+		\[ 
+			\langle \mathbf{w}^{(t)} - \mathbf{w}^*, \mathbf{v}_t \rangle
+			= \frac{1}{2\eta}(-\Arrowvert \mathbf{w}^{(t+1)} - \mathbf{w}^* \Arrowvert^2 + 
+			\Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2) + \frac{\eta}{2}
+			\Arrowvert \mathbf{v}_t \Arrowvert^2
+		\]
+		Second, key step:
+		\begin{align*}
+			\sum\limits^T_{t=1} \langle \mathbf{w}^{(t)} - \mathbf{w}^*, \mathbf{v}_t \rangle
+			=& \frac{1}{2\eta}(-\Arrowvert \mathbf{w}^{(T+1)} - \mathbf{w}^* \Arrowvert^2 + 
+			\Arrowvert \mathbf{w}^{(1)} - \mathbf{w}^* \Arrowvert^2) + \frac{\eta}{2}
+			\sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 \\
+			\le& \frac{1}{2\eta} \Arrowvert \mathbf{w}^{(1)} - \mathbf{w}^* \Arrowvert^2 
+			+\frac{\eta}{2}\sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 \\
+			=& \frac{1}{2\eta} \Arrowvert \mathbf{w}^* \Arrowvert^2 
+			+\frac{\eta}{2}\sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 \\
+		\end{align*}
+	\end{proof}
+\end{lem}
+
+\begin{align*}
+	f(\bar{\mathbf{w}}) - f(\mathbf{w}^*)
+	\le& \frac{1}{T} \sum\limits^T_{t=1} \langle \mathbf{w}^{(t)} - \mathbf{w}^*, \nabla f(\mathbf{w}^{(t)}) \rangle\\
+	=& \frac{1}{T} \left( \frac{1}{2\eta} \Arrowvert \mathbf{w}^* \Arrowvert^2 
+	+\frac{\eta}{2}\sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 \right)\\
+	\le& \frac{1}{2T} 
+	\sqrt{\Arrowvert \mathbf{w}^* \Arrowvert^2 \cdot \sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2}\\
+	\le& \frac{B \rho}{\sqrt T}
+\end{align*}
+
+\subsection{SUBGRADIENTS}
+\begin{defn} (Subgradient) $ \partial f $:
+	\begin{equation}
+		\forall \mathbf{u}, \quad
+		f(\mathbf{u}) \ge f(\mathbf{w}) + \langle \mathbf{u}-\mathbf{w}, \partial f(\mathbf{w}) \rangle
+	\end{equation}
+\end{defn}
+\subsubsection{Calculating Subgradients}
+\subsubsection{Subgradients of Lipschitz Functions}
+\begin{lem}
+	Let A be a convex open set and let $ f:A\rightarrow \mathbb{R} $ be a convex function.
+	Then, f is $ \rho-Lipschitz $ over A iff $ \forall \mathbf{w} \in A $ and $ \mathbf{v} \in \partial f(\mathbf{w}) $
+	we have that $ \Arrowvert \mathbf{v} \Arrowvert \le \rho $
+
+	Sufficiency:
+	$ f(\mathbf{w}) - f(\mathbf{u}) \le 
+	\langle \mathbf{v}, \mathbf{w}-\mathbf{u} \rangle
+	\le \Arrowvert \mathbf{v} \Arrowvert \Arrowvert \mathbf{w} - \mathbf{u} \Arrowvert
+	\le \rho\Arrowvert \mathbf{w} - \mathbf{u} \Arrowvert$
+
+	Necessity:Let $ \mathbf{w} \in A, \mathbf{v} \in \partial f(\mathbf{w}), 
+	\mathbf{u} = \mathbf{w} + \epsilon \mathbf{v} / \Arrowvert \mathbf{v} \Arrowvert $, 
+	Then, we have:
+	\[ \rho \epsilon \ge \rho \Arrowvert \mathbf{u} - \mathbf{w} \Arrowvert \ge f(\mathbf{u}) - f(\mathbf{w})
+	\ge \langle \mathbf{v, \mathbf{u} - \mathbf{w}} \rangle = \epsilon \Arrowvert \mathbf{v} \Arrowvert \]
+\end{lem}
+
+\subsubsection{Subgradient Descent}
+The analysis of the convergence rate remains unchanged.
+
+\subsection{STOCHASTIC GRADIENT DESCENT (SGD)}
+
+\begin{algorithm}[h!]
+	\caption{Stochastic Gradient Descent (SGD) for minimizing $ f(\mathbf{w}) $.}
+	\begin{algorithmic}
+		\Require{Scalar $ \eta > 0 $, integer $ T > 0 $}	
+		\Ensure{$ \mathbf{w}^{(1)} = \mathbf{0} $}
+		\For{$ t=1,2,\dots,T $}
+		\State{random choose $ \mathbf{v}_t $ (make sure that $ \mathbb{E}_\mathcal{D}[\mathbf{v}_t | \mathbf{w}^{(t)}] \in \partial f(\mathbf{w}^{(t)}) $)}
+		\State{$ \mathbf{w}^{(t+1)} = \mathbf{w}^{(t)} - \eta \mathbf{v}_t $}
+		\EndFor.
+		\State\Return{$ \bar{\mathbf{w}} = \frac{1}{T} \sum^T_{t=1} \mathbf{w}^{(t)} $}
+	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Anslysis of SGD for Convex-Lipschitz-Bounded Functions}
+
+\begin{thm}
+	Let $B$,$\rho > 0$, and $\mathbb{P}\{\Arrowvert\mathbf{v}_t\Arrowvert\le\rho\}=1$.Then,
+	\begin{equation}
+		\mathbf{E}_\mathcal{D} [f(\bar{\mathbf{w}})] - f(\mathbf{w}^*)
+		\le \frac{B\rho}{\sqrt{T}}
+	\end{equation}
+	\begin{proof}
+		Key step: proof 
+		\begin{equation}
+			 \underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ \frac{1}{T} \sum\limits^T_{t=1}(f(\mathbf{w}^{(t)})- f(\mathbf{w}^*)) \right] 
+			\le \underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ \frac{1}{T} \sum^T_{t=1} \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+		\end{equation}
+		Subproof:
+		\[ 
+			\underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ \frac{1}{T} \sum^T_{t=1} \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+			=  \frac{1}{T} \sum^T_{t=1} \underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+			=  \frac{1}{T} \sum^T_{t=1} \underset{\mathbf{v}_{1:t}}{\mathbb{E}}
+			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+		\]
+		\[ 
+			\underset{\mathbf{v}_{1:t}}{\mathbb{E}}
+			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+			= 
+			\underset{\mathbf{v}_{1:t-1}}{\mathbb{E}}
+			\underset{\mathbf{v}_{1:t}}{\mathbb{E}}
+			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle | \mathbf{v}_{1:t-1}\right]
+			=
+			\underset{\mathbf{v}_{1:t-1}}{\mathbb{E}}
+			\langle \mathbf{w}^{(t)}-\mathbf{w}^*,
+			\underset{\mathbf{v}_{t}}{\mathbb{E}}
+			\left[\mathbf{v}_t | \mathbf{v}_{1:t-1}\right] \rangle
+		\]
+
+		We have 
+		$ \underset{\mathbf{v}_t}{\mathbb{E}}
+		[\mathbf{v}_t | \mathbf{w}^{(t)}] \in \partial f(\mathbf{w}^{(t)})$,
+		which equals to
+		$ \underset{\mathbf{v}_t}{\mathbb{E}}
+		[\mathbf{v}_t | \mathbf{v}_{1:t-1}] \in \partial f(\mathbf{w}^{(t)})$,
+		so
+
+		\[ 
+			\underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
+			\ge
+			\underset{\mathbf{v}_{1:t-1}}{\mathbb{E}}
+			\left[ f(\mathbf{w}^{(t)}) - f(\mathbf{w}^*) \right]
+			=
+			\underset{\mathbf{v}_{1:T}}{\mathbb{E}}
+			\left[ f(\mathbf{w}^{(t)}) - f(\mathbf{w}^*) \right]
+		\]
+	\end{proof}
+\end{thm}
+
+\subsection{VARIANTS}
+
+\subsubsection{Adding a Projection Step}
+
+In previous analyses of the GD and SGD algorithms, we require $ \Arrowvert \mathbf{w}^* \Arrowvert \le B $,
+but there is no guarantee that $ \bar{\mathbf{w}} $ satisfies it. So here comes the projection step.
+
+\begin{defn}
+	(Porjection step).
+	\begin{enumerate}
+		\item $ \mathbf{w}^{(t+\frac{1}{2})} = \mathbf{w}^{(t)} - \eta \mathbf{v}_t $
+		\item $ \mathbf{w}^{(t+1)} = \arg\min_{\mathbf{w} \in \mathcal{H}} 
+			\Arrowvert \mathbf{w} - \mathbf{w}^{(t+\frac{1}{2})} \Arrowvert $
+	\end{enumerate}
+\end{defn}
+
+\begin{lem}
+	(Projection Lemma)
+	\[ 
+		\mathbf{v} = \underset{\mathbf{x}\in\mathcal{H}}{\arg\min} \Arrowvert \mathbf{x} - \mathbf{w} \Arrowvert^2 
+		\Rightarrow
+		\Arrowvert \mathbf{w} - \mathbf{u} \Arrowvert^2
+		-
+		\Arrowvert \mathbf{v} - \mathbf{u} \Arrowvert^2
+		\ge 0
+	\]
+\end{lem}
+
+So we have:
+\[ 
+	\Arrowvert \mathbf{w}^{(t+1)} - \mathbf{w}^* \Arrowvert^2
+	- \Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2
+	\le
+	\Arrowvert \mathbf{w}^{(t+\frac{1}{2})} - \mathbf{w}^* \Arrowvert^2
+	- \Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2
+\]
+
+\subsubsection{Variable Step Size}
+
+We can set $ \eta_t = \frac{B}{\rho \sqrt t} $ and achieve a similar bound.
+
+\subsubsection{Other Averaging Techniques}
+
+\begin{itemize}
+	\item $ \bar{\mathbf{w}} = \frac{1}{T} \sum^T_{t=1} \mathbf{w}^{(t)} $
+	\item $ \bar{\mathbf{w}} = \mathbf{w}^{(t)}$, for some random $ t \in [t] $ 
+	\item $ \bar{\mathbf{w}} = \frac{1}{\alpha T} \sum^{T}_{t= T - \alpha T} \mathbf{w}^{(t)} $
+		for $ \alpha \in (0, 1) $
+\end{itemize}
+
+\subsubsection{Strongly Convex Function}
+
+\begin{algorithm}[h!]
+	\caption{SGD for minimizing a $ \lambda-strongly $ convex function}
+	\begin{algorithmic}
+		\Ensure{$ \mathbf{w}^{(1)} = \mathbf{0} $}	
+		\For{$ t = 1, \dots, T $}
+			\State{Choose a random vector $ \mathbf{v}_t $ 
+			(s.t. $\mathbb{E}[\mathbf{v}_t | \mathbf{w}^{(t)}] \in \partial f(\mathbf{w}^{(t)})$)}
+			\State{$ \eta_t = 1/(\lambda t) $}
+			\State{$ \mathbf{w}^{(t+\frac{1}{2})} = \mathbf{w}^{(t)} - \eta \mathbf{v}_t $}
+			\State{$ \mathbf{w}^{(t+1)} = \arg\min_{\mathbf{w} \in \mathcal{H}} 
+			\Arrowvert \mathbf{w} - \mathbf{w}^{(t+\frac{1}{2})} \Arrowvert^2$}	
+		\EndFor.
+		\State{\Return{$ \bar{\mathbf{w}} = \frac{1}{T} \sum^T_{t=1} \mathbf{w}^{(t)} $}}
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{thm}
+	\label{thm_14_11}
+	Assume that $f$ is $ \lambda-strongly $ convex and that $ \mathbb{E} [\Arrowvert \mathbf{v}_t \Arrowvert^2] \le \rho^2 $.
+	Let $ \mathbf{w}^* \in \arg\min_{\mathbf{w}\in\mathcal{H}} f(\mathbf{w}) $ be an optimal solution. Then,
+	\begin{equation}
+		\mathbb{E}[f(\mathbf{\bar w})] - f(\mathbf{w}^*) \le \frac{\rho^2}{2\lambda T}(1+\log(T))
+	\end{equation}
+	\begin{proof}
+		We already have:
+		\begin{equation}
+			\langle \mathbf{w}^{(t)} - \mathbf{w}^*, \nabla^{(t)} \rangle
+			\le \frac{\mathbb{E}[\Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2 - 
+			\Arrowvert \mathbf{w}^{(t+1)} - \mathbf{w}^* \Arrowvert^2]}{2\eta_t} + \frac{\eta_t}{2} \rho^2
+		\end{equation}
+		So:
+		\begin{align*}
+			&\sum^T_{t=1} (\mathbb{E}[f(\mathbf{w}^{(t)})] - f(\mathbf{w}^*)) \\
+			\le& \mathbb{E} \left[ \sum\limits^T_{t=1} \left( 
+					\frac{\Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2 - 
+					\Arrowvert \mathbf{w}^{(t+1)} - \mathbf{w}^* \Arrowvert^2} {2\eta_t}	
+					- \frac{\lambda}{2}
+					\Arrowvert \mathbf{w}^{(t)} - \mathbf{w}^* \Arrowvert^2
+			\right)	\right]
+			+ \frac{\rho^2}{2} \sum\limits^T_{t=1} \eta_t
+		\end{align*}
+		When we use the definition $ \eta_t = 1/(\lambda t) $, then we can telescope the right side:
+		\[ 
+			\sum\limits^T_{t=1} ( \mathbb{E}[f(\mathbf{w}^{(t)})] - f(\mathbf{w}^*))
+			\le -\frac{\lambda T}{2} \Arrowvert \mathbf{w}^{(T+1)} - \mathbf{w}^{*} \Arrowvert^2 +
+			\frac{\rho^2}{2\lambda} \sum\limits^T_{t=1} \frac{1}{t}
+			\le \frac{\rho^2}{2\lambda}(1+\ln(T)).
+		\]
+		(Because $ \int^{T}_1 1/x dx < \sum^T_{t=2} 1/t$) 
+	\end{proof}
+\end{thm}
+
+\subsection{LEARNING WITH SGD}
+
+\subsubsection{SGD for Risk Minimization}
+SGD allows us to take a different approach and minimize $ L_{\mathcal{D}}(\mathbf{w}) $ directly.
+\begin{defn} (Risk function)
+	$ L_{\mathcal{D}}(\mathbf{w}) = \underset{z\sim\mathcal{D}}{\mathbb{E}}[ l(\mathbf{w}, z)] $.
+\end{defn}
+
+We set
+\[ 
+	\mathbf{v}_t = \nabla l (\mathbf{w}_{(t)}, z), \quad where\ z \sim \mathcal{D}.
+\]
+Then,
+\[ 
+	\mathbb{E}_{\mathbf{v}_t} [\mathbf{v}_t | \mathbf{w}^{(t)}]
+	= \underset{z\sim\mathcal{D}}{\mathbb{E}} [\nabla l (\mathbf{w}^{(t)}, z)]
+	= \nabla \underset{z\sim\mathcal{D}}{\mathbb{E}} [l (\mathbf{w}^{(t)}, z)]
+	= \nabla L_{\mathcal{D}}(\mathbf{w}^{(t)})
+\]
+
+\begin{algorithm}[h!]
+	\caption{Stochastic Gradient (SGD) for minimizing $ L_{\mathcal{D}}(\mathbf{w}) $}
+	\begin{algorithmic}
+		\Ensure{$ \mathbf{w}^{(1)} = \mathbf{0} $}
+		\For{$ t=1,2,\dots,T $}
+			\State{sample $ z \sim \mathcal{D} $}
+			\State{pick $ \mathbf{v}_t \in \partial l(\mathbf{w}^{(t)}, z) $}
+			\State{$ \mathbf{w}^{(t+1)} = \mathbf{w}^{(t)} - \eta \mathbf{v}_t $}
+		\EndFor.
+		\State{\Return{$ \bar{\mathbf{w}} = \frac{1}{T} \sum^T_{t=1} \mathbf{w}^{(t)} $}}
+	\end{algorithmic}
+\end{algorithm}
+
+We can get $ \mathbb{E} [L_{\mathcal{D}}(\bar{\mathbf{w}})]  \le
+\underset{\mathbf{w} \in \mathcal{H}}{\min} L_{\mathcal{D}}(\mathbf{w})+ \frac{B\rho}{\sqrt{T}} $
+ on a convex-Lipschitz-bounded learning problem.When setting $ T \ge \frac{B^2 \rho^2}{\epsilon^2} $,
+ we can get the accuracy to $ \epsilon $.
+
+ \subsubsection{Analyzing SGD for Convex-Smooth Learning Problems}
+
+ \begin{thm}
+	 Assume that for all z, the loss function $ l(\cdot, z) $ is convex, $ \beta-smooth $, and nonnegative.
+	 Then, if we run the SGD algorithm for minimzing $ L_{\mathcal{D}}(\mathbf{w}) $ we have that:
+	 \begin{equation}
+	 	\forall \mathbf{w},\quad 
+		\mathbb{E} [L_{\mathcal{D}}(\bar{\mathbf{w}})]
+		\le \frac{1}{1-\eta\beta}
+		\left( 
+			L_{\mathcal{D}}(\mathbf{w}) + \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta T}	
+		\right)
+	 \end{equation}
+	 \begin{proof}
+	 	Let $ z_1, \dots, z_T $ be the random samples of SGD algorithm,
+		and $ f_t(\cdot) = l(\cdot, z_t) $. So
+		\[ 
+			\sum\limits^T_{t=1} (f_t(\mathbf{w}^{(t)}) - f_t(\mathbf{w}))
+			\le \sum\limits^T_{t=1} \langle \mathbf{v}_t, \mathbf{w}^{(t)} - \mathbf{w} \rangle
+			\le \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta} + 
+			\frac{\eta}{2} \sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 
+			\le \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta} + 
+			\eta \beta \sum\limits^{T}_{t=1}f_t(\mathbf{w}^{(t)})
+		\]
+		The last inequation comes from self-bounded property.
+		\[ 
+			\frac{1}{T}\sum\limits^T_{t=1}f_t(\mathbf{w}^{(t)})
+			\le \frac{1}{1-\eta\beta}
+			\left( 
+				\frac{1}{T}	\sum\limits^T_{t=1}f_t(\mathbf{w}) + 
+			\frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta T}	
+			\right)
+		\]
+		Remaining steps are taking expectation of both side and using Jensen's inequation.
+	 \end{proof}
+ \end{thm}
+
+ \subsubsection{SGD for Regularized Loss Minimization}
+
+\[ 
+	\underset{\mathbf{w}}{\min} \left( 
+		\frac{\lambda}{2} \Arrowvert \mathbf{w} \Arrowvert^2 + L_S(\mathbf{w})
+	\right)
+\]	
+Regularization function $ f(\mathbf{w}) = \frac{\lambda}{2} \Arrowvert \mathbf{w} \Arrowvert^2 + L_S(\mathbf{w}) $ 
+is $ \lambda-strongly $ convex function.
+\begin{lem}
+	Random choose $ z_t \sim \mathcal{D} $, and pick $ \mathbf{v}_t \in \partial l(\mathbf{w}^{(t)},z)$,
+	then $ \mathbb{E} [\lambda \mathbf{w}^{(t)} + \mathbf{v}_t] \in \partial f(\mathbf{w}^{(t)}, z)$
+\end{lem}
+In this task, we set $ \eta = \frac{1}{\lambda t} $, then:
+\begin{align*}
+	t \mathbf{w}^{(t+1)} =& t \mathbf{w}^{(t)} - \frac{1}{\lambda}(\lambda \mathbf{w}^{(t)} + \mathbf{v}_t)
+	= (t-1)\mathbf{w}^{(t)} - \frac{\mathbf{v}_t}{\lambda}
+	= -\frac{\sum^t_{i=1}\mathbf{v}_i}{\lambda}
+\end{align*}
+If the loss function is $ \rho-Lipschitz $,then we have 
+$ \Arrowvert \lambda \mathbf{w}^{(t)} \Arrowvert \le \rho $,
+which also means $ \Arrowvert \lambda \mathbf{w}^{(t)} + \mathbf{v}_t \Arrowvert \le 2\rho $.
+Theorem~\ref{thm_14_11} tells us that:
+\begin{equation}
+	\mathbb{E}[f(\bar{\mathbf{w}})] - f(\mathbf{w}^*) \le 
+	\frac{2\rho^2}{\lambda T}(1+\log(T))
+\end{equation}
