@@ -1,8 +1,8 @@
 \contentsline {section}{\numberline {13}Regularization and Stability}{1}
 \contentsline {subsection}{\numberline {13.1}REGULARIZED LOSS MINIMIZATION}{1}
 \contentsline {subsubsection}{\numberline {13.1.1}Ridge Regression}{1}
-\contentsline {subsection}{\numberline {13.2}STABLE RULES DO NOT OVERFIT}{2}
+\contentsline {subsection}{\numberline {13.2}STABLE RULES DO NOT OVERFIT}{3}
 \contentsline {subsection}{\numberline {13.3}TIKHONOV REGULARIZATION AS A STABILIZER}{3}
-\contentsline {subsubsection}{\numberline {13.3.1}Lipschitz Loss}{3}
+\contentsline {subsubsection}{\numberline {13.3.1}Lipschitz Loss}{4}
 \contentsline {subsubsection}{\numberline {13.3.2}Smooth and Nonnegative Loss}{4}
 \contentsline {subsection}{\numberline {13.4}CONTROLLING THE FITTING-STABLITY TRADEOFF}{5}

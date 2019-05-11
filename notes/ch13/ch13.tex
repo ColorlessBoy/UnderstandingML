@@ -61,7 +61,55 @@ in which, A is a positive semidefinite matrix.
 Exercise~\ref{exm_13_1} tells us how an algorithm with a bounded expected risk can be used to construct an agnostic PAC learner.
 \begin{exm}
 	\label{exm_13_1}
-	empty
+	\textbf{From Bounded Expected Risk to Agnostic PAC Learning}:
+	Let A be an algorithm that guarantees the following: If $ m \ge m_\mathcal{H}(\epsilon) $
+	then for every distribution $ \mathcal{D} $ it holds that
+	\[ 
+		\underset{ S ~ \mathcal{D}^m} {\mathbb{E}} [L_\mathcal{D}(A(S))]
+		\le \min\limits_{h\in\mathcal{H}} L_\mathcal{D}(h)+\epsilon.
+	\]
+	We can get $ m_\mathcal{H}(\epsilon, \delta) $ from Bounded Expected Risk.
+	\begin{proof}
+		Step 1: If $ m \ge m_\mathcal{H}(\epsilon \delta) $, then
+		\[ 
+			\mathbb{P} \{ L_\mathcal{D}(A(S)) - \min\limits_{h\in\mathcal{H}} L_\mathcal{D}(h) > \epsilon \}
+			\le \frac{1}{\epsilon} 
+			\mathbb{E} \{ L_\mathcal{D}(A(S)) - \min\limits_{h\in\mathcal{H}} L_\mathcal{D}(h) \}
+			\le \delta
+		\]
+		Step 2:
+		We devided data into k+1 chunks, which $ k = \lceil \log_2(2/\delta) \rceil $.
+		For the first k chunks, each chunk is larger than $ m_\mathcal{H}(\epsilon/4) $, 
+		then we have,
+		\[ 
+			\mathbb{P} \{ \min\limits_{i \in [k]} L_\mathcal{D}(A(S_i)) > \min\limits_{h \in \mathcal{H}} (h) + \epsilon/2  \}
+			< \frac{1}{2^{k}} < \frac{\delta}{2}
+		\]
+		Step 3:
+		Then we apply ERM over finite class $ \{ h_1, \dots, h_{k} \} $ on the last chunk.
+		If we want get
+		\[ 
+			\mathbb{P} \{ L_\mathcal{D}(A_2(S_{k+1})) > \min\limits_{i \in [k]}(h_k) + \epsilon/2 \}
+			< \frac{\delta}{2} 
+		\]
+		we need
+		\[ 
+			m \ge m_\mathcal{H}(\epsilon/2, \delta/2) \ge m^{UC}_{\mathcal{H}}(\epsilon/4, \delta/2)
+			\ge 8 \left\lceil
+				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsion^2}
+				\right\rceil
+		\]
+		Overall, we have
+		\[ 
+			m_\mathcal{H}(\epsilon, \delta) = 
+			m_\mathcal{H}(\epsilon/4)\lceil \log_2(2/\delta) \rceil
+			+ 
+			8 \left\lceil
+				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsion^2}
+				\right\rceil
+		\]
+		
+	\end{proof}
 \end{exm}
 
 \subsection{STABLE RULES DO NOT OVERFIT}

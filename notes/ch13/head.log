@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.4.16)  24 APR 2019 22:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.4.16)  11 MAY 2019 21:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -429,58 +429,81 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (15.23016pt too wide) in paragraph at lines 104--104
+./ch13.tex:99: Undefined control sequence.
+<argument> \epsion 
+                   ^2
+l.99 ...lceil \log_2(2/\delta) \rceil)}{\epsion^2}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+./ch13.tex:108: Undefined control sequence.
+<argument> \epsion 
+                   ^2
+l.108 ...ceil \log_2(2/\delta) \rceil)}{\epsion^2}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+[2]
+Overfull \hbox (15.23016pt too wide) in paragraph at lines 152--152
 []\OT1/cmr/bx/n/12 TIKHONOV REG-U-LAR-IZA-TION AS A STA-BI-LIZER 
  []
 
-[2]
-Overfull \hbox (4.08371pt too wide) detected at line 144
+
+Overfull \hbox (4.08371pt too wide) detected at line 192
 \OML/cmm/m/it/10 f[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S[]\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 f[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 )) \OMS/cmsy/m/n/10 ^^T [] \OT1/cmr/m/n/10 + []
  []
 
-
-Overfull \hbox (4.08734pt too wide) in paragraph at lines 183--185
+[3]
+Overfull \hbox (4.08734pt too wide) in paragraph at lines 231--233
 \OT1/cmr/m/n/10 If the loss is $\OML/cmm/m/it/10 ^^L \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 smooth$ \OT1/cmr/m/n/10 and non-neg-a-tive then it is also self-bounded: $\OMS/cmsy/m/n/10 kr\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 (\OT1/cmr/bx/n/10 w\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 k[] ^^T
  []
 
-[3]
-Overfull \hbox (11.32866pt too wide) detected at line 201
+
+Overfull \hbox (11.32866pt too wide) detected at line 249
 \OML/cmm/m/it/10 l\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 ; z[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 l\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S[]\OT1/cmr/m/n/10 )\OML/cmm/m/it/10 ; z[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^T []k\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 k \OT1/cmr/m/n/10 + []\OMS/cmsy/m/n/10 k\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 k
  []
 
 
-Overfull \hbox (21.48688pt too wide) detected at line 228
+Overfull \hbox (21.48688pt too wide) detected at line 276
 [][]
  []
 
-
-Overfull \hbox (17.00937pt too wide) in paragraph at lines 242--242
+[4]
+Overfull \hbox (17.00937pt too wide) in paragraph at lines 290--290
 []\OT1/cmr/bx/n/12 CONTROLLING THE FITTING-STABLITY TRADE-
  []
 
-[4]
-Overfull \hbox (0.75647pt too wide) detected at line 288
+
+Overfull \hbox (0.75647pt too wide) detected at line 336
 \OMS/cmsy/m/n/10 8\OT1/cmr/bx/n/10 w\OML/cmm/m/it/10 ; \U/msb/m/n/10 E[]\OT1/cmr/m/n/10 [\OML/cmm/m/it/10 L[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 ))] \OMS/cmsy/m/n/10 ^^T [] \U/msb/m/n/10 E[]\OT1/cmr/m/n/10 [\OML/cmm/m/it/10 L[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 S\OT1/cmr/m/n/10 ))] \OMS/cmsy/m/n/10 ^^T [] \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 L[]\OT1/cmr/m/n/10 (\OT1/cmr/bx/n/10 w\OT1/cmr/m/n/10 ) + \OML/cmm/m/it/10 ^^U\OMS/cmsy/m/n/10 k\OT1/cmr/bx/n/10 w\OMS/cmsy/m/n/10 k[]\OT1/cmr/m/n/10 )
  []
 
-) [5] (./head.aux)
+[5]) [6] (./head.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 12278 strings out of 492982
- 238471 string characters out of 6134896
- 285870 words of memory out of 5000000
- 15596 multiletter control sequences out of 15000+600000
- 12468 words of font info for 48 fonts, out of 8000000 for 9000
+ 12281 strings out of 492982
+ 238501 string characters out of 6134896
+ 286870 words of memory out of 5000000
+ 15598 multiletter control sequences out of 15000+600000
+ 12827 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  54i,10n,73p,828b,199s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on head.pdf (5 pages, 199945 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
+Output written on head.pdf (6 pages, 217947 bytes).
 PDF statistics:
- 95 PDF objects out of 1000 (max. 8388607)
- 69 compressed objects within 1 object stream
+ 102 PDF objects out of 1000 (max. 8388607)
+ 74 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
