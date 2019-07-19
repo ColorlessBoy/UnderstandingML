@@ -1,0 +1,170 @@
+\documentclass{beamer}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+
+\begin{document}
+
+\begin{frame}
+    \title{Review of Chapter07}
+    \subtitle{Understanding Machine Learning}
+    \author{Peng Lingwei}
+    \date{\today}
+    \titlepage.
+\end{frame}
+
+\begin{frame}[1]{Uniform Convergence}
+    \begin{definition}
+        A hypothesis class $\mathcal{H}​$ is \emph{Uniform Convergence} if:\\
+        $\exists m^{UC}_{\mathcal{H}}(\delta, \epsilon)\rightarrow \mathbb{N}$ satisfies:\\
+        For $\forall \epsilon,\delta\in(0,1)$, \\
+        The training set $\{S:|S|\ge m^{UC}_{\mathcal{H}}(\epsilon, \delta), S\thicksim \mathcal{D}^m\}​$ guarantees that\\
+        $\mathbb{P}\{ \forall h \in \mathcal{H},|L_{S}(h) - L_{\mathcal{D}} (h)| \le \epsilon\}\ge 1-\delta​$.
+    \end{definition}
+    \begin{theorem}
+        \[
+         m^{UC}_{\mathcal{H}}(\epsilon, \delta)\le{\left\lceil \frac{\log(2|\mathcal{H}|/\delta) }{2\epsilon^2} \right\rceil}
+        \]
+        \begin{proof}
+            \begin{enumerate}
+                \item $ L_{S = \{ (x_1, y_1), \ldots, (x_m, y_m) \} \sim D^m}(h) = \frac{1}{m} \sum^{m}_{i=1}  {1 \{ h(x_i) \ne y_i \}} $ 
+                \item $ L_D = \mathbb{E}_{(x,y)\sim D} \{ 1 \{ h(x) \ne y \} \} = \mathbb{E}_{S \sim D^m} \{ L_S(h) \} $ 
+                \item 
+                    $\mathbb{P}\{ \exists h \in \mathcal{H},|L_{S}(h) - L_{\mathcal{D}} (h)| \ge \epsilon\}
+                    \le \sum^{|\mathcal{H}|}_{i=1} \mathbb{P} \{ h \in \mathcal{H},|L_{S}(h) - L_{\mathcal{D}} (h)| \ge \epsilon \}
+                    \le 2 |\mathcal{H}| \exp(-2m \epsilon^2)$
+            \end{enumerate}
+        \end{proof}
+    \end{theorem}
+\end{frame}
+
+\begin{frame}[2]{Nonuniformly Learnable}
+    \begin{definition}
+        A hypothesis class $\mathcal{H}​$ is \emph{Nonuniform Learnable} if:\\
+        $\exists A: S \rightarrow h_S \in \mathcal{H}, m^{NUL}_{\mathcal{H}}(\delta, \epsilon, h)\rightarrow \mathbb{N}$ satisfies:\\
+        For $\forall \epsilon,\delta\in(0,1), h \in \mathcal{H}$,\\
+        The training set $\{S:|S|\ge m^{NUL}_{\mathcal{H}}(\epsilon, \delta, h), S\thicksim \mathcal{D}^m\}​$ gaurantees that\\
+        \[
+            \mathbb{P}\{ L_{\mathcal{D}}(A(S)) - L_{\mathcal{D}} (h) \le \epsilon\}\ge 1-\delta​  
+        \]
+    \end{definition}
+    \begin{theorem}
+        $ \mathcal{H} = \cup_{n\in \mathbb{N}} \mathcal{H}_n $ (means countable sets' union),
+        s.t. $ \mathcal{H}_n $ is uniform convergence.\\
+        $\Rightarrow \mathcal{H} $ is nonuniformly learnable.
+    \end{theorem}
+    \begin{theorem}
+        $\mathcal{H}$ of binary classfiers is nonuniformly learnable.
+        $ \iff \mathcal{H} = \cup_{n\in \mathbb{N}} \mathcal{H}_n $,
+        s.t. $ \mathcal{H}_n $ is agnostic PAC learnable.
+    \end{theorem}
+\end{frame}
+
+\begin{frame}[3]{Structural Risk Minimization}
+    \begin{definition}
+        \[
+            \epsilon_n(m, \delta) = \min \{ \epsilon \in (0,1) : m^{UC}_{\mathcal{H}_n}(\epsilon, \delta) \le m \}
+        \]
+    \end{definition}
+    \begin{theorem}
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{D}(h) - L_S(h) \le \min_{n:h\in\mathcal{H}_n} \epsilon_n(m, w(n)\delta) \} \ge 1-\delta$
+    \end{theorem}
+    \begin{proof}
+        $\mathbb{P} \{ \forall h \in \mathcal{H}_n, |L_S(h) - L_\mathcal{D}(h)| \le \epsilon_n(m, w(n)\delta) \} \ge 1- w(n) \delta$
+        $\mathbb{P} \{ \exists h \in \mathcal{H}_n, |L_S(h) - L_\mathcal{D}(h)| \ge \epsilon_n(m, w(n)\delta) \} \le w(n) \delta$
+        $\mathbb{P} \{ \exists h \in \mathcal{H}, |L_S(h) - L_\mathcal{D}(h)| \ge \epsilon_{n:h\in\mathcal{H}_n}(m, w(n)\delta) \} \le \sum^{}_{n} w(n) \delta \le \delta$
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, |L_S(h) - L_\mathcal{D}(h)| \le \epsilon_{n:h\in\mathcal{H}_n}(m, w(n)\delta) \} \le 1 - \delta$
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{D}(h) - L_S(h) \le \min_{n:h\in\mathcal{H}_n} \epsilon_n(m, w(n)\delta) \} \le 1-\delta$
+    \end{proof}
+\end{frame}
+
+\begin{frame}
+    \begin{definition}
+        (Structural Risk Minimization)
+        \begin{enumerate}
+            \item \textbf{prior knowledge}: 
+                \begin{itemize}
+                    \item $ \mathcal{H} = \cup_n \mathcal{H}_n $ where $ \mathcal{H}_n $ has uniform convergence with $ m^{UC}_{\mathcal{H}_n} $.
+                    \item $ w: \mathbb{N}\rightarrow [0,1]$ s.t.$\sum^{}_{n} w(n) \le 1 $  
+                \end{itemize}
+            \item \textbf{define}:
+                $ \epsilon_n $ and $ n(h) = \min \{ n: h\in \mathcal{H}_n \} $ 
+            \item \textbf{input}:
+                training set $ S \sim \mathcal{D}^m $, confidence $ \delta $ 
+            \item \textbf{output}: $ h \in \arg\min_{h \in \mathcal{H}} [L_S(h) + \epsilon_{n(h)}(m, w(n(h)) \delta) ] $
+        \end{enumerate}
+    \end{definition} 
+\end{frame}
+
+\begin{frame}
+    \begin{theorem}
+        \[
+             m^{NUL}_{\mathcal{H}}(\epsilon, \delta, h) 
+            \le m^{UC}_{\mathcal{H}_{n(h)}}\left(\epsilon/2, \frac{6\delta/2}{{(\pi n(h))}^2} \right)
+        \]
+    \end{theorem}
+    \begin{proof}
+        Let $ m \ge m^{UC}_{\mathcal{H}_{n(h)}}\left(\epsilon/2, \frac{6\delta/2}{{(\pi n(h))}^2} \right)  $, then
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{D}(h) - L_S(h) \le \epsilon_n(m, w(n(h))\delta) \} \ge 1-\delta/2$
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{D}(A(S)) \le L_S(h) + \epsilon/2 \} \ge 1-\delta/2$.\\
+        From uniform convergence property, we also can get:
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{S}(h) \le L_D(h) + \epsilon/2 \} \ge 1-\delta/2$
+        Then we can guarantee nonuniformly learnable event happens:
+        $\mathbb{P} \{ \forall h \in \mathcal{H}, L_\mathcal{D}(A(S)) \le L_D(h) + \epsilon \} \ge 1-\delta$
+    \end{proof}
+\end{frame}
+
+\begin{frame}
+    In chapter6:\\
+    If $ VCdim(\mathcal{H}) = n$,then $ m^{UC}_{\mathcal{H}_n}(\epsilon, \delta) = C \frac{n+\log(1/\delta)}{\epsilon^2}  $.
+    \begin{theorem}
+        \begin{align*}
+            m^{NUL}_{\mathcal{H}} (\epsilon, \delta, h)
+            - m^{UC}_{\mathcal{H}_n} (\epsilon/2, \delta)
+        \le& m^{UC}_{\mathcal{H}_{n}}\left(\epsilon/2, \frac{3\delta}{{(\pi n)}^2}\right)
+            - m^{UC}_{\mathcal{H}_n} (\epsilon/2, \delta)\\
+        \le& \frac{4C}{\epsilon^2} \log \left( \frac{{(\pi n)}^2}{3} \right) \\
+        \le& \frac{4C}{\epsilon^2} 2 \log \left( \frac{\pi n}{\sqrt{3}}  \right) \\
+        \le& \frac{4C}{\epsilon^2} 2 \log \left( 2n  \right) \\
+        \end{align*}
+    \end{theorem}
+\end{frame}
+
+\begin{frame}{Consistency}
+    \begin{definition}
+        A hypothesis class $\mathcal{H}​$ is \emph{Consistency} in probability distributions set $ \mathcal{P} $  if:\\
+        $\exists A: S \rightarrow h_S \in \mathcal{H}, m^{CON}_{\mathcal{H}}(\delta, \epsilon, h, \mathcal{D})\rightarrow \mathbb{N}$ satisfies:\\ For $\forall \epsilon,\delta\in(0,1), h \in \mathcal{H}, \mathcal{D} \in \mathcal{P}$,\\ The training set $\{S:|S|\ge m^{CON}_{\mathcal{H}}(\epsilon, \delta, h), S\thicksim \mathcal{D}^m\}​$ gaurantees that\\
+        \[
+            \mathbb{P}\{ L_{\mathcal{D}}(A(S)) - L_{\mathcal{D}} (h) \le \epsilon\}\ge 1-\delta​  
+        \]
+    \end{definition}
+\end{frame}
+
+\begin{frame}
+    \begin{theorem}
+        The algorithm \textbf{Memorize} is consistency in countable $ \mathcal{X} $. ($ \mathcal{P} $ is the set of every distribution on $ \mathcal{X} $)
+        \begin{proof}
+            Let an $ \mathcal{X} $'s enumeration $ \{ x_i : i \in \mathbb{N} \} $ satisfies: 
+            \[
+                i \le j \Leftrightarrow \mathcal{D}(x_i) \ge \mathcal{D}(x_j).
+            \]
+            It's easy to verify $ \lim_{n \to \infty} \sum^{\infty}_{i=n} \mathcal{D}(x_i) = 0 $, which means that
+            \[
+                \forall \epsilon > 0, \exists N \in \mathbb{N},\ such\ that\ \mathcal{D}(i > N, x_i) < \epsilon
+            \]
+            \begin{align*}
+                \mathbb{P} \{ \exists x \notin S, \mathcal{D}(x) \ge \epsilon \}
+                \le& \mathbb{P} \{ \exists i \le N, x_i \notin S \} \\
+                \le& \sum^{N}_{i=1} \mathbb{P} \{ x_i \notin S \} = \sum^{N}_{i=1} {( 1 - \mathcal{D}(x_i) )}^m \\
+                \le& N {(1-\epsilon)}^m \le N e^{-\epsilon m}
+            \end{align*}
+        \end{proof}
+    \end{theorem}
+\end{frame}
+
+\end{document}
