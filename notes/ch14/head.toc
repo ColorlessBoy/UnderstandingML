@@ -1,18 +1,18 @@
-\contentsline {section}{\numberline {14}Stochastic Gradient Descent}{1}
-\contentsline {subsection}{\numberline {14.1}GRADIENT DESCENT}{2}
-\contentsline {subsubsection}{\numberline {14.1.1}Analysis of GD for Convex-Lipschitz Functions}{2}
-\contentsline {subsection}{\numberline {14.2}SUBGRADIENTS}{3}
-\contentsline {subsubsection}{\numberline {14.2.1}Calculating Subgradients}{3}
-\contentsline {subsubsection}{\numberline {14.2.2}Subgradients of Lipschitz Functions}{3}
-\contentsline {subsubsection}{\numberline {14.2.3}Subgradient Descent}{3}
-\contentsline {subsection}{\numberline {14.3}STOCHASTIC GRADIENT DESCENT (SGD)}{3}
-\contentsline {subsubsection}{\numberline {14.3.1}Anslysis of SGD for Convex-Lipschitz-Bounded Functions}{4}
-\contentsline {subsection}{\numberline {14.4}VARIANTS}{4}
-\contentsline {subsubsection}{\numberline {14.4.1}Adding a Projection Step}{4}
-\contentsline {subsubsection}{\numberline {14.4.2}Variable Step Size}{4}
-\contentsline {subsubsection}{\numberline {14.4.3}Other Averaging Techniques}{5}
-\contentsline {subsubsection}{\numberline {14.4.4}Strongly Convex Function}{5}
-\contentsline {subsection}{\numberline {14.5}LEARNING WITH SGD}{6}
-\contentsline {subsubsection}{\numberline {14.5.1}SGD for Risk Minimization}{6}
-\contentsline {subsubsection}{\numberline {14.5.2}Analyzing SGD for Convex-Smooth Learning Problems}{6}
-\contentsline {subsubsection}{\numberline {14.5.3}SGD for Regularized Loss Minimization}{7}
+\contentsline {section}{\numberline {14}Stochastic Gradient Descent}{1}% 
+\contentsline {subsection}{\numberline {14.1}GRADIENT DESCENT}{2}% 
+\contentsline {subsubsection}{\numberline {14.1.1}Analysis of GD for Convex-Lipschitz Functions}{2}% 
+\contentsline {subsection}{\numberline {14.2}SUBGRADIENTS}{3}% 
+\contentsline {subsubsection}{\numberline {14.2.1}Calculating Subgradients}{3}% 
+\contentsline {subsubsection}{\numberline {14.2.2}Subgradients of Lipschitz Functions}{3}% 
+\contentsline {subsubsection}{\numberline {14.2.3}Subgradient Descent}{3}% 
+\contentsline {subsection}{\numberline {14.3}STOCHASTIC GRADIENT DESCENT (SGD)}{3}% 
+\contentsline {subsubsection}{\numberline {14.3.1}Anslysis of SGD for Convex-Lipschitz-Bounded Functions}{4}% 
+\contentsline {subsection}{\numberline {14.4}VARIANTS}{4}% 
+\contentsline {subsubsection}{\numberline {14.4.1}Adding a Projection Step}{4}% 
+\contentsline {subsubsection}{\numberline {14.4.2}Variable Step Size}{4}% 
+\contentsline {subsubsection}{\numberline {14.4.3}Other Averaging Techniques}{5}% 
+\contentsline {subsubsection}{\numberline {14.4.4}Strongly Convex Function}{5}% 
+\contentsline {subsection}{\numberline {14.5}LEARNING WITH SGD}{6}% 
+\contentsline {subsubsection}{\numberline {14.5.1}SGD for Risk Minimization}{6}% 
+\contentsline {subsubsection}{\numberline {14.5.2}Analyzing SGD for Convex-Smooth Learning Problems}{6}% 
+\contentsline {subsubsection}{\numberline {14.5.3}SGD for Regularized Loss Minimization}{7}% 
