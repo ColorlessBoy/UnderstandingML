@@ -1,0 +1,289 @@
+% chapter26 Rademacher Complexities, Understanding Machine Learning
+
+\section{Rademacher Complexities}%
+\label{sec:rademacher_complexities_w_}
+
+\begin{enumerate}
+    \item \textbf{Uniform convergence} is a sufficient condition for learnability.
+    \item \textbf{Rademacher complexities} measures the rate of uniform convergence.
+\end{enumerate}
+
+\subsection{THE RADEMACHER COMPLEXITY}%
+\label{sub:the_rademacher_complexity}
+
+\begin{definition}
+    \textbf{($ \epsilon$-Representative Sample).}
+    (w.r.t.\ domain $ Z = (\mathcal{X}, \mathcal{Y}) \sim \mathcal{D}$, hypothesis class $\mathcal{H}$, loss function $ l $).
+    A training set $ S $ is called $ \epsilon $-representative if
+    \[
+        \sup_{h\in \mathcal{H}} \left| L_ \mathcal{D}(h) - L_S(h) \right| \le \epsilon
+    \]
+\end{definition}
+
+We have $ m_\mathcal{H}(\epsilon, \delta) \le m^{UC}_\mathcal{H}(\epsilon/2, \delta)$.
+
+\begin{definition}
+    \textbf{(The representativeness of $ S $ with respect to $ \mathcal{F} $). }
+    \begin{equation}
+        Rep_ \mathcal{D}(\mathcal{F}, S) := \sup_{f \in \mathcal{F}} (L_ \mathcal{D}(f) - L_S (f))
+    \end{equation}
+    where,
+    \[
+        \mathcal{F} := l \circ \mathcal{H} := \left\{ z \mapsto l(h,z) : z \in Z, h \in \mathcal{H} \right\}
+    \]
+    \[
+        f\in \mathcal{F},\quad
+        L_ \mathcal{D}(f) = \mathbb{E}_{z\sim \mathcal{D}} [f(z)],\quad
+        L_S = \frac{1}{m} \sum^{m}_{i=1} f(z_i).
+    \]
+\end{definition}
+
+Analogizing the concept of validation set which used to estimate the representativeness of $ S $, we define \textbf{rademacher complexity}.
+\begin{definition}
+    \textbf{(The rademacher complexity of $ \mathcal{F} $ w.r.t.\ $ S $).}
+    \begin{equation}
+        R( \mathcal{F} \circ S ) := \frac{1}{m} \mathbb{E}_{\sigma \sim {\{ \pm 1 \}}^m}
+        \left[ \sup_{f \in \mathcal{F}} \sum^{m}_{i=1} \sigma_i f(z_i)  \right]
+    \end{equation}
+    where,
+    \[
+        \mathcal{F}\circ S = \{(f(z_1), \ldots, f(z_m)) : f \in \mathcal{F}\}
+    \]
+    \[
+        \sigma = \{ \sigma_i : \mathbb{P}[\sigma_i = 1] = \mathbb{P}[\sigma_i = -1] = 0.5 \}
+    \]
+    More generally, given a set of vectors, $ A \subset \mathbb{R}^m$, we define
+    \[
+        R(A) := \frac{1}{m} \mathbb{E}_\sigma \left[ \sup_{a \in A} \sum^{m}_{i=1} \sigma_i a_i \right]
+    \]
+\end{definition}
+
+\begin{lemma}
+    \begin{equation}
+        \mathbb{E} _{S \sim \mathcal{D}^m}[Rep_ \mathcal{D}( \mathcal{F}, S ) ]
+        \le 2 \mathbb{E}_{S \sim \mathcal{D}^m } R( \mathcal{F}\circ S)
+    \end{equation}
+    \begin{proof}
+        Let $ S' = \{ z'_1, \ldots, z'_m \} $ be another i.i.d.\ sample.Then,
+        \[
+            L_ \mathcal{D}(f) - L_S(f) = \mathbb{E}_{S'} [L_{S'}(f)] - L_S(f)= \mathbb{E}_{S'} [L_{S'}(f) - L_S(f)]
+        \]
+        \begin{align*}
+            Rep_{\mathcal{D}}( \mathcal{F}, S) = \sup_{f\in \mathcal{F}}(L_ \mathcal{D}(f) - L_S(f))
+            =& \sup_{f \in \mathcal{F}} (\mathbb{E}_{S'} [L_{S'}(f) - L_S(f)]) \\
+            \le& \mathbb{E}_{S'} \left[ \sup_{f\in\mathcal{F}} (L_{S'}(f) - L_S(f))\right]
+        \end{align*}
+        \begin{align*}
+            \mathbb{E}_{S\sim \mathcal{D}^m} [Rep_{\mathcal{D}}(\mathcal{F}, S)]
+            \le \mathbb{E}_{S,S'} \left[ \sup_{f\in\mathcal{F}} (L_{S'}(f) - L_S(f))\right]
+            \le \frac{1}{m} \mathbb{E}_{S,S'} \left[ \sup_{f\in\mathcal{F}} \sum^{m}_{i=1} (f(z'_i) - f(z_i))\right]
+        \end{align*}
+        In some techniques, we can get:
+        \begin{align*}
+            \mathbb{E}_{S,S'} \left[ \sup_{f\in\mathcal{F}} \sum^{m}_{i=1} (f(z'_i) - f(z_i))\right]
+            =& \mathbb{E}_{S,S',\sigma} \left[ \sup_{f\in\mathcal{F}} \sum^{m}_{i=1} \sigma_i (f(z'_i) - f(z_i))\right]\\
+            \le& \mathbb{E}_{S,S',\sigma} \left[ \sup_{f\in\mathcal{F}} \sum^{m}_{i=1} \sigma_i (f(z'_i)) + \sup_{f\in\mathcal{F}} \sum^{m}_{i=1} (-\sigma_i) f(z_i)\right]\\
+            =& m \mathbb{E}_{S'}[R( \mathcal{F} \circ S')] + m \mathbb{E}_{S}[R( \mathcal{F} \circ S)]
+            = 2m \mathbb{E}_{S} [R( \mathcal{F} \circ S)].
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\begin{theorem}
+    \begin{align*}
+        \mathbb{E} _{S \sim \mathcal{D}^m}[L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S(ERM_ \mathcal{H}(S))]
+        \le& 2 \mathbb{E}_{S \sim \mathcal{D}^m } R( l \circ \mathcal{H} \circ S)
+    \end{align*}
+    \[
+        \mathbb{E} _{S \sim \mathcal{D}^m}[L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S(h^*)]
+        \le 2 \mathbb{E}_{S \sim \mathcal{D}^m } R( l \circ \mathcal{H} \circ S),
+        \ where\ h^* = \arg\min_h L_\mathcal{D}(h)\\
+    \]
+    Because $ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_ \mathcal{D}(h^*) \ge 0 $, then
+    \[
+        \mathbb{P} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_ \mathcal{D}(h^*) \ge 
+        \frac{2 \mathbb{E}_{S' \sim D^m} R(l \circ \mathcal{H} \circ S')}{\delta} \right\} \le \delta
+    \]
+\end{theorem}
+\begin{lemma}
+    \textbf{(McDiarmid's Inequality).}\\
+    If
+    \[
+        \left| f(x_1, \ldots, x_m) - f(x_1, \ldots, x_{i-1}, x'_i, x_{i+1}, \ldots, x_m) \right| \le c_i.
+    \]
+    then,
+    \[
+        \mathbb{P} \left\{ f - \mathbb{E}f \ge \epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} c_i}  \right)
+    \]
+    \[
+        \mathbb{P} \left\{ f - \mathbb{E}f \le -\epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} c_i}  \right)
+    \]
+    which also means
+    \[
+        \mathbb{P} \left\{ | f - \mathbb{E}f | \ge c \sqrt{\ln( 2/\delta ) m/2}  \right\} \le \delta
+    \]
+\end{lemma}
+
+\begin{theorem}
+    \textbf{(Data-dependent bound).}
+    Assume that for all $ z $ and $ h \in \mathcal{H} $, we have that $ |l(h,z)| \le c $. Then,
+    \begin{enumerate}
+        \item 
+            \[
+                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 \mathbb{E}_{S'\sim \mathcal{D}^m} R( l\circ \mathcal{H}\circ S') + c \sqrt{2 \ln(1/\delta)/m} \right\} \ge 1-\delta
+            \]
+            \begin{proof}
+                $ Rep_ \mathcal{D}( \mathcal{F}, S) $ satisfies the preceeding condition with a constant $ 2c/m $,
+            \end{proof}
+        \item  
+            \[
+                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 R( l\circ \mathcal{H}\circ S) + 3c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta
+            \]
+            \begin{proof}
+                \[
+                    \mathbb{P} \left\{ Rep_ \mathcal{D}(F, S) \le \mathbb{E}_{S'} Rep_ \mathcal{D}( l\circ \mathcal{H}\circ S') + c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                \]
+                \[
+                    \mathbb{P} \left\{ \mathbb{E}Rep_ \mathcal{D}(F, S) \le 2 \mathbb{E}R(l\circ \mathcal{H}\circ S') \right\} = 1
+                \]
+                \[
+                    \mathbb{P} \left\{ \mathbb{E}_{S'} R( l\circ \mathcal{H}\circ S') \le R( l\circ \mathcal{H} \circ S) + c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                \]
+            \end{proof}
+        \item 
+            \[
+                \mathbb{P} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S (h^*) \le 2 R( l\circ \mathcal{H}\circ S) + 4c \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-\delta
+            \]
+            \begin{proof}
+                \begin{align*}
+                    L_ \mathcal{D}(h_S) - L_ \mathcal{D}(h^*)
+                    =& L_ \mathcal{D}(h_S) - L_S(h_S) + L_S(h_S) - L_S(h^*) + L_S(h^*) - L_ \mathcal{D}(h^*)\\
+                    \le& (L_ \mathcal{D}(h_S) - L_S(h_S)) + (L_S(h^*) - L_ \mathcal{D}(h^*))
+                \end{align*}
+            \[
+                \mathbb{P} \left\{ L_ \mathcal{D}(h_S) - L_S (h_S) \le 2 R( l\circ \mathcal{H}\circ S) + 3c \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-2\delta/3
+            \]
+            Because $ L_ \mathcal{D}(h^*) $ does not depend on $ S $, so we can use hoeffding's inequality to get 
+            \[
+                \mathbb{P} \left\{ L_S(h^*) - L_ \mathcal{D}(h^*) \le c \sqrt{ {2\ln(3/\delta)}/{m} } \right\} \ge 1-\delta/3
+            \]
+            \end{proof}
+    \end{enumerate}
+\end{theorem}
+
+\subsubsection{Rademacher Calculus}%
+\label{sub:rademacher_calculus}
+
+\begin{lemma}
+    $ \forall A \subset \mathbb{R}^m, c \in \mathbb{R}, \mathbf{a}_0 \in \mathbb{R}^m $, we have
+    \begin{equation}
+        R( \{ c \mathbf{a}+ \mathbf{a}_0 : \mathbf{a} \in A \}) = |c| R(A)
+    \end{equation}
+\end{lemma}
+
+\begin{lemma}
+    $ \forall A \subset \mathbb{R}^m $, if $ A' = \left\{ \sum^{N}_{j=1} \alpha_j \mathbf{a}^{(j)} : N \in \mathbb{N}, \forall j, \mathbf{a}^{(j)} \in A, \alpha_j \ge 0, \Arrowvert \vec{\alpha} \Arrowvert_1 = 1 \right\} $, then $ R(A') = R(A) $. 
+    \begin{proof}
+        \begin{align*}
+            m R(A') =& \mathbb{E}_\sigma \sup_{\vec \alpha \succeq \vec 0 : \Arrowvert \vec \alpha \Arrowvert_1 = 1}
+            \sup_{\mathbf{a}^{(1)}, \ldots, \mathbf{a}^{(N)}} \sum^{m}_{i=1} \sigma_i \sum^{N}_{j=1} \alpha_j a_i^{(j)}\\
+            =& \mathbb{E}_\sigma \sup_{\vec \alpha \succeq \vec 0 : \Arrowvert \vec \alpha \Arrowvert_1 = 1}\sum^{N}_{j=1} \alpha_j \sup_{\mathbf{a}^{(j)}} \sum^{m}_{i=1} \sigma_i a_i^{(j)}\\
+            =& \mathbb{E}_\sigma \sup_{\mathbf{a}\in A} \sum^{m}_{i=1} \sigma_i a_i
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    \textbf{(Massart Lemma)}.
+    Let $ A = \{ \mathbf{a}_1, \ldots, \mathbf{a}_N \} $ be a finite set of vectors in $ \mathbf{R}^m $.
+    Define $ \bar{ \mathbf{a}} = \frac{1}{N} \sum^{N}_{i=1} \mathbf{a}_i $. Then,
+    \begin{equation}
+        R(A) \le \max_{\mathbf{a} \in A} \Arrowvert \mathbf{a} - \bar{\mathbf{a}} \Arrowvert
+        \frac{\sqrt{2\log(N)}}{m} 
+    \end{equation}
+    \begin{proof}
+        \begin{align*}
+            \forall A,\quad
+            m R(A) =& \mathbb{E}_{\vec\sigma} \left[ \max_{\mathbf{a}\in A } \langle \vec \sigma, \textbf{a} \rangle \right]
+            = \mathbb{E}_{\vec\sigma}\left[ \log \left(  \max_{\mathbf{a}\in A } e^{\langle \vec \sigma, \textbf{a} \rangle } \right) \right]\\
+            =& \mathbb{E}_{\vec\sigma}\left[ \log \left(  \sum_{\mathbf{a}\in A } e^{\langle \vec \sigma, \textbf{a} \rangle } \right) \right]
+            \le \log \left[ \mathbb{E}_{\vec\sigma} \left(  \sum_{\mathbf{a}\in A } e^{\langle \vec \sigma, \textbf{a} \rangle } \right) \right] \\
+            \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} \mathbb{E}_{\sigma_i} [e^{\sigma_i a_i}] \right) 
+            \le \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} [e^{a_i} + e^{-a_i}]/2 \right) \\
+            \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} e^{a_i^2/2} \right) 
+            = \log \left( \sum^{}_{a \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert^2/2 \right) \right)\\
+            \le& \log \left( \left| A \right| \max_{\mathbf{a} \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert^2/2 \right) \right) = \log \left( \left| A \right| \right) + \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert^2 /2)
+        \end{align*}
+        Since $ R(A) = R(A')/\lambda $ we obtain that
+        \[
+            R(A) \le \frac{\log(|A|) + \lambda^2 \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert^2 /2)}{\lambda m}
+        \]
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    \textbf{(Contraction Lemma).}
+    $ \forall i \in [m] $, let $ \phi_i: \mathbb{R} \rightarrow \mathbb{R} $ be a $ \rho-Lipschitz $ function.
+    For $ \mathbf{a} \in \mathbb{R}^m $ let $ \phi(a) = (\phi_1(a1), \ldots, \phi_m(y_m)) $.
+    Let $ \phi \circ A = \{ \phi(\vec a) : a \in A \} $. Then,
+    \[
+        R(\phi \circ A) \le \rho R(A).
+    \]
+    \begin{proof}
+        First, $ \rho = 1 $.
+        Let $ A_i = \{ (a_1, \ldots, a_{i-1}, \phi_i(a_i), a_{i+1}, \ldots, a_m) : \mathbf{a} \in A \} $.
+        \begin{align*}
+            mR(A_1) =& \mathbb{E}_{\sigma} \left[ \sup_{\mathbf{a} \in A_1} \sum^{m}_{i=1} \sigma_i a_i \right]\\
+            =& \mathbb{E}_{\sigma} \left[ \sup_{\mathbf{a} \in A} \sigma_1 \phi(a_1) + \sum^{m}_{i=2} \sigma_i a_i \right]\\
+            =& \frac{1}{2} \mathbb{E}_{\sigma_2, \ldots, \sigma_m}
+            \left[ \sup_{\mathbf{a,a'} \in A} \left( \phi(a_1) - \phi(a'_1) + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] \\
+            \le& \frac{1}{2} \mathbb{E}_{\sigma_2, \ldots, \sigma_m}
+            \left[ \sup_{\mathbf{a,a'} \in A} \left( | a_1 - a'_1 | + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] \\
+            =& \frac{1}{2} \mathbb{E}_{\sigma_2, \ldots, \sigma_m}
+            \left[ \sup_{\mathbf{a,a'} \in A} \left( a_1 - a'_1 + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] \\
+            mR(A_1) \le& mR(A)
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\subsection{RADEMACHER COMPLEXITY OF LINEAR CLASSES}%
+\label{sub:rademacher_complexity_of_linear_classes}
+\begin{enumerate}
+    \item $ \mathcal{H}_1 = \{ \mathbf{x} \mapsto \langle \mathbf{w}, \mathbf{x} \rangle : \Arrowvert \mathbf{w} \Arrowvert_1 \le 1 \} $ 
+    \item $ \mathcal{H}_2 = \{ \mathbf{x} \mapsto \langle \mathbf{w}, \mathbf{x} \rangle : \Arrowvert \mathbf{w} \Arrowvert_2 \le 1 \} $ 
+\end{enumerate}
+
+\begin{lemma}
+    \begin{equation}
+        R( \mathcal{H}_2 \circ S ) \le \frac{\max_i \Arrowvert \mathbf{x}_i \Arrowvert_2}{\sqrt{m}}
+    \end{equation}
+    \begin{proof}
+        \begin{align*}
+            mR( \mathcal{H}_2 \circ S) =& \mathbb{E}_\sigma \left[ \sup_{\mathbf{a} \in \mathcal{H}_2 \circ S} \sum^{m}_{i=1} \sigma_i a_i \right] = \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_2 \le 1} \sum^{m}_{i=1} \sigma_i \langle \mathbf{w}, \mathbf{x}_i \rangle \right]\\
+            =& \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_2 \le 1} \langle \mathbf{w}, \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \rangle \right]
+            \le \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_2 \right]\\
+        \le& {\left( \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert^2 \right] \right)}^{1/2} \\
+        \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert^2 \right]
+        =& \sum^{}_{i\ne j} \langle \mathbf{x_i}, \mathbf{x_j} \rangle \mathbb{E}_\sigma[\sigma_i \sigma_j]
+        + \sum^{m}_{i=1} \langle \mathbf{x}_i, \mathbf{x}_i \rangle \mathbb{E}_\sigma[\sigma_i^2]\\
+        =& \sum^{m}_{i=1} \Arrowvert \mathbf{x}_i \Arrowvert^2_2 \le m \max_i \Arrowvert \mathbf{x}_i \Arrowvert^2_2
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    Let $ S = ( \mathbf{x}_1, \ldots, \mathbf{x}_m ) $ be the vectors in $ \mathbb{R}^n $, then,
+    \begin{equation}
+        R( \mathcal{H}_1 \circ S) \le \max_i \Arrowvert \mathbf{x}_i \Arrowvert_\infty
+        \sqrt{\frac{2\log(2n)}{m}}
+    \end{equation}
+    \begin{proof}
+        Using Holder's inequality, we have $ \langle \mathbf{w}, \mathbf{v} \rangle \le \Arrowvert \mathbf{w} \Arrowvert_1 \Arrowvert \mathbf{v} \Arrowvert_\infty$. Therefore,
+        \begin{align*}
+            mR( \mathcal{H}_1 \circ S )
+            = \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_1 \le 1} \langle \mathbf{w}, \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \rangle \right]
+            \le \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_\infty \right].
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
