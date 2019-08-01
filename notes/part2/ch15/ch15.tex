@@ -1,0 +1,121 @@
+% Chapter15 Support Vector Machines, Understanding Machine Learning
+
+\section{Support Vector Machine}%
+\label{sec:support_vector_machine}
+
+\subsection{MARGIN AND HARD-SVM}%
+\label{sub:margin_and_hard_svm}
+
+\begin{claim}
+    The distance between the hyperplane $ \langle \vec{w} , \vec{x} \rangle + b = 0 $ and the point $ \vec{x} $ is
+    \[
+        \frac{ \left| \langle \vec{w}, \vec{x} \rangle + b\right|}{ \Arrowvert \vec{w} \Arrowvert } 
+    \]
+\end{claim}
+
+\begin{definition}
+    \textbf{(Hard -SVM rule).}
+    \[
+        \arg\max_{ (\vec{w}, b): \Arrowvert \vec{w} \Arrowvert = 1 } \min_{i \in [m]} \left| \langle \vec{w}, \vec{x}_i \rangle + b \right| \quad \text{s.t.}\quad \forall i, y_i ( \langle \vec{w} , \vec{x}_i \rangle + b) > 0
+    \]
+    We can change it into
+    \[
+        \min_{ \vec{w} } \frac{1}{2} \Arrowvert \vec{w}  \Arrowvert^2 \quad s.t.\quad \forall i,\quad y_i \langle \vec{w}, \vec{x}_i \rangle + b \ge 1.
+    \]
+    If we add one dimension into sample space, we can use this rule
+    \[
+        \min_{ \vec{w} } \frac{1}{2} \Arrowvert \vec{w}  \Arrowvert^2 \quad s.t.\quad \forall i,\quad y_i \langle \vec{w}, \vec{x}_i \rangle \ge 1.
+    \]
+    The regularizing $ b $ usually does not make a significant difference to the sample complexity.
+\end{definition}
+
+\subsection{GENERALIZATION BOUNDS FOR SVM}%
+\label{sub:generalization_bounds_for_svm}
+
+\begin{definition}
+    \textbf{(Loss function).}
+    Let $ \mathcal{H} = \left\{ \vec{w} : {\Arrowvert \vec{w}  \Arrowvert}_2 \le B \right\} $, $ Z = \mathcal{X}\times \mathcal{Y} $ be the examples domain. Then, the loss function: $ l : \mathcal{H} \times Z \rightarrow \mathbb{R} $ is
+    \begin{equation}
+        l( \vec{w} , ( \vec{x} , y) ) = \phi (\langle \vec{w}, \vec{x} \rangle, y)
+    \end{equation}
+    \begin{enumerate}
+        \item Hinge-loss function: $ \phi(a, y) = \max \left\{ 0, 1-ya \right\}$;
+        \item Absolute loss function: $ \phi(a, y) = \left| a - y \right| $.
+    \end{enumerate}
+\end{definition}
+
+\begin{theorem}
+    Suppose that $ \mathcal{D} $ is a distribution over $ \mathcal{X}\times \mathcal{Y} $ such that w.p.1 we have
+    $ {\Arrowvert \vec{x}  \Arrowvert}_2 \le R $. Let $ \mathcal{H} = \left\{ \vec{w} : {\Arrowvert \vec{w}  \Arrowvert}_2 \le B \right\} $ and let $ l: \mathcal{H} \times Z \rightarrow \mathbb{R} $ be a loss function of the form $ \phi(a,y) $ and it's a $ \rho-Lipschitz $ function and $ \max_{a \in [-BR, BR]} \left| \phi(a, y) \right| \le c$, so
+    \[
+    \mathbb{P} \left\{ \forall \vec{w} \in \mathcal{H}, L_{ \mathcal{D} }( \vec{w} )
+    \le L_S( \vec{w} ) + \frac{2 \rho BR}{\sqrt{m}} + c \sqrt{ \frac{2 \ln(2/\delta)}{m} }\right\}
+    \ge 1 - \delta
+    \]
+    (Chapter 26)
+\end{theorem}
+
+\begin{theorem}
+    In Hard-SVM, we assume that $ \exists \vec{w}^* $ with $ \mathbb{P}_{( \vec{x}, y) \sim \mathcal{D}} [ y \langle \vec{w}^*, \vec{x} \rangle \ge 1] = 1 $ and $ \mathbb{P} \left\{ {\Arrowvert \vec{x} \Arrowvert}_2 \le R \right\} = 1 $.
+    Let the SVM rule's output is $ \vec{w}_S $.
+    \[
+        \mathbb{P} \left\{ L^{0-1}_{ \mathcal{D}}( \vec{w} _S ) \le L^{ramp}_{ \mathcal{D}} ( \vec{w} _S) 
+        \le \frac{2 R {\Arrowvert \vec{w} ^* \Arrowvert}_2 }{\sqrt{m}} + \sqrt{ \frac{2\ln(2/\delta)}{m} } \right\} \ge 1- \delta
+    \]
+\end{theorem}
+
+The preceding theorem depends on $ {\Arrowvert \vec{w}^* \Arrowvert}_2  $, which is unknow. In the following we derive a bound that depends on the norm of the output of SVM.\@
+
+\begin{theorem}
+    \begin{equation}
+        \mathbb{P} \left\{ L^{0-1}_\mathcal{D} ( \vec{w}_S ) \le \frac{4R {\Arrowvert \vec{w} _S \Arrowvert}_2 }{\sqrt m} + \sqrt{\frac{\ln \left( 4\log_2 {\Arrowvert \vec{w} _S \Arrowvert}_2 / \delta  \right)}{m} }  \right\} \ge 1- \delta
+    \end{equation}
+    The proof is similar to the SRM.\@
+    \begin{proof}
+        For $ i \in \mathbb{N}^+ $, let $ B_i = 2^i, \mathcal{H}_i = \left\{ \vec{w}: {\Arrowvert \vec{w} \Arrowvert}_2 \le B_i \right\} $, and let $ \delta_i = \frac{\delta}{2i^2} $, then we have
+        \[
+            \mathbb{P} \left\{ \forall \vec{w} \in \mathcal{H}_i, L_{ \mathcal{D} }( \vec{w} )
+            \le L_S( \vec{w} ) + \frac{2 B_i R}{\sqrt{m}} + c \sqrt{ \frac{2 \ln(2/\delta_i )}{m} }\right\}
+            \ge 1 - \delta_i
+        \]
+        Applying the union bound and using $ \sum^{\infty}_{i=1} \delta_i \le \delta $, so the union event happens with probability of at least $ 1- \delta $.
+        $ \forall \vec{w} $, we let $ \vec{w} \in \mathcal{H}_{ \left\lceil \log_2 ( {\Arrowvert \vec{w} \Arrowvert}_2 ) \right\rceil} $.
+        Then $ B_i \le 2 {\Arrowvert \vec{w} \Arrowvert}_2 $ and $ \frac{2}{\delta} = \frac{{(2i)}^2}{\delta} \le \frac{{(4 \log_2 ( {\Arrowvert \vec{w}  \Arrowvert}_2 ) )}^2}{\delta} $.
+    \end{proof}
+\end{theorem}
+
+\begin{theorem}
+    Suppose that $ \mathcal{D} $ is a distribution over $ \mathcal{X}\times \mathcal{Y} $ such that w.p.1 we have
+    $ {\Arrowvert \vec{x}  \Arrowvert}_\infty \le R $. Let $ \mathcal{H} = \left\{ \vec{w} \in \mathbb{R}^d : {\Arrowvert \vec{w}  \Arrowvert}_1 \le B \right\} $ and let $ l: \mathcal{H} \times Z \rightarrow \mathbb{R} $ be a loss function of the form $ \phi(a,y) $ and it's a $ \rho-Lipschitz $ function and $ \max_{a \in [-BR, BR]} \left| \phi(a, y) \right| \le c$, so
+    \[
+    \mathbb{P} \left\{ \forall \vec{w} \in \mathcal{H}, L_{ \mathcal{D} }( \vec{w} )
+    \le L_S( \vec{w} ) + 2 \rho BR \sqrt{ \frac{2\log(2d)}{m} }+ c \sqrt{ \frac{2 \ln(2/\delta)}{m} }\right\}
+    \ge 1 - \delta
+    \]
+    (Also following Chapter26).
+\end{theorem}
+
+\subsection{SOFT-SVM AND NORM REGULARIZATION}%
+\label{sub:soft_svm_and_norm_regularization}
+
+\begin{definition}
+    \textbf{(Soft-SVM).}
+    \[
+        \min_{ \vec{w}, b, \xi} \left( \lambda {\Arrowvert \vec{w}  \Arrowvert}_2^2 + \frac{1}{m} \sum^{m}_{i=1} \xi_i \right) \quad
+        s.t.\quad \forall i, y_i ( \langle \vec{w} , \vec{x} _i \rangle) + b \ge 1- \xi_i\ and\ \xi_i \ge 0
+    \]
+    Recall the definition of the hinge loss:
+    \[
+        l^{hinge} (( \vec{w} , b), ( \vec{x} , y) )  = \max \left\{ 0, 1 - y( \langle \vec{w} , \vec{x} \rangle + b) \right\}
+    \]
+    Then, the Soft-SVM rule changes into:
+    \[
+        \min_{ \vec{w}, b} \left( \lambda \Arrowvert \vec{w}  \Arrowvert^2_2 + L^{hinge}_S(( \vec{w}, b)) \right)
+    \]
+    If considering Soft-SVM for learning a homogenous halfspace, it's convenient to optimize
+    \[
+        \min_{ \vec{w} } \left( \lambda {\Arrowvert \vec{w}  \Arrowvert}_2^2 + L^{hinge}_S( \vec{w} ) \right),
+        \quad
+        L^{hinge}_S( \vec{w} ) = \frac{1}{m} \sum^{m}_{i=1} \max \left\{ 0, 1- y \langle \vec{w}, \vec{x}_i \rangle \right\}
+    \]
+\end{definition}

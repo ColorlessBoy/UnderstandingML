@@ -45,7 +45,6 @@ The solution to ridge regression becomes:
 in which, A is a positive semidefinite matrix.
 
 \begin{thm}
-	\label{thm_13_1}
 	Let $ \mathcal{X}\times [-1,1] \sim \mathcal{D} $, 
 	where $ \mathcal{X} = \{ \mathbf{x} \in \mathbb{R}^d : \Arrowvert \mathbf{x} \Arrowvert \le 1 \} $, 
 	and $ \mathcal{H} = \{ \mathbf{w} \in \mathbb{R}^d : \Arrowvert \mathbf{w} \Arrowvert \le B \} $.
@@ -60,12 +59,11 @@ in which, A is a positive semidefinite matrix.
 
 Exercise~\ref{exm_13_1} tells us how an algorithm with a bounded expected risk can be used to construct an agnostic PAC learner.
 \begin{exm}
-	\label{exm_13_1}
 	\textbf{From Bounded Expected Risk to Agnostic PAC Learning}:
 	Let A be an algorithm that guarantees the following: If $ m \ge m_\mathcal{H}(\epsilon) $
 	then for every distribution $ \mathcal{D} $ it holds that
 	\[ 
-		\underset{ S ~ \mathcal{D}^m} {\mathbb{E}} [L_\mathcal{D}(A(S))]
+		\underset{ S \sim \mathcal{D}^m} {\mathbb{E}} [L_\mathcal{D}(A(S))]
 		\le \min\limits_{h\in\mathcal{H}} L_\mathcal{D}(h)+\epsilon.
 	\]
 	We can get $ m_\mathcal{H}(\epsilon, \delta) $ from Bounded Expected Risk.
@@ -82,21 +80,21 @@ Exercise~\ref{exm_13_1} tells us how an algorithm with a bounded expected risk c
 		For the first k chunks, each chunk is larger than $ m_\mathcal{H}(\epsilon/4) $, 
 		then we have,
 		\[ 
-			\mathbb{P} \{ \min\limits_{i \in [k]} L_\mathcal{D}(A(S_i)) > \min\limits_{h \in \mathcal{H}} (h) + \epsilon/2  \}
+			\mathbb{P} \{ \min\limits_{i \in [k]} L_\mathcal{D}(A(S_i)) > \min\limits_{h \in \mathcal{H}} L_D (h) + \epsilon/2  \}
 			< \frac{1}{2^{k}} < \frac{\delta}{2}
 		\]
 		Step 3:
 		Then we apply ERM over finite class $ \{ h_1, \dots, h_{k} \} $ on the last chunk.
 		If we want get
 		\[ 
-			\mathbb{P} \{ L_\mathcal{D}(A_2(S_{k+1})) > \min\limits_{i \in [k]}(h_k) + \epsilon/2 \}
+			\mathbb{P} \{ L_\mathcal{D}(A_2(S_{k+1})) > \min\limits_{i \in [k]}L_\mathcal{D}(h_k) + \epsilon/2 \}
 			< \frac{\delta}{2} 
 		\]
 		we need
 		\[ 
 			m \ge m_\mathcal{H}(\epsilon/2, \delta/2) \ge m^{UC}_{\mathcal{H}}(\epsilon/4, \delta/2)
 			\ge 8 \left\lceil
-				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsion^2}
+				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsilon^2}
 				\right\rceil
 		\]
 		Overall, we have
@@ -105,7 +103,7 @@ Exercise~\ref{exm_13_1} tells us how an algorithm with a bounded expected risk c
 			m_\mathcal{H}(\epsilon/4)\lceil \log_2(2/\delta) \rceil
 			+ 
 			8 \left\lceil
-				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsion^2}
+				\frac{\log(4/\delta) + \log(\lceil \log_2(2/\delta) \rceil)}{\epsilon^2}
 				\right\rceil
 		\]
 		
@@ -123,7 +121,6 @@ Symbols in following sections:
 \end{itemize}
 
 \begin{thm}
-	\label{thm_13_2}
 	\begin{equation}
 		\label{equ_13_6}
 		\underset{S \sim \mathcal{D}^m} {\mathbb{E}}
@@ -145,7 +142,7 @@ In light of Theorem~\ref{thm_13_2}, the algorithm should both fit the training s
 	if for every distribution $ \mathcal{D} $
 	\begin{equation}
 		\underset{(S,z') \sim \mathcal{D}^{m+1}, i \sim U(m)} {\mathbb{E}}
-		[l(A(S^{(i)}, z_i)) - l(A(S), z_i)] \le \epsilon(m)
+		[l(A(S^{(i)}), z_i) - l(A(S), z_i)] \le \epsilon(m)
 	\end{equation}
 \end{defn}
 
@@ -166,6 +163,7 @@ We have
 
 Let $ A(S) = \underset{\mathbf{w}}{\arg\min} \left( L_S(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 \right) $,
 and $ f_S(\mathbf{w}) = L_S(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 $.Then
+($ f_S( \textbf{w}) $ is $ 2\lambda-strongly $ convex.)
 \begin{equation}
 	\label{equ_13_7}
 	f_S(\mathbf{v}) - f_S(A(S)) \ge \lambda \Arrowvert \mathbf{v} - A(S) \Arrowvert^2
@@ -232,7 +230,7 @@ If the loss is $ \beta-smooth $ and nonnegative then it is also self-bounded:
 $ \Arrowvert \nabla f(\mathbf{w}) \Arrowvert^2 \le 2 \beta f(\mathbf{w}) $.
 
 \begin{equation}
-	\label{equ_13_10}
+	\label{equ_13_14}
 	\begin{aligned}
 		& l( A(S^{(i)}), z_i) - l( A(S), z_i) \\
 		\le & \Arrowvert \nabla l ( A(S), z_i) \Arrowvert \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
@@ -245,7 +243,7 @@ We also have:
 \begin{equation}
 	l( A(S), z') - l( A(S^{(i)}), z')
 	\le \sqrt{2\beta l( A( S^{(i)} ), z')}	\Arrowvert A(S^{(i)}) - A(S) \Arrowvert
-	+\frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert
+	+\frac{\beta}{2} \Arrowvert A(S^{(i)}) - A(S) \Arrowvert^2
 \end{equation}
 Put these two equation into Equation~\ref{equ_13_10}, we can get:
 \[ 
@@ -259,7 +257,7 @@ We assume $ \lambda \ge 2\beta/m $, we have
 	\frac{\sqrt{8\beta}}{\lambda m}
 	\left( \sqrt{l(A(S), z_i)} + \sqrt{l(A(S^{(i)}), z')}\right)
 \]
-Combining the preceding with Equation~\ref{equ_13_10}, we have
+Combining the preceding with Equation~\ref{equ_13_14}, we have
 
 \begin{equation}
 	\begin{aligned}
@@ -338,17 +336,17 @@ Let us play with this equation:
 \[
 	\begin{aligned}
 		&\mathbb{E}_S[L_\mathcal{D}(A(S))] \le \left( 1 + \frac{24\beta}{\lambda m} \right)
-		\left( L_\mathcal{D}(\mathbf{w}) + \lambda \Arrowvert \mathbf{w} \Arrowvert^2 \right)\\
-		=& L_\mathcal{D}(\mathbf{w}) + 
-		\frac{24 \beta L_\mathcal{D}(\mathbf{w})}{\lambda m} + \lambda \Arrowvert \mathbf{w} \Arrowvert^2
-		+ \frac{24\beta \Arrowvert \mathbf{w} \Arrowvert^2}{m} \\
-		\le& L_\mathcal{D}(\mathbf{w}) + 
-		\frac{24 \beta L_\mathcal{D}(\mathbf{w})}{\lambda m} + \lambda B^2
+		\left( L_\mathcal{D}(\mathbf{w^*}) + \lambda \Arrowvert \mathbf{w^*} \Arrowvert^2 \right)\\
+		=& L_\mathcal{D}(\mathbf{w^*}) + 
+		\frac{24 \beta L_\mathcal{D}(\mathbf{w^*})}{\lambda m} + \lambda \Arrowvert \mathbf{w^*} \Arrowvert^2
+		+ \frac{24\beta \Arrowvert \mathbf{w^*} \Arrowvert^2}{m} \\
+		\le& L_\mathcal{D}(\mathbf{w^*}) + 
+		\frac{24 \beta L_\mathcal{D}(\mathbf{w^*})}{\lambda m} + \lambda B^2
 		+ \frac{24\beta B^2}{m} \\
-		\le& L_\mathcal{D}(\mathbf{w}) + 
+		\le& L_\mathcal{D}(\mathbf{w^*}) + 
 		\frac{24 \beta C}{\lambda m} + \lambda B^2
-		+ \frac{24\beta B^2}{m} \quad (L_\mathcal{D}(\mathbf{w}) \le C) \\
-		\le& L_\mathcal{D}(\mathbf{w}) + 
+        + \frac{24\beta B^2}{m} \quad (L_\mathcal{D}(\mathbf{w^*}) \le L_ \mathcal{D}( \vec{0} ) = C) \\
+		\le& L_\mathcal{D}(\mathbf{w^*}) + 
 		\frac{24 \beta C B^2}{\alpha \epsilon m} + \alpha \epsilon
 		+ \frac{24\beta B^2}{m} \quad \left(\lambda = \frac{\alpha\epsilon}{B^2}, \alpha \in (0,1)\right)
 	\end{aligned}
@@ -360,6 +358,10 @@ we need
 	m \ge \frac{C + \alpha \epsilon}{ (1-\alpha)\alpha \epsilon^2} \cdot 24 \beta B^2
 	\quad or \quad
 	m \ge \frac{2C + \epsilon}{\epsilon^2} \cdot 48 \beta B^2 \quad ( \alpha = 1/2)
+\]
+
+\[
+    \left( \lambda \ge \frac{2 \beta}{m}, \lambda = \frac{\alpha \epsilon}{B^2} \right)
 \]
 
 

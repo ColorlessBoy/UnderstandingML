@@ -1,6 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1554972610 "head.tex" "head.pdf" "head" 1554972611
-  "/etc/texmf/web2c/texmf.cnf" 1553742816 475 c0e671620eb5563b2130f56340a5fde8 ""
+["pdflatex"] 1564575097 "head.tex" "head.pdf" "head" 1564576862
+  "/etc/texmf/web2c/texmf.cnf" 1561474345 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1480098698 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -144,14 +144,15 @@
   "/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty" 1480098843 55589 34128738f682d033422ca125f82e5d62 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
-  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1553848337 2700761 ac0584cc9514ab21918550a6948c4ee2 ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1553848353 4129233 52a100d0a0361be35ee8e8e9f4aaf79c ""
-  "ch10.tex" 1554972609 13711 8e66a2d0e72eb956e71ecb1ca2aa7757 ""
-  "head.aux" 1554972610 952 e79d3ab08239c3f911788d43bd677e15 ""
-  "head.tex" 1554905313 544 91c92a7b38d5b2423a59ab462a2da658 ""
-  "head.toc" 1554972610 456 15589393079c7537ed9c306209d4940e ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1561474377 2700761 ac0584cc9514ab21918550a6948c4ee2 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1561474395 4128994 f5c978851ccb8f9b02061b85555fbf48 ""
+  "adaboost.tex" 1564575095 3668 f2fc64209548f06a20514cf9ddbba67e ""
+  "ch10.tex" 1564544793 13749 2e7650868ec24cf2fb05f7060b8b4f08 ""
+  "head.aux" 1564575097 1200 0007c602b32b2d6380c32cecccc1135b ""
+  "head.tex" 1564563621 566 90973ff4e6cb177bedf2378bbc15284b ""
+  "head.toc" 1564575097 585 d2a8c7f709fe66201353d8d19bd45368 ""
   (generated)
-  "head.aux"
-  "head.pdf"
   "head.toc"
+  "head.pdf"
   "head.log"
+  "head.aux"

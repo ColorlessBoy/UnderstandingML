@@ -47,7 +47,7 @@ ERM with respect to B as the weak learning algorithm.For this to work, we nned B
 two properties:
 \begin{itemize}
 	\item $ERM_B$ is efficiently implementable.
-	\item For every sample taht is labeled by some hypothesis from $\mathcal{H}$, any
+	\item For every sample that is labeled by some hypothesis from $\mathcal{H}$, any
 		$ERM_B$ hypothesis will have an error of at most $1/2-\gamma$.
 \end{itemize}
 
@@ -63,7 +63,7 @@ two properties:
 			\begin{proof}
 				($ERM_B$ is a $\gamma-weak-learner$ for $\mathcal{H}$)\\
 				Since $\forall \mathcal{D}, \exists h \in B, L_\mathcal{D}(h) \le 1/3$,\\
-				In ch6, we have that when $m \ge \log\frac{2/\delta}{\epsilon}$ : 
+                In ch6, we have that when $m \ge \Omega\left\{ \frac{\log 2/\delta}{\epsilon^2} \right\}$ : 
 				\[
 					\mathbb{P}\{L_\mathcal{D}(ERM_B(S)) \le min L_\mathcal{D}(h) + \epsilon\} \ge 1-\delta
 				.\]

@@ -1,6 +1,6 @@
 # Fdb version 3
-["pdflatex"] 1554293835 "head.tex" "head.pdf" "head" 1554293835
-  "/etc/texmf/web2c/texmf.cnf" 1553742816 475 c0e671620eb5563b2130f56340a5fde8 ""
+["pdflatex"] 1564486706 "head.tex" "head.pdf" "head" 1564486706
+  "/etc/texmf/web2c/texmf.cnf" 1561474345 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1480098698 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -137,14 +137,14 @@
   "/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty" 1480098843 55589 34128738f682d033422ca125f82e5d62 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
-  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1553848337 2700761 ac0584cc9514ab21918550a6948c4ee2 ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1553848353 4129233 52a100d0a0361be35ee8e8e9f4aaf79c ""
-  "ch9.tex" 1554293834 7994 04e8d674da5774121dbc91ac8ebeda32 ""
-  "head.aux" 1554293835 990 a6ce117977e2ba5d88fcc93c7544d9d5 ""
-  "head.tex" 1554269696 516 5eb407e9930ec2fbfc5ba543ceebae55 ""
-  "head.toc" 1554293835 687 b401900b4ad72ca6e8dd75a6f877a6ed ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1561474377 2700761 ac0584cc9514ab21918550a6948c4ee2 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1561474395 4128994 f5c978851ccb8f9b02061b85555fbf48 ""
+  "ch9.tex" 1562721510 7994 04e8d674da5774121dbc91ac8ebeda32 ""
+  "head.aux" 1564486706 990 a6ce117977e2ba5d88fcc93c7544d9d5 ""
+  "head.tex" 1562721510 516 5eb407e9930ec2fbfc5ba543ceebae55 ""
+  "head.toc" 1564486706 687 b401900b4ad72ca6e8dd75a6f877a6ed ""
   (generated)
-  "head.toc"
-  "head.log"
   "head.pdf"
   "head.aux"
+  "head.log"
+  "head.toc"

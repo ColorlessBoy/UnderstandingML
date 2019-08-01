@@ -1,0 +1,73 @@
+% Notes of Adaboost
+
+\subsection{Revist Adaboost}%
+\label{sec:revist_adaboost}
+
+\begin{defn}
+    \textbf{(Weak hypothesis class).}
+    We call a hypothesis class is a weak hypothesis class of a training set $ S $, we means that
+    \begin{equation}
+        \mathcal{H}_{weak} = \left\{ 
+            h_1, h_2, \ldots, h_N : \forall i \in [N], L^{0-1}_S(h_i) \le \frac{1}{2} - \gamma
+        \right\}
+    \end{equation}
+\end{defn}
+
+\begin{defn}
+    \textbf{(Adaboost hypothesis class).}
+    \begin{equation}
+        \mathcal{H}_{ada} = \left\{ \sum^{N}_{i=1} \alpha_i h_i : \alpha_i \in \mathbb{R} \wedge h_i \in \mathcal{H}_{weak} \right\}
+    \end{equation}
+\end{defn}
+
+Adaboost minimizes the exponential loss
+\[
+    L^{e x p}_S(h) = \frac{1}{m} \sum^{m}_{i=1} \exp \left\{ -y_i h(x_i) \right\}
+\]
+
+Furthermore, Adaboost algorithm is the algorithm using coordinate gradient descent to solve the problem.
+
+\begin{proof}
+    For convenience, we denote that
+    \[
+        mL( \vec{\alpha} ) = \sum^{m}_{i=1} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) \right\}
+    \]
+    If we want walk on $ k th $ coordination, then the optimal step size $ \eta $ can get as follows.
+    \begin{align*}
+        \min_{\eta} mL( \vec{\alpha} + \eta \vec{e}_k)
+        =\min_\eta & \sum^{m}_{i=1} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) - y_i h_k(x_i)\eta \right\} \\
+        \frac{\partial{mL( \vec{\alpha} + \eta \vec{e_k} )}}{\partial{\eta}} 
+        =& -\sum^{m}_{i=1} y_i h_k(x_i)\exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) - y_i h_k(x_i)\eta \right\} \\
+        =& -\sum^{}_{i: y_i = h_k(x_i)} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) \right\} \exp (- \eta )\\
+         & +\sum^{}_{i: y_i \ne h_k(x_i)} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) \right\} \exp (\eta) \\
+    \end{align*}
+    Let $ Z = \sum^{m}_{i=1} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) \right\} = mL( \vec{a} )$,
+    $ \mathcal{D} = \left\{ \mathcal{D}_i =  \frac{1}{Z} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i) \right\} \right\} $,
+    $ \epsilon_k = \mathbb{E}_{ \mathcal{D}}[ 1_{\left\{ y_i \ne h_k(x_i) \right\}}] $ 
+    then,
+    \begin{align*}
+        \frac{\partial{mL( \vec{\alpha} + \eta \vec{e_k} )}}{\partial{\eta}} 
+        =& -\sum^{}_{i: y_i = h_k(x_i)} \mathcal{D}_i Z\exp (- \eta )
+          +\sum^{}_{i: y_i \ne h_k(x_i)} \mathcal{D}_i Z\exp (\eta) \\
+        \Rightarrow 0 =& -(1 - \epsilon_k) \exp(-\eta) + \epsilon_k \exp(\eta)
+        \Rightarrow \eta = \frac{1}{2} \log \left(\frac{1 - \epsilon_k}{\epsilon_k} \right)
+    \end{align*}
+\end{proof}
+
+\subsection{Error analysis}%
+\label{sub:error_analysis}
+
+\begin{align*}
+    \frac{L( \vec{a} + \eta \vec{e_k} )}{L( \vec{a} )} =& \frac{1}{Z}  
+    \sum^{m}_{i=1} \exp \left\{ - y_i \sum^{N}_{j=1} \alpha_j h_j(x_i)\right\} \exp \left\{- y_i h_k(x_i)\eta \right\} \\
+    =& \sum^{m}_{i=1} \mathcal{D}_i \exp \left\{- y_i h_k(x_i)\eta \right\} \\
+    =& \sum^{}_{i: y_i = h_k(x_i)} \mathcal{D}_i \exp (- \eta )
+          +\sum^{}_{i: y_i \ne h_k(x_i)} \mathcal{D}_i \exp (\eta) \\
+    =& ( 1 - \epsilon_k) \exp(-\eta) + \epsilon_k \exp(\eta) \\
+    =& 2 \sqrt{\epsilon_{k} (1 - \epsilon_k)} \le 2 \sqrt{\left( \frac{1}{2} - \gamma\right)\left( \frac{1}{2} + \gamma\right)}, \quad ( \epsilon_k \le \frac{1}{2} - \gamma )\\
+    \le& \sqrt{1 - 4\gamma^2} \le \exp(- 2 \gamma^2)
+\end{align*}
+If $ \vec{\alpha}_0 = \vec{0} $, then $ L( \vec{\alpha}_0) = 1 \Rightarrow L( \vec{a}_T ) \le \exp(-2\gamma^2 T) $. 
+
+We already have that $ sign \left\{ -y h(x) \right\} \le \exp \left\{ -y_i h(x) \right\}$, so
+$ \forall h, L^{0-1}_S(h) \le L^{e x p}_S(h) \le \exp (-2 \gamma^2 T) $.

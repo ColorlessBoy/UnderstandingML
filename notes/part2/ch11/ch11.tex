@@ -17,7 +17,7 @@ The SRM paradigm has been described and analyzed in Section 7.2.
 Consider a countable sequence of hypothesis classes $\mathcal{H}_1, \mathcal{H}_2, \mathcal{H}_3, \dots$.
 $\forall d$, the $\mathcal{H}_d$ enjoys the uniform convergence property
 \begin{equation}
-	m^{UC}_{\mathcal{H}_d}(\epsilon,\delta)(\epsilon, \delta) \le 
+	m^{UC}_{\mathcal{H}_d}(\epsilon, \delta) \le 
 	\frac{g(d)\log(1/\delta)}{\epsilon^2}
 \end{equation}
 
@@ -56,7 +56,7 @@ Validatiun can be naturally used for model selection.
 	be arbitrary set of predictors and assume that the loss function is in $ [0, 1]  $. Assume that a validation set V of size $ m_v $ 
 	is sampled independent of $ \mathcal{H} $. Then, 
 	\[ \forall h\in\mathcal{H}, \mathbb{P} \left\{ |L_\mathcal{D} - L_V(h)| \le 
-	\sqrt {\frac{\log(2|\mathcal{H}/\delta)}{2m_v}}  \right\} \ge 1-\delta.\]
+	\sqrt {\frac{\log(2|\mathcal{H}|/\delta)}{2m_v}}  \right\} \ge 1-\delta.\]
 \end{thm}
 
 \subsubsection{The Model-Selection Curve}

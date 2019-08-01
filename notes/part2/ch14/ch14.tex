@@ -15,7 +15,7 @@ By using Jensen's inequality,
 	f(\bar{\mathbf{w}}) - f(\mathbf{w}^*)
 	=& f \left( \frac{1}{T} \sum\limits^T_{t=1} \mathbf{w}^{(t)} \right) - f(\mathbf{w}^*) \\
 	\le& \frac{1}{T} \sum\limits^T_{t=1} f \left( \mathbf{w}^{(t)} \right) - f(\mathbf{w}^*) \\
-	=& \frac{1}{T} \sum\limits^T_{t=1} f \left( \mathbf{w}^{(t)} - f(\mathbf{w}^*) \right) \\
+    =& \frac{1}{T} \sum\limits^T_{t=1} \left( f(\mathbf{w}^{(t)}) - f(\mathbf{w}^*) \right) \\
 	\le& \frac{1}{T} \sum\limits^T_{t=1} \langle \mathbf{w}^{(t)} - \mathbf{w}^*, \nabla f(\mathbf{w}^{(t)}) \rangle
 \end{align*}
 
@@ -58,6 +58,8 @@ By using Jensen's inequality,
 	\sqrt{\Arrowvert \mathbf{w}^* \Arrowvert^2 \cdot \sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2}\\
 	\le& \frac{B \rho}{\sqrt T}
 \end{align*}
+($ f $ is a convex, $ \rho-Lipschitz $ function. 
+$ \Arrowvert \vec{v}_t \Arrowvert = \Arrowvert \nabla f( \textbf{w}_t) \Arrowvert \le \rho $)
 
 \subsection{SUBGRADIENTS}
 \begin{defn} (Subgradient) $ \partial f $:
@@ -82,7 +84,7 @@ By using Jensen's inequality,
 	Necessity:Let $ \mathbf{w} \in A, \mathbf{v} \in \partial f(\mathbf{w}), 
 	\mathbf{u} = \mathbf{w} + \epsilon \mathbf{v} / \Arrowvert \mathbf{v} \Arrowvert $, 
 	Then, we have:
-	\[ \rho \epsilon \ge \rho \Arrowvert \mathbf{u} - \mathbf{w} \Arrowvert \ge f(\mathbf{u}) - f(\mathbf{w})
+	\[ \rho \epsilon = \rho \Arrowvert \mathbf{u} - \mathbf{w} \Arrowvert \ge f(\mathbf{u}) - f(\mathbf{w})
 	\ge \langle \mathbf{v, \mathbf{u} - \mathbf{w}} \rangle = \epsilon \Arrowvert \mathbf{v} \Arrowvert \]
 \end{lem}
 
@@ -134,7 +136,7 @@ The analysis of the convergence rate remains unchanged.
 			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle \right]
 			= 
 			\underset{\mathbf{v}_{1:t-1}}{\mathbb{E}}
-			\underset{\mathbf{v}_{1:t}}{\mathbb{E}}
+			\underset{\mathbf{v}_{t}}{\mathbb{E}}
 			\left[ \langle \mathbf{w}^{(t)}-\mathbf{w}^*, \mathbf{v}_t \rangle | \mathbf{v}_{1:t-1}\right]
 			=
 			\underset{\mathbf{v}_{1:t-1}}{\mathbb{E}}
@@ -264,7 +266,7 @@ We can set $ \eta_t = \frac{B}{\rho \sqrt t} $ and achieve a similar bound.
 			\frac{\rho^2}{2\lambda} \sum\limits^T_{t=1} \frac{1}{t}
 			\le \frac{\rho^2}{2\lambda}(1+\ln(T)).
 		\]
-		(Because $ \int^{T}_1 1/x dx < \sum^T_{t=2} 1/t$) 
+		(Because $ \int^{T}_1 1/x dx > \sum^T_{t=2} 1/t$) 
 	\end{proof}
 \end{thm}
 
@@ -312,22 +314,22 @@ We can get $ \mathbb{E} [L_{\mathcal{D}}(\bar{\mathbf{w}})]  \le
 	 Assume that for all z, the loss function $ l(\cdot, z) $ is convex, $ \beta-smooth $, and nonnegative.
 	 Then, if we run the SGD algorithm for minimzing $ L_{\mathcal{D}}(\mathbf{w}) $ we have that:
 	 \begin{equation}
-	 	\forall \mathbf{w},\quad 
+	 	\forall \mathbf{w^*},\quad 
 		\mathbb{E} [L_{\mathcal{D}}(\bar{\mathbf{w}})]
 		\le \frac{1}{1-\eta\beta}
 		\left( 
-			L_{\mathcal{D}}(\mathbf{w}) + \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta T}	
+			L_{\mathcal{D}}(\mathbf{w^*}) + \frac{\Arrowvert \mathbf{w^*} \Arrowvert^2}{2\eta T}	
 		\right)
 	 \end{equation}
 	 \begin{proof}
 	 	Let $ z_1, \dots, z_T $ be the random samples of SGD algorithm,
 		and $ f_t(\cdot) = l(\cdot, z_t) $. So
 		\[ 
-			\sum\limits^T_{t=1} (f_t(\mathbf{w}^{(t)}) - f_t(\mathbf{w}))
-			\le \sum\limits^T_{t=1} \langle \mathbf{v}_t, \mathbf{w}^{(t)} - \mathbf{w} \rangle
-			\le \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta} + 
+			\sum\limits^T_{t=1} (f_t(\mathbf{w}^{(t)}) - f_t(\mathbf{w}^*))
+			\le \sum\limits^T_{t=1} \langle \mathbf{v}_t, \mathbf{w}^{(t)} - \mathbf{w^*} \rangle
+			\le \frac{\Arrowvert \mathbf{w^*} \Arrowvert^2}{2\eta} + 
 			\frac{\eta}{2} \sum\limits^T_{t=1} \Arrowvert \mathbf{v}_t \Arrowvert^2 
-			\le \frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta} + 
+			\le \frac{\Arrowvert \mathbf{w^*} \Arrowvert^2}{2\eta} + 
 			\eta \beta \sum\limits^{T}_{t=1}f_t(\mathbf{w}^{(t)})
 		\]
 		The last inequation comes from self-bounded property.
@@ -335,13 +337,21 @@ We can get $ \mathbb{E} [L_{\mathcal{D}}(\bar{\mathbf{w}})]  \le
 			\frac{1}{T}\sum\limits^T_{t=1}f_t(\mathbf{w}^{(t)})
 			\le \frac{1}{1-\eta\beta}
 			\left( 
-				\frac{1}{T}	\sum\limits^T_{t=1}f_t(\mathbf{w}) + 
-			\frac{\Arrowvert \mathbf{w} \Arrowvert^2}{2\eta T}	
+				\frac{1}{T}	\sum\limits^T_{t=1}f_t(\mathbf{w}^*) + 
+			\frac{\Arrowvert \mathbf{w}^* \Arrowvert^2}{2\eta T}	
 			\right)
 		\]
 		Remaining steps are taking expectation of both side and using Jensen's inequation.
 	 \end{proof}
  \end{thm}
+\begin{align*}
+    \mathbb{E}{L_ \mathcal{D}(\bar{\textbf{w}})}
+    \le& L_ \mathcal{D}(\textbf{w}^*) + \frac{\eta \beta}{1- \eta \beta} L_ \mathcal{D}( \textbf{w}^*)
+    + \frac{\Arrowvert \mathbf{w}^* \Arrowvert^2}{(1 - \eta \beta)2 \eta T} \\
+    \le& L_ \mathcal{D}(\textbf{w}^*) + \frac{\eta \beta}{1- \eta \beta} + \frac{\Arrowvert \mathbf{w}^* \Arrowvert^2}{(1 - \eta \beta)2 \eta T},
+    \quad (L_ \mathcal{D} \le 1) \\
+\end{align*}
+It's easy to construct $ \eta, \beta, T $ letting $ \mathbb{E}L_ \mathcal{D} (\bar{\mathbf{w}}) \le \min_{ \mathbf{w} \in \mathcal{H}} L_ \mathcal{D}( \mathbf{w}) + \epsilon$. 
 
  \subsubsection{SGD for Regularized Loss Minimization}
 

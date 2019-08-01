@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.3.29)  11 APR 2019 16:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.6.25)  31 JUL 2019 20:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -442,20 +442,25 @@ Overfull \hbox (3.23997pt too wide) in paragraph at lines 140--141
 []\OT1/cmr/m/n/10 We use fol-low-ing equa-tion to cal-cu-late Equ(10.1[]) in $\OML/cmm/m/it/10 O\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 dm\OT1/cmr/m/n/10 )$ in-stead of $\OML/cmm/m/it/10 O\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 dm[]\OT1/cmr/m/n/10 )$. 
  []
 
-[3] [4] [5] [6]) [7] (./head.aux) ) 
+[3] [4] [5] [6]) (./adaboost.tex [7]
+Overfull \hbox (61.2264pt too wide) in paragraph at lines 43--48
+\OT1/cmr/m/n/10 Let $\OML/cmm/m/it/10 Z \OT1/cmr/m/n/10 = [][] [] [] = \OML/cmm/m/it/10 mL\OT1/cmr/m/n/10 ([])$, $\OMS/cmsy/m/n/10 D \OT1/cmr/m/n/10 = []$,
+ []
+
+) [8] (./head.aux) ) 
 Here is how much of TeX's memory you used:
- 12312 strings out of 492982
- 238975 string characters out of 6134896
- 288801 words of memory out of 5000000
- 15628 multiletter control sequences out of 15000+600000
+ 12317 strings out of 492982
+ 239050 string characters out of 6134896
+ 288822 words of memory out of 5000000
+ 15630 multiletter control sequences out of 15000+600000
  14243 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  54i,11n,73p,828b,282s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on head.pdf (7 pages, 228855 bytes).
+Output written on head.pdf (8 pages, 241997 bytes).
 PDF statistics:
- 107 PDF objects out of 1000 (max. 8388607)
- 78 compressed objects within 1 object stream
+ 110 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
