@@ -38,7 +38,7 @@ We have $ m_\mathcal{H}(\epsilon, \delta) \le m^{UC}_\mathcal{H}(\epsilon/2, \de
     \]
 \end{definition}
 
-Analogizing the concept of validation set which used to estimate the representativeness of $ S $, we define \textbf{rademacher complexity}.
+Analogizing the concept of validation set which used to estimate the representativeness of $ S $, we define \textbf{Rademacher complexity}.
 \begin{definition}
     \textbf{(The rademacher complexity of $ \mathcal{F} $ w.r.t.\ $ S $).}
     \begin{equation}
@@ -54,7 +54,7 @@ Analogizing the concept of validation set which used to estimate the representat
     \]
     More generally, given a set of vectors, $ A \subset \mathbb{R}^m$, we define
     \[
-        R(A) := \frac{1}{m} \mathbb{E}_\sigma \left[ \sup_{a \in A} \sum^{m}_{i=1} \sigma_i a_i \right]
+        R(A) := \frac{1}{m} \mathbb{E}_\sigma \left[ \sup_{\mathbf{a} \in A} \sum^{m}_{i=1} \sigma_i \mathbf{a}_i \right]
     \]
 \end{definition}
 
@@ -198,7 +198,7 @@ Analogizing the concept of validation set which used to estimate the representat
     Let $ A = \{ \mathbf{a}_1, \ldots, \mathbf{a}_N \} $ be a finite set of vectors in $ \mathbf{R}^m $.
     Define $ \bar{ \mathbf{a}} = \frac{1}{N} \sum^{N}_{i=1} \mathbf{a}_i $. Then,
     \begin{equation}
-        R(A) \le \max_{\mathbf{a} \in A} \Arrowvert \mathbf{a} - \bar{\mathbf{a}} \Arrowvert
+        R(A) \le \max_{\mathbf{a} \in A} \Arrowvert \mathbf{a} - \bar{\mathbf{a}} \Arrowvert_2
         \frac{\sqrt{2\log(N)}}{m} 
     \end{equation}
     \begin{proof}
@@ -211,12 +211,12 @@ Analogizing the concept of validation set which used to estimate the representat
             \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} \mathbb{E}_{\sigma_i} [e^{\sigma_i a_i}] \right) 
             \le \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} [e^{a_i} + e^{-a_i}]/2 \right) \\
             \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} e^{a_i^2/2} \right) 
-            = \log \left( \sum^{}_{a \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert^2/2 \right) \right)\\
-            \le& \log \left( \left| A \right| \max_{\mathbf{a} \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert^2/2 \right) \right) = \log \left( \left| A \right| \right) + \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert^2 /2)
+            = \log \left( \sum^{}_{a \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert_2^2/2 \right) \right)\\
+            \le& \log \left( \left| A \right| \max_{\mathbf{a} \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert_2^2/2 \right) \right) = \log \left( \left| A \right| \right) + \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert_2^2 /2)
         \end{align*}
         Since $ R(A) = R(A')/\lambda $ we obtain that
         \[
-            R(A) \le \frac{\log(|A|) + \lambda^2 \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert^2 /2)}{\lambda m}
+            R(A) \le \frac{\log(|A|) + \lambda^2 \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert_2^2 /2)}{\lambda m}
         \]
     \end{proof}
 \end{lemma}
@@ -262,8 +262,8 @@ Analogizing the concept of validation set which used to estimate the representat
             mR( \mathcal{H}_2 \circ S) =& \mathbb{E}_\sigma \left[ \sup_{\mathbf{a} \in \mathcal{H}_2 \circ S} \sum^{m}_{i=1} \sigma_i a_i \right] = \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_2 \le 1} \sum^{m}_{i=1} \sigma_i \langle \mathbf{w}, \mathbf{x}_i \rangle \right]\\
             =& \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_2 \le 1} \langle \mathbf{w}, \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \rangle \right]
             \le \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_2 \right]\\
-        \le& {\left( \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert^2 \right] \right)}^{1/2} \\
-        \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert^2 \right]
+        \le& {\left( \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_2^2 \right] \right)}^{1/2} \\
+        \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_2^2 \right]
         =& \sum^{}_{i\ne j} \langle \mathbf{x_i}, \mathbf{x_j} \rangle \mathbb{E}_\sigma[\sigma_i \sigma_j]
         + \sum^{m}_{i=1} \langle \mathbf{x}_i, \mathbf{x}_i \rangle \mathbb{E}_\sigma[\sigma_i^2]\\
         =& \sum^{m}_{i=1} \Arrowvert \mathbf{x}_i \Arrowvert^2_2 \le m \max_i \Arrowvert \mathbf{x}_i \Arrowvert^2_2
@@ -284,6 +284,20 @@ Analogizing the concept of validation set which used to estimate the representat
             = \mathbb{E}_\sigma \left[ \sup_{\mathbf{w}:\Arrowvert \mathbf{w} \Arrowvert_1 \le 1} \langle \mathbf{w}, \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \rangle \right]
             \le \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_\infty \right].
         \end{align*}
+        Let $ j \in [n] $ and $ \mathbf{v}_j = ( x_{1,j}, \ldots, x_{m,j}) \in \mathbb{R}^m $,
+        and $ V = \{ \mathbf{v}_1, \ldots, \mathbf{v}_n, - \mathbf{v}_1, \ldots, - \mathbf{v}_n \} $.
+        Note that $ \Arrowvert \mathbf{v}_j \Arrowvert_2 \le \sqrt{m} \max_i \Arrowvert \mathbf{x}_i \Arrowvert_\infty $.
+        \begin{align*}
+            \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_\infty \right]
+            =& \mathbb{E}_\sigma \left[ \max_j | \langle \mathbf{v}_j, \sigma \rangle | \right]
+            = m R(V) \\
+            \le& \max_j \Arrowvert \mathbf{v}_j \Arrowvert_2 \frac{\sqrt{2\log(2n)}}{m} \\
+            \le& \max_i \Arrowvert \mathbf{x}_i \Arrowvert_\infty \sqrt{2\log(2n)/m}
+        \end{align*}
     \end{proof}
 \end{lemma}
+
+\subsection{GENERALIZATION BOUNDS FOR SVM}%
+\label{sub:generalization_bounds_for_svm}
+
 
