@@ -297,6 +297,23 @@ Analogizing the concept of validation set which used to estimate the representat
     \end{proof}
 \end{lemma}
 
+In chapter6, we defined ``Restriction of $ \mathcal{H} $ to S '':
+\[
+    \mathcal{H}_S = \left\{ (h(s_1), h(s_2), \ldots, h(s_m)) : h \in \mathcal{H}, s_i \in S\right\},
+\]
+Here is the growth function:
+\[
+    \forall m \in \mathbb{N}, \Pi_{ \mathcal{H}} (m) = \max_{S \sim \mathcal{D}^m} \left| \mathcal{H}_S \right|
+\]
+Then, the VC-dimension is:
+\[
+    VCdim( \mathcal{H}) = \max \left\{ m: \Pi_ \mathcal{H}(m) = 2^m \right\}
+\]
+Using Massart Lemma:
+\[
+    R_m(\mathcal{H} \circ S) = \mathbb{E}_S \left[ \mathbb{E}_{\vec{\sigma} } \left[ \sup_{h_S \in \mathcal{H}_S} \frac{1}{m} \langle \vec{\sigma}, h_S \rangle \right] \right] \le \mathbb{E}_S \left[ \frac{\sqrt{m} \sqrt{2 \log (\Pi_{\mathcal{H}})}}{m}  \right]
+\]
+
 \subsection{GENERALIZATION BOUNDS FOR SVM}%
 \label{sub:generalization_bounds_for_svm}
 

@@ -16,7 +16,7 @@
 \begin{definition}
     \textbf{(Hard -SVM rule).}
     \[
-        \arg\max_{ (\vec{w}, b): \Arrowvert \vec{w} \Arrowvert = 1 } \min_{i \in [m]} \left| \langle \vec{w}, \vec{x}_i \rangle + b \right| \quad \text{s.t.}\quad \forall i, y_i ( \langle \vec{w} , \vec{x}_i \rangle + b) > 0
+        \arg\max_{ (\vec{w}, b): \Arrowvert \vec{w} \Arrowvert = 1 } \min_{i \in [m]} \left| \langle \vec{w}, \vec{x}_i \rangle + b \right| \quad \text{s.t.}\quad \forall i, y_i ( \langle \vec{w} , \vec{x}_i \rangle + b) > 0G
     \]
     We can change it into
     \[
@@ -29,8 +29,7 @@
     The regularizing $ b $ usually does not make a significant difference to the sample complexity.
 \end{definition}
 
-\subsection{GENERALIZATION BOUNDS FOR SVM}%
-\label{sub:generalization_bounds_for_svm}
+\subsubsection{GENERALIZATION BOUNDS FOR SVM}%
 
 \begin{definition}
     \textbf{(Loss function).}
@@ -119,3 +118,125 @@ The preceding theorem depends on $ {\Arrowvert \vec{w}^* \Arrowvert}_2  $, which
         L^{hinge}_S( \vec{w} ) = \frac{1}{m} \sum^{m}_{i=1} \max \left\{ 0, 1- y \langle \vec{w}, \vec{x}_i \rangle \right\}
     \]
 \end{definition}
+
+\subsubsection{The Sample Complexity of Soft-SVM}%
+
+\begin{corollary}
+    Let $ \mathcal{X} = \left\{ \mathbf{x} : \Arrowvert \mathbf{x} \Arrowvert \le \rho \right\} $. Then $ L^{hinge}_S( \mathbf{w}) $ is $ \Arrowvert \mathbf{x} \Arrowvert -Lipschitz $.
+    \[
+        \mathbb{E}_{S \sim \mathcal{D}^m} [L^{0-1}_D( A(S) ) ] \le
+        \mathbb{E}_{S \sim \mathcal{D}^m} [L^{hinge}_D( A(S) ) ]
+        \le L^{hinge}_D( \mathbf{u}) + \lambda \Arrowvert \mathbf{u} \Arrowvert^2 + \frac{2 \rho^2}{ \lambda m} 
+        \le L^{hinge}_D( \mathbf{u}) + \sqrt{ \frac{8 \rho^2 B^2}{m} }
+    \]
+    \[
+        \mathbb{E}_{S \sim \mathcal{D}^m} [L^{0-1}_D( A(S) ) ]
+        \le \min_{ \mathbf{w}: \Arrowvert \mathbf{w} \Arrowvert \le B}L^{hinge}_D( \mathbf{u}) + \sqrt{ \frac{8 \rho^2 B^2}{m} }
+    \]
+\end{corollary}
+
+\subsubsection{The Ramp Loss}%
+\[
+    l^{ramp} ( \textbf{w}, ( \textbf{x}, y))
+    = \min \left\{ 1, l^{hinge} ( \mathbf{w}, ( \mathbf{x}, y)) \right\}
+\]
+
+\subsection{IMPLEMENTING SOFT-SVM USING SGD}%
+\label{sub:implementing_soft_svm_using_sgd}
+
+\begin{algorithm}[h!]
+    \caption{SGD for Solving Soft-SVM} 
+    \begin{algorithmic}
+        \Require{T}
+        \Ensure{$ \vec{\theta}^{(1)} = \vec{0}  $}
+        \For{$ t = 1, \ldots, T $ }
+            \State{Let $ \vec{w}^{(t)} = \frac{1}{\lambda t} \vec \theta^{(t)} $ }
+            \State{Uniformly choose i at random from [m]}:
+            \State{$ \vec\theta^{(t+1)} += (y_i \langle \vec{w} ^{(t)}, x_i \rangle \le 1)? y_i \vec{x}_i: 0 $ }
+        \EndFor.
+        \State{\Return{$ \bar{\vec{w}} = \frac{1}{T} \sum^{T}_{t=1} \vec{w} ^{(t)}$}}
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{Revisit SVM}
+
+\subsubsection{The optimal problem of hard-SVM}
+
+\begin{enumerate}
+    \item Original:
+        \[
+            \max_{ \vec{w} , b} \min_{ ( \vec{x} , y) \in S } \frac{ \left| \langle \vec{w} , \vec{x}  \rangle  + b \right|}{ \Arrowvert \vec{w}  \Arrowvert },
+            \quad s.t.
+            \forall y( \vec{x} , y) \in S, y(\langle \vec{w} , \vec{x}  \rangle  + b) > 0
+        \]
+    \item Equal Problem1:
+        \[
+            \max_{ \vec{w} , b : \Arrowvert \vec{w}  \Arrowvert = 1} \min_{ ( \vec{x} , y) \in S } { \left| \langle \vec{w} , \vec{x}  \rangle  + b \right|},
+            \quad s.t.
+            \forall ( \vec{x} , y) \in S, y(\langle \vec{w} , \vec{x}  \rangle  + b) > 0
+        \]
+    \item Equal Problem2:
+        \[
+            \max_{ \vec{w} , b : \Arrowvert \vec{w}  \Arrowvert = 1} \min_{ ( \vec{x} , y) \in S } { y \left( \langle \vec{w} , \vec{x}  \rangle  + b \right)},
+        \]
+    \item Equal Problem3:
+        \[
+            \min_{ \vec{w} , b} \frac{1}{2} \Arrowvert \vec{w}  \Arrowvert^2,
+            \quad s.t.
+            \forall ( \vec{x} , y) \in S, y(\langle \vec{w} , \vec{x}  \rangle  + b) > 1
+        \]
+    \item Lagrangian Problem:
+        \[
+            \min_{\vec{w}, b} \max_{\vec{\alpha} \succeq \vec{0}} \left(L(\vec{w}, b, \vec{\alpha}) = \frac{1}{2} \Arrowvert \vec{w} \Arrowvert^2 - \sum^{m}_{i=1} \alpha_i \left[ y_i( \langle \vec{w}, \vec{x}_i \rangle + b) - 1 \right] \right)
+        \]
+\end{enumerate}
+
+\subsubsection{Support Vector}%
+\label{ssub:support_vector}
+
+In hard-SVM, we can guarrantees that
+(KKT conditions.):
+\begin{enumerate}
+    \item $ \forall i, \sum^{m}_{i=1} \alpha_i \left[ y_i( \langle \vec{w}^*, \vec{x}_i \rangle + b^*) - 1 \right] = 0 $
+    \item $ \nabla_{\vec{w}} L(\vec{w}^*) = \vec{w}^* - \sum^{m}_{i=1} \alpha_i y_i \vec{x}_i = 0 \Rightarrow \vec{w} = \sum^{m}_{i=1} \alpha_i y_i \vec{x}_i $ 
+    \item $ \nabla_b L(b^*) = - \sum^{m}_{i=1} \alpha_i y_i = 0 \Rightarrow \sum^{m}_{i=1} \alpha_i y_i  = 0 $
+\end{enumerate}
+For $ \alpha_i $ is 0 when $ x_i $ isn't on the bound hyperplane, so we call bound points support vector, and $ \vec{w} $ is in the support vectors's linear spaces.
+
+\subsubsection{Analysis Hard-SVM Problem}%
+\label{ssub:analysis_svm_problem}
+
+\begin{align*}
+    &\min_{\vec{w}, b} \max_{\vec{\alpha} \succeq \vec{0}} \left(L(\vec{w}, b, \vec{\alpha}) = \frac{1}{2} \Arrowvert \vec{w} \Arrowvert^2 - \sum^{m}_{i=1} \alpha_i \left[ y_i( \langle \vec{w}, \vec{x}_i \rangle + b) - 1 \right] \right)\\
+    \ge& \max_{\vec{\alpha} \succeq \vec{0}} \min_{\vec{w}, b} \left(L(\vec{w}, b, \vec{\alpha}) = \frac{1}{2} \Arrowvert \vec{w} \Arrowvert^2 - \sum^{m}_{i=1} \alpha_i \left[ y_i( \langle \vec{w}, \vec{x}_i \rangle + b) - 1 \right] \right)\\
+    =& \max_{\vec{\alpha} \succeq \vec{0}} \sum^{m}_{i=1} \alpha_i - \frac{1}{2} \sum^{m}_{i,j = 1} \alpha_i \alpha_j y_i y_j \langle \vec{x}_i, \vec{x}_j \rangle \\
+    =& \max_{\vec{\alpha} \succeq \vec{0}} \langle  \vec{\alpha}, \vec{1} \rangle - \frac{1}{2} \vec{\alpha}^T D^T_y X^T X D_y \vec{\alpha},
+    \quad s.t.\forall i \in [m], \sum^{m}_{i=1} \alpha_i y_i = 0.\\
+\end{align*}
+Then we have
+\begin{align*}
+    \vec{\alpha} =& {(D_y^T X^T X D_y)}^{-1} \vec{1}\\
+    \vec{w} =& X D_y \vec{\alpha}\\
+    b =& y_i - \sum^{m}_{j = 1} \alpha_j y_j \langle \vec{x}_j, \vec{x}_i \rangle\\
+    \Arrowvert \vec{w} \Arrowvert^2 =& \Arrowvert XD_y \vec{\alpha} \Arrowvert^2
+    = \vec{1}^T {{(D_y^T X^T X D_y)}^{-1}} \vec{1} = \Arrowvert \vec{\alpha} \Arrowvert_1
+\end{align*}
+
+\subsubsection{Analysis Soft-SVM Problem}%
+\label{ssub:analysis_soft_svm_problem}
+
+\[
+    \min_{\vec{w}, b, \vec{\xi}} \max_{\vec{\alpha}, \vec{\beta}}
+    \frac{1}{2} \Arrowvert \vec{w} \Arrowvert^2 + C \sum^{m}_{i=1} \xi_i - \sum^{m}_{i=1} \alpha_i \left\{ y_i \left( \langle \vec{w}, \vec{x}_i \rangle + b \right)+\xi_i - 1 \right\} - \sum^{m}_{i=1} \beta_i \xi_i
+\]
+The dual problem can also be changed into
+\[
+    \max_{\vec{\alpha}} \sum^{m}_{i=1} \alpha_i - \frac{1}{2} \sum^{m}_{i,j=1} \alpha_i \alpha_j y_i y_j \langle \vec{x}_i, \vec{x}_j \rangle,
+    \quad s.t. 0\le \alpha_i \le C \wedge \sum^{m}_{i=1} \alpha_i y_i = 0, i \in [m]
+\]
+which is almost analogue to Hard-SVM.\@
+
+\subsection{Margin Theorem}%
+\label{sub:margin_theorem}
+
+

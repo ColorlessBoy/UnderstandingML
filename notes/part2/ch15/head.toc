@@ -1,4 +1,13 @@
 \contentsline {section}{\numberline {15}Support Vector Machine}{2}
 \contentsline {subsection}{\numberline {15.1}MARGIN AND HARD-SVM}{2}
-\contentsline {subsection}{\numberline {15.2}GENERALIZATION BOUNDS FOR SVM}{2}
-\contentsline {subsection}{\numberline {15.3}SOFT-SVM AND NORM REGULARIZATION}{3}
+\contentsline {subsubsection}{\numberline {15.1.1}GENERALIZATION BOUNDS FOR SVM}{2}
+\contentsline {subsection}{\numberline {15.2}SOFT-SVM AND NORM REGULARIZATION}{3}
+\contentsline {subsubsection}{\numberline {15.2.1}The Sample Complexity of Soft-SVM}{4}
+\contentsline {subsubsection}{\numberline {15.2.2}The Ramp Loss}{4}
+\contentsline {subsection}{\numberline {15.3}IMPLEMENTING SOFT-SVM USING SGD}{4}
+\contentsline {subsection}{\numberline {15.4}Revisit SVM}{4}
+\contentsline {subsubsection}{\numberline {15.4.1}The optimal problem of hard-SVM}{4}
+\contentsline {subsubsection}{\numberline {15.4.2}Support Vector}{5}
+\contentsline {subsubsection}{\numberline {15.4.3}Analysis Hard-SVM Problem}{5}
+\contentsline {subsubsection}{\numberline {15.4.4}Analysis Soft-SVM Problem}{5}
+\contentsline {subsection}{\numberline {15.5}Margin Theorem}{5}
