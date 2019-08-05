@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.6.25)  2 AUG 2019 09:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.6.25)  5 AUG 2019 15:41
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -435,32 +435,42 @@ Overfull \hbox (15.43558pt too wide) detected at line 101
  []
 
 
-Overfull \hbox (20.54987pt too wide) detected at line 134
+Overfull \hbox (45.79979pt too wide) detected at line 137
 \U/msb/m/n/10 P [] \OMS/cmsy/m/n/10 ^^U \OT1/cmr/m/n/10 1 \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 ^^N
  []
 
 
-Overfull \hbox (1.93471pt too wide) in paragraph at lines 136--137
-[]$\OML/cmm/m/it/10 Rep[]\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 F\OML/cmm/m/it/10 ; S\OT1/cmr/m/n/10 )$ sat-is-fies the pre-ceed-ing con-di-tion with a con-stant $2\OML/cmm/m/it/10 c=m$\OT1/cmr/m/n/10 ,
+Overfull \hbox (13.49803pt too wide) detected at line 144
+\U/msb/m/n/10 P [] \OMS/cmsy/m/n/10 ^^U \OT1/cmr/m/n/10 1 \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 ^^N
  []
 
 [3]
-Overfull \hbox (19.14722pt too wide) detected at line 162
+Overfull \hbox (22.9748pt too wide) detected at line 159
+\U/msb/m/n/10 P [] \OMS/cmsy/m/n/10 ^^U \OT1/cmr/m/n/10 1 \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 ^^N
+ []
+
+
+Overfull \hbox (19.14722pt too wide) detected at line 165
 []
  []
 
 
-Overfull \hbox (24.7747pt too wide) in paragraph at lines 185--187
+Overfull \hbox (3.55885pt too wide) detected at line 168
+\U/msb/m/n/10 P [] \OMS/cmsy/m/n/10 ^^U \OT1/cmr/m/n/10 1 \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/m/n/10 2\OML/cmm/m/it/10 ^^N=\OT1/cmr/m/n/10 3
+ []
+
+
+Overfull \hbox (24.7747pt too wide) in paragraph at lines 188--190
 []\OT1/cmr/bx/n/10 Lemma 4. []$\OMS/cmsy/m/n/10 8\OML/cmm/m/it/10 A \OMS/cmsy/m/n/10 ^^Z \U/msb/m/n/10 R[]$\OT1/cmr/m/it/10 , if $\OML/cmm/m/it/10 A[] \OT1/cmr/m/n/10 = []$\OT1/cmr/m/it/10 ,
  []
 
 [4]
-Overfull \hbox (30.38301pt too wide) in paragraph at lines 249--249
+Overfull \hbox (30.38301pt too wide) in paragraph at lines 252--252
 []\OT1/cmr/bx/n/12 RADEMACHER COM-PLEX-ITY OF LIN-EAR CLASSES 
  []
 
 [5]
-Overfull \hbox (3.481pt too wide) in paragraph at lines 286--290
+Overfull \hbox (3.481pt too wide) in paragraph at lines 289--293
 \OT1/cmr/m/n/10 Let $\OML/cmm/m/it/10 j \OMS/cmsy/m/n/10 2 \OT1/cmr/m/n/10 [\OML/cmm/m/it/10 n\OT1/cmr/m/n/10 ]$ and $\OT1/cmr/bx/n/10 v[] \OT1/cmr/m/n/10 = (\OML/cmm/m/it/10 x[]; [] ; x[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 2 \U/msb/m/n/10 R[]$\OT1/cmr/m/n/10 , and $\OML/cmm/m/it/10 V \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 f\OT1/cmr/bx/n/10 v[]\OML/cmm/m/it/10 ; [] ; \OT1/cmr/bx/n/10 v[]\OML/cmm/m/it/10 ; \OMS/cmsy/m/n/10 ^^@\OT1/cmr/bx/n/10 v[]\OML/cmm/m/it/10 ; [] ; \OMS/cmsy/m/n/10 ^^@\OT1/cmr/bx/n/10 v[]\OMS/cmsy/m/n/10 g$\OT1/cmr/m/n/10 .
  []
 
@@ -468,13 +478,13 @@ Overfull \hbox (3.481pt too wide) in paragraph at lines 286--290
 Here is how much of TeX's memory you used:
  12298 strings out of 492982
  238790 string characters out of 6134896
- 290026 words of memory out of 5000000
+ 288026 words of memory out of 5000000
  15618 multiletter control sequences out of 15000+600000
  12827 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  54i,13n,73p,828b,316s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on head.pdf (7 pages, 225197 bytes).
+Output written on head.pdf (7 pages, 227379 bytes).
 PDF statistics:
  103 PDF objects out of 1000 (max. 8388607)
  75 compressed objects within 1 object stream

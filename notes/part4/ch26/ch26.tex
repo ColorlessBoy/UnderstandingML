@@ -109,50 +109,53 @@ Analogizing the concept of validation set which used to estimate the representat
     \textbf{(McDiarmid's Inequality).}\\
     If
     \[
-        \left| f(x_1, \ldots, x_m) - f(x_1, \ldots, x_{i-1}, x'_i, x_{i+1}, \ldots, x_m) \right| \le c_i.
+        f(x_1, \ldots, x_m) - f(x_1, \ldots, x_{i-1}, x'_i, x_{i+1}, \ldots, x_m) \in [a_i, b_i].
     \]
     then,
     \[
-        \mathbb{P} \left\{ f - \mathbb{E}f \ge \epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} c_i}  \right)
+        \mathbb{P} \left\{ f - \mathbb{E}f \ge \epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} {(a_i - b_i)}^2}  \right)
     \]
     \[
-        \mathbb{P} \left\{ f - \mathbb{E}f \le -\epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} c_i}  \right)
+        \mathbb{P} \left\{ f - \mathbb{E}f \le -\epsilon  \right\} \le \exp \left( \frac{-2\epsilon^2}{ \sum^{m}_{i=1} {(a_i - b_i)}^2}  \right)
     \]
     which also means
     \[
-        \mathbb{P} \left\{ | f - \mathbb{E}f | \ge c \sqrt{\ln( 2/\delta ) m/2}  \right\} \le \delta
+        \mathbb{P} \left\{ | f - \mathbb{E}f | \ge \sqrt{\frac{\sum^{m}_{i=1} {(a_i - b_i)}^2}{2} \log (2/\delta)} \right\} \le \delta
+    \]
+    \[
+        \mathbb{P} \left\{ | f - \mathbb{E}f | \ge (b - a)\sqrt{\frac{m \log(2/\delta)}{2}} \right\} \le \delta
     \]
 \end{lemma}
 
 \begin{theorem}
     \textbf{(Data-dependent bound).}
-    Assume that for all $ z $ and $ h \in \mathcal{H} $, we have that $ |l(h,z)| \le c $. Then,
+    Assume that for all $ z $ and $ h \in \mathcal{H} $, we have that $ l(h,z) \in [a, b] $. Then,
     \begin{enumerate}
         \item 
             \[
-                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 \mathbb{E}_{S'\sim \mathcal{D}^m} R( l\circ \mathcal{H}\circ S') + c \sqrt{2 \ln(1/\delta)/m} \right\} \ge 1-\delta
+                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 \mathbb{E}_{S'\sim \mathcal{D}^m} R( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2\ln(1/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
-                $ Rep_ \mathcal{D}( \mathcal{F}, S) $ satisfies the preceeding condition with a constant $ 2c/m $,
+                $ Rep_ \mathcal{D}( \mathcal{F}, S) $ satisfies the preceeding condition with a constant $ [(a-b)/m, (b-a)/m] $,
             \end{proof}
         \item  
             \[
-                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 R( l\circ \mathcal{H}\circ S) + 3c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta
+                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
                 \[
-                    \mathbb{P} \left\{ Rep_ \mathcal{D}(F, S) \le \mathbb{E}_{S'} Rep_ \mathcal{D}( l\circ \mathcal{H}\circ S') + c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                    \mathbb{P} \left\{ Rep_ \mathcal{D}(F, S) \le \mathbb{E}_{S'} Rep_ \mathcal{D}( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
                 \]
                 \[
                     \mathbb{P} \left\{ \mathbb{E}Rep_ \mathcal{D}(F, S) \le 2 \mathbb{E}R(l\circ \mathcal{H}\circ S') \right\} = 1
                 \]
                 \[
-                    \mathbb{P} \left\{ \mathbb{E}_{S'} R( l\circ \mathcal{H}\circ S') \le R( l\circ \mathcal{H} \circ S) + c \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                    \mathbb{P} \left\{ \mathbb{E}_{S'} R( l\circ \mathcal{H}\circ S') \le R( l\circ \mathcal{H} \circ S) + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
                 \]
             \end{proof}
         \item 
             \[
-                \mathbb{P} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S (h^*) \le 2 R( l\circ \mathcal{H}\circ S) + 4c \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-\delta
+                \mathbb{P} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S (h^*) \le 2 R( l\circ \mathcal{H}\circ S) + 4(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
                 \begin{align*}
@@ -161,11 +164,11 @@ Analogizing the concept of validation set which used to estimate the representat
                     \le& (L_ \mathcal{D}(h_S) - L_S(h_S)) + (L_S(h^*) - L_ \mathcal{D}(h^*))
                 \end{align*}
             \[
-                \mathbb{P} \left\{ L_ \mathcal{D}(h_S) - L_S (h_S) \le 2 R( l\circ \mathcal{H}\circ S) + 3c \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-2\delta/3
+                \mathbb{P} \left\{ L_ \mathcal{D}(h_S) - L_S (h_S) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-2\delta/3
             \]
             Because $ L_ \mathcal{D}(h^*) $ does not depend on $ S $, so we can use hoeffding's inequality to get 
             \[
-                \mathbb{P} \left\{ L_S(h^*) - L_ \mathcal{D}(h^*) \le c \sqrt{ {2\ln(3/\delta)}/{m} } \right\} \ge 1-\delta/3
+                \mathbb{P} \left\{ L_S(h^*) - L_ \mathcal{D}(h^*) \le (b-a) \sqrt{ {\ln(3/\delta)}/{(2m)} } \right\} \ge 1-\delta/3
             \]
             \end{proof}
     \end{enumerate}
