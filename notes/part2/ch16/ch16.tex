@@ -1,0 +1,105 @@
+% Chapter16 Kernel Methods, Understanding Machine Learning.
+% I note Chapter06 Kernel Methods, Foundations of Machine Learning.
+
+\section{Kernel Methods}%
+
+\subsection{Little about Kernel Methods}%
+\label{sub:little_about_kernel_methods}
+
+\begin{definition}
+    \textbf{(Kernels).}
+    A kernel function $ K: \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}$.
+\end{definition}
+We want $ K(x, x') = \langle \phi(x), \phi(x') \rangle $, where $ \phi: \mathcal{X}\rightarrow \mathbb{H} $ maps $ \mathcal{X} $ to Hibert space $ \mathbb{H} $ called a \textbf{feature space}.
+
+\begin{definition}
+    \textbf{(Positive definite symmetric kernels).}
+    $ \forall \left\{ x_1, \ldots, x_m \right\} \subseteq \mathcal{X} $,
+    the matrix $ \textbf{K} = {[K(x_i, x_j)]}_{ij} $ is symmetric positive semidefinite (SPSD).
+\end{definition}
+
+\begin{example}
+    Some kernels:\\
+    \begin{enumerate}
+        \item Polynomial kernels: $ \forall \vec{x}, \vec{x}' \in \mathbb{R}^N, K(\vec{x},\vec{x}') = {(\langle \vec{x}, \vec{x}' \rangle+c)}^d $.
+        \item Gaussian kernels (Radial Basis Function, RBF): $ \forall \vec{x}, \vec{x}' \in \mathbb{R}^N, K(\vec{x},\vec{x}') = \exp \left( - \frac{ \Arrowvert \vec{x}' - \vec{x} \Arrowvert^2}{2 \sigma^2}  \right)$.
+        \item Sigmoid kernels: $ \forall \vec{x}, \vec{x}' \in \mathbb{R}^N, K(\vec{x},\vec{x}') = \tanh \left( a \langle \vec{x}, \vec{x}' \rangle+b \right)$
+    \end{enumerate}
+\end{example}
+
+\begin{lemma}
+    \textbf{(Cauchy-Schwarz inequality for PDS kernels).}
+    \[
+         {K(\vec{x}, \vec{x}')}^2 \le K(\vec{x}, \vec{x})K(\vec{x}', \vec{x}') 
+    \]
+\end{lemma}
+
+\begin{theorem}
+    \textbf{(Reproducing kernel Hibert space (RKHS)).}
+    If $ K $ is a PDS kernel, then there exists a Hilbert space $ \mathbb{H} $ and a mapping $ \phi $ such that:
+    \[
+        \forall \vec{x}, \vec{x}' \in \mathcal{X}, \quad K(\vec{x}, \vec{x}') = \langle \phi(\vec{x}), \phi(\vec{x}') \rangle
+    \]
+    \begin{proof}
+        First, we denote $ \Phi_{\vec{w}}(\vec{x}) = K(\vec{w}, \vec{x}) $.
+    If the theorem is true, then we have $ \Phi_{\vec{w}}(\vec{x}) = \langle \phi(\vec{w}), \phi(\vec{x}) \rangle $.\\
+        we also define subspace $ \mathbb{H}_W \subset \mathbb{H} $:
+        \[
+            \mathbb{H}_W = \left\{ \sum^{}_{i \in [|W|]} a_i \Phi_{w_i} : a_i \in \mathbb{R}, w_i \in W, i \in [|W|] \right\}
+        \]
+        Then, we define the inner product operation $ \langle \cdot, \cdot \rangle $ on $ \mathbb{H}_W \times \mathbb{H}_W $ defined for all $ f, g \in \mathbb{H}_W $ with $ f = \sum^{}_{i \in I} a_i \Phi_{w_i} $ and $ g = \sum^{}_{j \in J} b_j \Phi_{w_j} $ by
+        \[
+            \langle f, g \rangle = \sum^{}_{i \in I, j \in J} a_i b_j K(w_i, w_j) = \sum^{}_{j \in J} b_j f(w_j) = \sum^{}_{i \in I} a_i g(w_i)
+        \]
+        So 
+        \[
+            \langle f, f \rangle = \sum^{}_{i,j\in I} a_i a_j K(x_i, x_j) \ge 0.
+        \]
+        Then
+        \[
+            \sum^{m}_{i, j = 1} c_i c_j \langle f_i, f_j \rangle
+            = \langle \sum^{m}_{i=1} c_i f_i, \sum^{m}_{j=1} c_j f_j \rangle \ge 0
+        \]
+    \end{proof}
+\end{theorem}
+
+\begin{definition}
+    \textbf{(Normalized kernel K).}
+    \[
+        \forall \vec{x}, \vec{x}' \in \mathcal{X},
+        K^{norm}(\vec{x}, \vec{x}') = \frac{K(x, x')}{\sqrt{K(x, x) K(x', x') }}
+    \]
+    The Gaussian kernel comes from normalizing the kernel $ K = \exp\left( \frac{\langle x, x' \rangle}{\sigma^2} \right) $.
+\end{definition}
+
+\subsection{THE KERNEL TRICK}%
+\label{sub:the_kernel_trick}
+
+\begin{definition}
+    \textbf{(General problem).}
+    General problem:
+    \[
+        \min_{\vec{w}} (L(\langle \vec{w}, \vec{x}_1 \rangle, \ldots, \langle \vec{w}, \vec{x}_m \rangle)) + R( \Arrowvert \vec{w} \Arrowvert)
+    \]
+    where $ L: \mathbb{R}^m \rightarrow \mathbb{R} \cup \left\{ +\infty \right\} $, and $ R $ is non-decreasing function.j
+\end{definition}
+
+\begin{theorem}
+    The optimal solution of general problem $ \vec{w}^* = \sum^{m}_{i=1} \alpha_i \phi(\vec{x}_i) $.
+\end{theorem}
+
+Then, the general problem can be rewritten into
+\[
+    \min_{\vec{\alpha} \in \mathbb{R}^m} L \left( \sum^{m}_{i=1} \alpha_i K(\vec{x}_i, \vec{x}_1), \ldots, \sum^{m}_{i=1} \alpha_i K(\vec{x}_i, \vec{x}_m) \right) + R \left( \sqrt{ \sum^{m}_{i,j=1} \alpha_i \alpha_j K(\vec{x}_i, \vec{x}_j)} \right)
+\]
+
+Let $ \mathbf{K}_{ij} = K(\vec{x}_i, \vec{x}_j) $, then the Soft-SVM can be rewritten into
+\[
+    \min_{\vec{\alpha} \in \mathbb{R}^m} \left( \lambda \vec{\alpha}^T \mathbf{K} \vec{\alpha} + \frac{1}{m} \sum^{m}_{i=1} \max \left\{ 0, 1 - y_i {(\mathbf{K} \vec{\alpha})}_i \right\} \right)
+\]
+
+We can calculate the prediction by
+\[
+    h_{\vec{w}}(\vec{x}) = \langle \vec{w}, \phi(\vec{x}) \rangle
+    = \sum^{m}_{j=1} \alpha_i \langle \phi(\vec{x}_i), \vec{x} \rangle = \sum^{m}_{i=1} \alpha_i K(\vec{x}_i, \vec{x})
+\]

@@ -239,4 +239,18 @@ which is almost analogue to Hard-SVM.\@
 \subsection{Margin Theorem}%
 \label{sub:margin_theorem}
 
+\begin{definition}
+    \textbf{(Confidence margin)}.
+    $ \rho_{con} = y h(\vec{x}) $
+\end{definition}
+
+\begin{definition}
+    \textbf{(Margin loss function).}
+    \[
+        l^{\rho-ramp}(h, (\vec{x}, y)) = \Phi_\rho(y h(\vec{x})),
+        \quad
+        \Phi_\rho(u) = \min\left( 1, \max\left( 0, 1- \frac{u}{\rho} \right) \right).
+    \]
+\end{definition}
+Comparing 0--1 loss: $ l^{0-1}(h, (\vec{x}, y)) = \mathbf{1}\left\{ yh(x) \le 0 \right\} $
 

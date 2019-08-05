@@ -10,4 +10,4 @@
 \contentsline {subsubsection}{\numberline {15.4.2}Support Vector}{5}
 \contentsline {subsubsection}{\numberline {15.4.3}Analysis Hard-SVM Problem}{5}
 \contentsline {subsubsection}{\numberline {15.4.4}Analysis Soft-SVM Problem}{5}
-\contentsline {subsection}{\numberline {15.5}Margin Theorem}{5}
+\contentsline {subsection}{\numberline {15.5}Margin Theorem}{6}
