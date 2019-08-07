@@ -294,8 +294,8 @@ Analogizing the concept of validation set which used to estimate the representat
             \mathbb{E}_\sigma \left[ \Arrowvert \sum^{m}_{i=1} \sigma_i \mathbf{x}_i \Arrowvert_\infty \right]
             =& \mathbb{E}_\sigma \left[ \max_j | \langle \mathbf{v}_j, \sigma \rangle | \right]
             = m R(V) \\
-            \le& \max_j \Arrowvert \mathbf{v}_j \Arrowvert_2 \frac{\sqrt{2\log(2n)}}{m} \\
-            \le& \max_i \Arrowvert \mathbf{x}_i \Arrowvert_\infty \sqrt{2\log(2n)/m}
+            \le& m \cdot \max_j \Arrowvert \mathbf{v}_j \Arrowvert_2 \frac{\sqrt{2\log(2n)}}{m} \\
+            \le& m \cdot \max_i \Arrowvert \mathbf{x}_i \Arrowvert_\infty \sqrt{2\log(2n)/m}
         \end{align*}
     \end{proof}
 \end{lemma}
@@ -306,7 +306,7 @@ In chapter6, we defined ``Restriction of $ \mathcal{H} $ to S '':
 \]
 Here is the growth function:
 \[
-    \forall m \in \mathbb{N}, \Pi_{ \mathcal{H}} (m) = \max_{S \sim \mathcal{D}^m} \left| \mathcal{H}_S \right|
+\forall m \in \mathbb{N}, \Pi_{ \mathcal{H}} (m) = \max_{S \sim \mathcal{D}^m} \left| \mathcal{H}_S \right| \le {\left( \frac{em}{d}  \right)}^d
 \]
 Then, the VC-dimension is:
 \[
@@ -314,7 +314,7 @@ Then, the VC-dimension is:
 \]
 Using Massart Lemma:
 \[
-    R_m(\mathcal{H} \circ S) = \mathbb{E}_S \left[ \mathbb{E}_{\vec{\sigma} } \left[ \sup_{h_S \in \mathcal{H}_S} \frac{1}{m} \langle \vec{\sigma}, h_S \rangle \right] \right] \le \mathbb{E}_S \left[ \frac{\sqrt{m} \sqrt{2 \log (\Pi_{\mathcal{H}})}}{m}  \right]
+    R_m(\mathcal{H} \circ S) = \mathbb{E}_{\vec{\sigma} } \left[ \sup_{h_S \in \mathcal{H}_S} \frac{1}{m} \langle \vec{\sigma}, h_S \rangle \right] \le \sqrt{m} \frac{\sqrt{2 \log (\Pi_{\mathcal{H}})}}{m} \le \sqrt{ \frac{2\log(\Pi_{\mathcal{H}})}{m} } \le \sqrt{ \frac{2d \log (em/d)}{m} }
 \]
 
 \subsection{GENERALIZATION BOUNDS FOR SVM}%
