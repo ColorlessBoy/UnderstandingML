@@ -133,42 +133,42 @@ Analogizing the concept of validation set which used to estimate the representat
     \begin{enumerate}
         \item 
             \[
-                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 \mathbb{E}_{S'\sim \mathcal{D}^m} R( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2\ln(1/\delta)/m} \right\} \ge 1-\delta
+                \mathbb{P}_{S \sim \mathcal{D}^m} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 \mathbb{E}_{S'\sim \mathcal{D}^m} R( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2\ln(1/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
                 $ Rep_ \mathcal{D}( \mathcal{F}, S) $ satisfies the preceeding condition with a constant $ [(a-b)/m, (b-a)/m] $,
             \end{proof}
         \item  
             \[
-                \mathbb{P} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta
+                \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ \forall h \in \mathcal{H}, L_ \mathcal{D}(h) - L_S (h) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
                 \[
-                    \mathbb{P} \left\{ Rep_ \mathcal{D}(F, S) \le \mathbb{E}_{S'} Rep_ \mathcal{D}( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                    \mathbb{P}_{S \sim \mathcal{D}^m} \left\{ Rep_ \mathcal{D}(F, S) \le \mathbb{E}_{S'} Rep_ \mathcal{D}( l\circ \mathcal{H}\circ S') + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
                 \]
                 \[
-                    \mathbb{P} \left\{ \mathbb{E}Rep_ \mathcal{D}(F, S) \le 2 \mathbb{E}R(l\circ \mathcal{H}\circ S') \right\} = 1
+                    \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ \mathbb{E}Rep_ \mathcal{D}(F, S) \le 2 \mathbb{E}R(l\circ \mathcal{H}\circ S') \right\} = 1
                 \]
                 \[
-                    \mathbb{P} \left\{ \mathbb{E}_{S'} R( l\circ \mathcal{H}\circ S') \le R( l\circ \mathcal{H} \circ S) + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
+                    \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ \mathbb{E}_{S'} R( l\circ \mathcal{H}\circ S') \le R( l\circ \mathcal{H} \circ S) + (b-a) \sqrt{2 \ln(2/\delta)/m} \right\} \ge 1-\delta/2
                 \]
             \end{proof}
         \item 
             \[
-                \mathbb{P} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_S (h^*) \le 2 R( l\circ \mathcal{H}\circ S) + 4(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-\delta
+                \forall h \in \mathcal{H}, \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ L_ \mathcal{D}(ERM_ \mathcal{H}(S)) - L_\mathcal{D} (h) \le 2 R( l\circ \mathcal{H}\circ S) + 4(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-\delta
             \]
             \begin{proof}
                 \begin{align*}
-                    L_ \mathcal{D}(h_S) - L_ \mathcal{D}(h^*)
-                    =& L_ \mathcal{D}(h_S) - L_S(h_S) + L_S(h_S) - L_S(h^*) + L_S(h^*) - L_ \mathcal{D}(h^*)\\
-                    \le& (L_ \mathcal{D}(h_S) - L_S(h_S)) + (L_S(h^*) - L_ \mathcal{D}(h^*))
+                    L_ \mathcal{D}(h_S) - L_ \mathcal{D}(h)
+                    =& L_ \mathcal{D}(h_S) - L_S(h_S) + L_S(h_S) - L_S(h) + L_S(h) - L_ \mathcal{D}(h)\\
+                    \le& (L_ \mathcal{D}(h_S) - L_S(h_S)) + (L_S(h) - L_ \mathcal{D}(h))
                 \end{align*}
             \[
-                \mathbb{P} \left\{ L_ \mathcal{D}(h_S) - L_S (h_S) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-2\delta/3
+                \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ L_ \mathcal{D}(h_S) - L_S (h_S) \le 2 R( l\circ \mathcal{H}\circ S) + 3(b-a) \sqrt{2 \ln(3/\delta)/m} \right\} \ge 1-2\delta/3
             \]
-            Because $ L_ \mathcal{D}(h^*) $ does not depend on $ S $, so we can use hoeffding's inequality to get 
+            Because $ L_ \mathcal{D}(h) $ does not depend on $ S $, so we can use hoeffding's inequality to get 
             \[
-                \mathbb{P} \left\{ L_S(h^*) - L_ \mathcal{D}(h^*) \le (b-a) \sqrt{ {\ln(3/\delta)}/{(2m)} } \right\} \ge 1-\delta/3
+                \mathbb{P} _{S \sim \mathcal{D}^m} \left\{ L_S(h) - L_ \mathcal{D}(h) \le (b-a) \sqrt{ {\ln(3/\delta)}/{(2m)} } \right\} \ge 1-\delta/3
             \]
             \end{proof}
     \end{enumerate}
@@ -189,8 +189,8 @@ Analogizing the concept of validation set which used to estimate the representat
     \begin{proof}
         \begin{align*}
             m R(A') =& \mathbb{E}_\sigma \sup_{\vec \alpha \succeq \vec 0 : \Arrowvert \vec \alpha \Arrowvert_1 = 1}
-            \sup_{\mathbf{a}^{(1)}, \ldots, \mathbf{a}^{(N)}} \sum^{m}_{i=1} \sigma_i \sum^{N}_{j=1} \alpha_j a_i^{(j)}\\
-            =& \mathbb{E}_\sigma \sup_{\vec \alpha \succeq \vec 0 : \Arrowvert \vec \alpha \Arrowvert_1 = 1}\sum^{N}_{j=1} \alpha_j \sup_{\mathbf{a}^{(j)}} \sum^{m}_{i=1} \sigma_i a_i^{(j)}\\
+            \sup_{\mathbf{a}^{(1)}, \ldots, \mathbf{a}^{(N)}} \sum^{m}_{i=1} \sigma_i \sum^{N}_{j=1} \alpha_j a_i^{(j)} \quad (\vec{\sigma}^T \mathbf{A} \vec{\alpha})\\
+            =& \mathbb{E}_\sigma \sup_{\vec \alpha \succeq \vec 0 : \Arrowvert \vec \alpha \Arrowvert_1 = 1}\sum^{N}_{j=1} \alpha_j \sup_{\mathbf{a}^{(j)}} \sum^{m}_{i=1} \sigma_i a_i^{(j)} \quad (\vec{\alpha}^T \mathbf{A}^T \vec{\sigma})\\
             =& \mathbb{E}_\sigma \sup_{\mathbf{a}\in A} \sum^{m}_{i=1} \sigma_i a_i
         \end{align*}
     \end{proof}
@@ -212,14 +212,14 @@ Analogizing the concept of validation set which used to estimate the representat
             =& \mathbb{E}_{\vec\sigma}\left[ \log \left(  \sum_{\mathbf{a}\in A } e^{\langle \vec \sigma, \textbf{a} \rangle } \right) \right]
             \le \log \left[ \mathbb{E}_{\vec\sigma} \left(  \sum_{\mathbf{a}\in A } e^{\langle \vec \sigma, \textbf{a} \rangle } \right) \right] \\
             \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} \mathbb{E}_{\sigma_i} [e^{\sigma_i a_i}] \right) 
-            \le \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} [e^{a_i} + e^{-a_i}]/2 \right) \\
+            = \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} [e^{a_i} + e^{-a_i}]/2 \right) \\
             \le& \log \left(  \sum_{\mathbf{a}\in A } \prod^m_{i=1} e^{a_i^2/2} \right) 
             = \log \left( \sum^{}_{a \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert_2^2/2 \right) \right)\\
             \le& \log \left( \left| A \right| \max_{\mathbf{a} \in A} \exp \left( \Arrowvert \mathbf{a} \Arrowvert_2^2/2 \right) \right) = \log \left( \left| A \right| \right) + \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert_2^2 /2)
         \end{align*}
-        Since $ R(A) = R(A')/\lambda $ we obtain that
+        We let $ \lambda > 0,  A' = \lambda A $,then $ R(A) = R(A')/\lambda $ we obtain that
         \[
-            R(A) \le \frac{\log(|A|) + \lambda^2 \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert_2^2 /2)}{\lambda m}
+            R(A) \le \frac{\log(|A'|) + \max_{\lambda\mathbf{a} \in A' } (\Arrowvert \lambda\mathbf{a} \Arrowvert_2^2 /2)}{m}= \frac{\log(|A|) + \lambda^2 \max_{\mathbf{a} \in A } (\Arrowvert \mathbf{a} \Arrowvert_2^2 /2)}{\lambda m}
         \]
     \end{proof}
 \end{lemma}
@@ -243,7 +243,7 @@ Analogizing the concept of validation set which used to estimate the representat
             \le& \frac{1}{2} \mathbb{E}_{\sigma_2, \ldots, \sigma_m}
             \left[ \sup_{\mathbf{a,a'} \in A} \left( | a_1 - a'_1 | + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] \\
             =& \frac{1}{2} \mathbb{E}_{\sigma_2, \ldots, \sigma_m}
-            \left[ \sup_{\mathbf{a,a'} \in A} \left( a_1 - a'_1 + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] \\
+            \left[ \sup_{\mathbf{a,a'} \in A} \left( a_1 - a'_1 + \sum^{m}_{i=2} \sigma_i a_i + \sum^{m}_{i=2} \sigma_i a'_i \right) \right] = m R(A) \\
             mR(A_1) \le& mR(A)
         \end{align*}
     \end{proof}
