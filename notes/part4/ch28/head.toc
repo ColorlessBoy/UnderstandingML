@@ -1,0 +1,6 @@
+\contentsline {section}{\numberline {28}Proof of the Fundamental Theorem of Learning Theory}{2}
+\contentsline {subsection}{\numberline {28.1}THE UPPER BOUND FOR THE AGNOSTIC CASE}{2}
+\contentsline {subsection}{\numberline {28.2}THE LOWER BOUND FOR THE AGNOSTIC CASE}{2}
+\contentsline {subsubsection}{\numberline {28.2.1}$ m(\epsilon , \delta ) \ge (1-\epsilon ^2)/\epsilon ^2 \qopname \relax o{log}(1/(4\delta - 4 \delta ^2))$}{2}
+\contentsline {subsubsection}{\numberline {28.2.2}Showing That $ m(\epsilon , \delta ) \ge d/ (32\epsilon ^2) $}{3}
+\contentsline {subsection}{\numberline {28.3}THE UPPER BOUND FOR THE REALIZABLE CASE}{5}

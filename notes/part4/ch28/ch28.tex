@@ -1,0 +1,171 @@
+% Note of Chapter28 Proof of the Fundamental Theorem of Learning Theory, Understanding Machine Learning.
+
+\section{Proof of the Fundamental Theorem of Learning Theory}%
+\label{sec:proof_of_the_fundamental_theorem_of_learning_theory}
+
+\subsection{THE UPPER BOUND FOR THE AGNOSTIC CASE}%
+
+Nowadays, we have that $ m_\mathcal{H}(\epsilon, \delta) \le C \frac{d + \ln(1/\delta)}{\epsilon^2} $.
+But the proof need a careful analysis of the Rademacher complexity using a technique called ``chaining''.\\
+In this chapter, we proof
+\[
+    m_\mathcal{H}(\epsilon, \delta) \le C \frac{d\ln(d/\epsilon) + \ln(1/\delta)}{\epsilon^2}.
+\]
+
+\begin{proof}
+    Let $ \mathcal{H}_S = \left\{ (h(\vec{x}_1), \ldots, h(\vec{x}_m)): h \in \mathcal{H}, x_i \in S \right\} $, then
+    $ A = l^{0-1} \circ \mathcal{H}_S = \left\{ ( 1_{ y_1 \ne h(\vec{x}_1)}, \ldots, 1_{y_m \ne h(\vec{x}_m)}): h \in \mathcal{H}, x_i \in S \right\} $.\\
+    By Sauer-Shelah lemma: $ |A| = |\mathcal{H}_S| \le {\left( \frac{em}{d}  \right)}^d $.\\
+    By Massart lemma: $ R(A) \le \max_{\vec{a} \in A} \Arrowvert \vec{a} - \bar{\vec a} \Arrowvert \sqrt{2 \ln( |A| )} / m = \sqrt{2 \ln(|A|) / m} $.
+    \[
+        \mathbb{P} \left\{  |L_\mathcal{D}(h) - L_S(h) | \le 2\mathbb{E} R(A) + \sqrt{2 \ln(2/\delta) / m} \right\} \ge 1- \delta
+    \]
+    \[
+        \mathbb{P} \left\{  |L_\mathcal{D}(h) - L_S(h) | \le \sqrt{{8d \ln(em/d)}/{m}}+ \sqrt{2 \ln(2/\delta) / m} \right\} \ge 1- \delta
+    \]
+    \[
+        \mathbb{P} \left\{  |L_\mathcal{D}(h) - L_S(h) | \le \sqrt{{16d \ln(em/d)}/{m} + 4 \ln(2/\delta) / m} \right\} \ge 1- \delta
+    \]
+    Then we only need $ m \ge \frac{16d}{\epsilon^2} \ln\left( \frac{em}{d} \right) + \frac{4}{\epsilon^2} \log(2/\delta) $.
+    \[
+        m \ge \frac{16d}{\epsilon^2} \ln (m) + \frac{4}{\epsilon^2} \left( 4d \ln(e/d) + \ln(2/\delta) \right)
+    \]
+    
+    we have that $ \forall a > 0, b > 0, x \ge 4a \ln(2a) + 2b \Rightarrow x \ge a \ln(x) +b $.
+    So, we only need
+    \[
+        m \ge \frac{64d}{\epsilon^2} \ln \left( \frac{32d}{\epsilon^2} \right) + \frac{8}{\epsilon^2} \left( 4d \ln(e/d) + \ln(2/\delta) \right)
+    \]
+    Which means
+    \[
+        m_\mathcal{H}(\epsilon, \delta) \le \frac{64d}{\epsilon^2} \ln \left( \frac{32d}{\epsilon^2} \right) + \frac{8}{\epsilon^2} \left( 4d \ln(e/d) + \ln(2/\delta) \right) \le C \frac{d\ln(d/\epsilon) + \ln(1/\delta)}{\epsilon^2} 
+    \]
+\end{proof}
+
+\subsection{THE LOWER BOUND FOR THE AGNOSTIC CASE}%
+
+This section's target is proofing $ m_\mathcal{H} (\epsilon, \delta) \ge C \frac{d + \ln(1/\delta)}{\epsilon^2}  $.
+
+\subsubsection{$ m(\epsilon, \delta) \ge (1-\epsilon^2)/\epsilon^2 \log(1/(4\delta - 4 \delta^2))$}%
+\label{ssub:_m_epsilon_delta_ge_0_5_log_1_4delta_epsilon_2_}
+
+$ \mathcal{X} = \left\{ c \right\}, \mathcal{Y} = \left\{ +1, -1 \right\}, \mathcal{H} = \left\{ +1, -1 \right\}, \mathbf{D} = \left\{ \mathcal{D}_{+1}, \mathcal{D}_{-1} \right\}$, where $ \mathcal{D}_b = \frac{1+yb\epsilon}{2}  $.
+Let $ S = \left\{ (c, y_1), \ldots, (c, y_m) \right\}, \vec{y} = \left\{ y_1, \ldots, y_m \right\}$.
+\[
+    \forall h \in \mathcal{H}, \quad L_{\mathcal{D}_b}(h) = \frac{1-h(c) b \epsilon}{2}.
+\]
+So, the Bayes optimal hypothesis is $ h_b(c) = b $.Then,
+\[
+    L_{\mathcal{D}_b}(A(\vec{y})) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_b}(h_b)
+    = \frac{1 - A(\vec{y}) b \epsilon}{2} - \frac{1 - \epsilon}{2} =
+    \begin{cases}
+        \epsilon \quad A (\vec{y}) \ne b \\
+        0 \quad otherwise
+    \end{cases}
+\]
+\[
+    \mathbb{P}_{\mathcal{D}_b} \left\{ L_{\mathcal{D}_b}(A(\vec{y})) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_b}(h_b) \ge \epsilon \right\}
+    = \sum^{}_{\vec{y}} \mathbb{P}_{\mathcal{D}_b} (\vec{y}) 1_{A(\vec{y}) \ne b}
+\]
+We denote $ N^+ = \left\{ \vec{y}: \langle \vec{1}, \vec{y} \rangle \ge 0 \right\} $.
+\begin{align*}
+    &\max_{\mathcal{D}_b \in \mathbf{D}} \mathbb{P}_{\mathcal{D}_b} \left\{ L_{\mathcal{D}_b}(A(\vec{y})) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_b}(h_b) \ge \epsilon \right\}\\
+    =& \max_{\mathcal{D}_b \in \mathbf{D}} \sum^{}_{\vec{y}} \mathbb{P}_{\mathcal{D}_b}[\vec{y}] 1_{[A(\vec{y})\ne b]}\\
+    \ge& \frac{1}{2} \sum^{}_{\vec{y}} \mathbb{P}_{\mathcal{D}_{+1}}[\vec{y}]1_{[A(\vec{y})\ne +1]}
+    + \frac{1}{2} \sum^{}_{\vec{y}} \mathbb{P}_{\mathcal{D}_{-1}}[\vec{y}]1_{[A(\vec{y})\ne -1]}\\
+    =& \frac{1}{2} \sum^{}_{\vec{y} \in N^+} \mathbb{P}_{\mathcal{D}_{+1}}[\vec{y}]1_{[A(\vec{y})\ne +1]}
+    + \frac{1}{2} \sum^{}_{\vec{y} \in N^+} \mathbb{P}_{\mathcal{D}_{-1}}[\vec{y}]1_{[A(\vec{y})\ne -1]}\\
+    &\frac{1}{2} \sum^{}_{\vec{y} \in N^-} \mathbb{P}_{\mathcal{D}_{+1}}[\vec{y}]1_{[A(\vec{y})\ne +1]}
+    + \frac{1}{2} \sum^{}_{\vec{y} \in N^-} \mathbb{P}_{\mathcal{D}_{-1}}[\vec{y}]1_{[A(\vec{y})\ne -1]}\\
+    \ge& \frac{1}{2} \sum^{}_{\vec{y} \in N^+} \mathbb{P}_{\mathcal{D}_{-1}}[\vec{y}]1_{[A(\vec{y})\ne +1]}
+    + \frac{1}{2} \sum^{}_{\vec{y} \in N^+} \mathbb{P}_{\mathcal{D}_{-1}}[\vec{y}]1_{[A(\vec{y})\ne -1]}\\
+    &\frac{1}{2} \sum^{}_{\vec{y} \in N^-} \mathbb{P}_{\mathcal{D}_{+1}}[\vec{y}]1_{[A(\vec{y})\ne +1]}
+    + \frac{1}{2} \sum^{}_{\vec{y} \in N^-} \mathbb{P}_{\mathcal{D}_{+1}}[\vec{y}]1_{[A(\vec{y})\ne -1]}\\
+    =& \frac{1}{2} \sum^{}_{\vec{y} \in N^+} P_{\mathcal{D}_{-1}}[\vec{y}]
+    +\frac{1}{2} \sum^{}_{\vec{y} \in N^-} P_{\mathcal{D}_{+1}}[\vec{y}] = \sum^{}_{\vec{y} \in N^-} P_{\mathcal{D}_{+1}}[\vec{y}]
+\end{align*}
+
+The probability equals the probability that a Binomial $ (m, (1-\epsilon)/2) $ random variable will have value greater than m/2. Using Slud's inequality, we have
+\[
+    \sum^{}_{\vec{y} \in N^-} p_{\mathcal{D}_{+1}}[\vec{y}] \ge
+    \frac{1}{2} \left( 1 - \sqrt{1 - \exp \left( -m \epsilon^2 / (1-\epsilon^2) \right)} \right) \ge \delta
+\]
+\[
+    m \le \frac{1 - \epsilon^2}{\epsilon^2} \ln \frac{1}{4\delta - 4\delta^2}
+    \Rightarrow m_\mathcal{H}(\epsilon, \delta) \ge \frac{1 - \epsilon^2}{\epsilon^2} \ln \frac{1}{4\delta - 4\delta^2}
+    \ge C \frac{\ln(1/\delta)}{\epsilon^2} 
+\]
+
+\subsubsection{Showing That $ m(\epsilon, \delta) \ge d/ (32\epsilon^2) $}%
+\label{ssub:showing_that_m_epsilon_1_8_ge_8d_epsilon_2_}
+
+Let $ \mathcal{X} = \left\{ x_1, \ldots, x_d \right\} $, $ \mathcal{Y} = \left\{ +1, -1 \right\} $, and $ \mathcal{H} $ shatters $ \mathcal{X} $. \\
+We only consider $ \mathbf{D}_\rho = \left\{ \mathcal{D}_{\vec{b}} : \vec{b} \in {\left\{ \pm 1 \right\}}^d \right\} $, where
+\[
+    \mathcal{D}_{\vec{b}} (\left\{ (x,y) \right\})
+    \begin{cases}
+        \frac{1}{d} \cdot \frac{1+yb_i \rho}{2} \quad \exists i: x = c_i \\
+        0 \quad otherwise.
+    \end{cases}
+\]
+
+\[
+    \forall h \in \mathcal{H}, L_{\mathcal{D}_{\vec{b}}}(h) = \frac{1+\rho}{2} \cdot \frac{\left| \left\{ i \in [d]: h(c_i) \ne b_i \right\} \right|}{d} + \frac{1-\rho}{2} \cdot \frac{\left| \left\{ i \in [d]: h(c_i) = b_i \right\} \right|}{d} 
+\]
+\[
+    \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h) = \frac{1-\rho}{2} \Rightarrow
+    L_{\mathcal{D}_{\vec{b}}}(h) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h)
+    = \rho \cdot \frac{\left| \left\{ i \in [d]: h(c_i) \ne b_i \right\} \right|}{d}.
+\]
+which means that
+\[
+    L_{\mathcal{D}_{\vec{b}}}(h) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h) \in [0, \rho]
+\]
+
+\begin{align*}
+    &\max_{\mathcal{D}_{\vec{b}} \in \mathbf{D}_\rho} \mathbb{E}_{S \sim \mathcal{D}^m_{\vec{b}}} \left[ L_{\mathcal{D}_{\vec{b}}}(A(S)) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h) \right]\\
+    \ge& \mathbb{E}_{\mathcal{D}_{\vec{b}} \sim U(\mathbf{D}_\rho)} \mathbb{E}_{S \sim \mathcal{D}^m_{\vec{b}}} \left[ L_{\mathcal{D}_{\vec{b}}}(A(S)) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h) \right]\\
+    =& \mathbb{E}_{\mathcal{D}_{\vec{b}} \sim U(\mathbf{D}_\rho)} \mathbb{E}_{S \sim \mathcal{D}^m_{\vec{b}}} \left[ \rho \cdot \frac{\left| \left\{ i \in [d]: A(S)(c_i) \ne b_i \right\} \right|}{d} \right]\\
+    =& \frac{\rho}{d} \sum^{d}_{i=1} \mathbb{E}_{\mathcal{D}_{\vec{b}} \sim U(\mathbf{D}_\rho)} \mathbb{E}_{S \sim \mathcal{D}^m_{\vec{b}}} 1_{[A(S)(c_i) \ne b_i]}\\
+    =& \frac{\rho}{d} \sum^{d}_{i=1} \mathbb{E}_{\vec\jmath \sim {U([d])}^m} \mathbb{E}_{\vec{b} \sim {\left\{ \pm 1 \right\}}^m} \mathbb{E}_{\vec{y} \sim b_{\vec\jmath}} 1_{[A(c_{\vec\jmath}, \vec{y})(c_i) \ne b_i]}\\
+    &\mathbb{E}_{\vec{b} \sim {\left\{ \pm 1 \right\}}^m} \mathbb{E}_{\vec{y} \sim b_{\vec\jmath}} 1_{[A(c_{\vec\jmath}, \vec{y})(c_i) \ne b_i]}\\
+    =& \mathbb{E}_{(\vec{b}-b_i) \sim {\left\{ \pm 1 \right\}}^{m-1}} \mathbb{E}_{\vec{y}^{\neg I} \sim b^{\neg I}_{\vec\jmath}} \mathbb{E}_{b_i \sim \left\{ \pm 1 \right\}} \mathbb{E}_{\vec{y}^I \sim b_i} 1_{[A(c_{\vec\jmath}, \vec{y})(c_i) \ne b_i]}\\
+    =& \mathbb{E}_{(\vec{b}-b_i) \sim {\left\{ \pm 1 \right\}}^{m-1}} \mathbb{E}_{\vec{y}^{\neg I} \sim b^{\neg I}_{\vec\jmath}} \left[ \frac{1}{2} \sum^{}_{y^I} \left( \sum^{}_{b_i \in \left\{ \pm 1 \right\}} \mathbb{P}[y^I | b_i] 1_{[A(c_{\vec{\jmath}}, \vec{y})(c_i) \ne b_i]} \right) \right]\\
+    \ge& \mathbb{E}_{(\vec{b}-b_i) \sim {\left\{ \pm 1 \right\}}^{m-1}} \mathbb{E}_{\vec{y}^{\neg I} \sim b^{\neg I}_{\vec\jmath}} \left[ \frac{1}{2} \sum^{}_{y^I} \left( \sum^{}_{b_i \in \left\{ \pm 1 \right\}} \mathbb{P}[y^I | b_i] 1_{[A_{ML}(c_{\vec{\jmath}}, \vec{y})(c_i) \ne b_i]} \right) \right]
+\end{align*}
+where $ A_{ML}(S) (c_i) = sign \left( \sum^{}_{r: x_r = c_i} y_r \right) $.
+In equation
+\[
+    \mathbb{E}_{\vec{b} \sim {\left\{ \pm 1 \right\}}^m} \mathbb{E}_{\vec{y} \sim b_{\vec\jmath}} 1_{[A(c_{\vec\jmath}, \vec{y})(c_i) \ne b_i]}\\
+\]
+we fix the $ X = \left\{ x_1, \ldots, x_m \right\} $'s index vector $ \vec{\jmath} $.We denote $ n_{\vec{\jmath}}(i) $ as the number i occurring in $ \vec{\jmath} $. We want maximum-likelihood going wrong, which means that $ B \sim (n_{\vec{\jmath}}(i), (1-\rho)/2) \ge n_{\vec{\jmath}}(i)/2 $ occuring.
+\[
+    \mathbb{P}\left[ B \ge n_{\vec{\jmath}}(i) /2 \right] \ge \frac{1}{2} \left( 1 - \sqrt{1 - \exp \left\{ -2 n _{\vec{\jmath}}(i)\rho^2\right\}} \right)
+\]
+\begin{align*}
+    &\max_{\mathcal{D}_{\vec{b}} \in \mathbf{D}_\rho} \mathbb{E}_{S \sim \mathcal{D}^m_{\vec{b}}} \left[ L_{\mathcal{D}_{\vec{b}}}(A(S)) - \min_{h \in \mathcal{H}} L_{\mathcal{D}_{\vec{b}}}(h) \right]\\
+    \ge& \frac{\rho}{2d} \sum^{d}_{i=1} \mathbb{E}_{\vec{\jmath} \sim {U ([d])}^m} \left( 1 - \sqrt{1 - \exp \left\{ -2 n _{\vec{\jmath}}(i)\rho^2\right\}} \right)\\
+    \ge& \frac{\rho}{2d} \sum^{d}_{i=1} \left( 1 - \sqrt{1 - \exp \left\{ -2 \rho^2\mathbb{E}_{\vec{\jmath} \sim {U ([d])}^m} n _{\vec{\jmath}}(i)\right\}} \right)\\
+    =& \frac{\rho}{2d} \sum^{d}_{i=1} \left( 1 - \sqrt{1 - \exp \left\{ -2 \rho^2 m/d \right\}} \right)\\
+    =& \frac{\rho}{2} \left( 1 - \sqrt{1 - \exp \left\{ -2 \rho^2 m/d \right\}} \right)\\
+    \ge& \frac{\rho}{2} \left( 1 - \sqrt{2\rho^2m/d} \right)\\
+    & \max_{\rho}\max_{\mathcal{D} \in \mathbf{D}_\rho}\mathbb{P}_{\mathcal{D}} \left[ L_{\mathcal{D}}(A(S)) - \min_{h\in \mathcal{H}} L_{\mathcal{D}}(h) > \epsilon \right]\\
+    =& \max_{\rho}\max_{\mathcal{D} \in \mathbf{D}_\rho} \mathbb{P}_{\mathcal{D} \in \mathbf{D}_\rho} \left[ \frac{1}{\rho} \left(  L_{\mathcal{D}}(A(S)) - \min_{h\in \mathcal{H}} L_{\mathcal{D}}(h) \right)> \frac{\epsilon}{\rho} \right]\\
+    \ge& \max_{\rho}\max_{\mathcal{D} \in \mathbf{D}_\rho} \mathbb{E}\left[ \frac{1}{\rho} \left(  L_{\mathcal{D}}(A(S)) - \min_{h\in \mathcal{H}} L_{\mathcal{D}}(h) \right) \right] - \frac{\epsilon}{\rho} \\
+    \ge& \max_{\rho}\frac{1}{2} \left( 1 - \sqrt{2\rho^2m/d} \right) - \frac{\epsilon}{\rho}
+    = \max_{\rho}\frac{1}{2} - \left( \rho \sqrt{\frac{m}{2d}} + \frac{\epsilon}{\rho} \right)\\
+    =& \frac{1}{2} - 2 \sqrt{\epsilon \sqrt{m/(2d)}} \ge \delta \Rightarrow m \le \frac{d{(1 - 2\delta)}^2}{8 \epsilon^2} 
+\end{align*}
+Overall, $ m_{\mathcal{H}}(\epsilon, \delta) \ge \frac{d{(1-2\delta)}^2}{8\epsilon^2}$. In reality, we want $ \delta $ as small as possible, we can constrain $ \delta \in (0, 1/4) $, then $ m_{\mathcal{H}}(\epsilon, \delta) \ge \frac{d}{32 \epsilon^2} $.
+
+\subsection{THE UPPER BOUND FOR THE REALIZABLE CASE}%
+\label{sub:the_upper_bound_for_the_realizable_case}
+
+The sample complexity of PAC learnable:
+\[
+    m_{\mathcal{H}}(\epsilon, \delta) \le C \frac{d\ln(1/\epsilon) + \ln(1/\delta)}{\epsilon}.
+\]
+
+
+
+
