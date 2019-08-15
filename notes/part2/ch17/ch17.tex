@@ -1,0 +1,298 @@
+% Chapter 17 Multiclass, Ranking and Complex prediction Problems, Understanding Machine Learning
+
+\section{Multiclass, Ranking and Complex prediction Problems}%
+
+\subsection{ONE-VERSUS-ALL AND ALL-PAIRS}%
+
+$ \mathcal{Y} = \{1, 2, 3, \ldots, k\} $
+
+\begin{algorithm}[H]
+    \caption{One-Versus-All}
+    \begin{algorithmic}
+        \Require{\\training set $ S = ((\vec{x}_1, y_1), (\vec{x}_2, y_2), \ldots, (\vec{x}_m, y_m)) $, algorithm for binary classification A}
+        \For{$ i \in \mathcal{Y} $}
+        \State{$ S_i = ((\vec{x}_1, {(-1)}^{1_{y_1 \ne i}}), \ldots, (\vec{x}_m, {(-1)}^{1_{y_m \ne i}}) ) $}
+        \State{$ h_i = A(S_i) $}
+        \EndFor.
+        \State{\Return{$ h(\vec{x}) \in \arg\max_{i\in\mathcal{Y}} h_i(\vec{x}) $}}
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+    \caption{All-Pairs}
+    \begin{algorithmic}
+        \Require{\\training set $ S = ((\vec{x}_1, y_1), (\vec{x}_2, y_2), \ldots, (\vec{x}_m, y_m)) $, algorithm for binary classification A}
+        \For{$ i, j \in \mathcal{Y} $ s.t. $ i < j $}
+            \State{$ S_{i,j} = () $}
+            \For{$ t = 1, \ldots, m $}
+                \If{$ y_t = i $ or $ y_t = j $} {$ S_{i,j} = S_{i,j} \cup (\vec{x}_t, {(-1)}^{1_{y_t \ne i}}) $}
+                \EndIf.
+            \EndFor.
+            $ h_{i,j} = A(S_{i,j}) $.
+        \EndFor.
+        \State{\Return{$ h(\vec{x}) \in \arg\max_{i\in\mathcal{Y}} \left( \sum^{}_{j\in \mathcal{Y}} sign(j-i) h_{i,j}(\vec{x}) \right) $}}
+    \end{algorithmic}
+\end{algorithm}
+
+The binary learner might lead to \textbf{suboptimal results}.
+
+\subsection{LINEAR MULTICLASS PERDICTORS}%
+\begin{enumerate}
+    \item Let $ \Psi: \mathcal{X}\times\mathcal{Y} \rightarrow \mathbb{R}^d $ be a class-sensitive feature mapping.We can think of the elements of $ \Psi(\vec{x}, y) $ as score functions that access how well the label y fits the instance $\vec{x}$.
+    \item $ h(\vec{x}) = \arg\max_{y\in \mathcal{Y}} \langle \vec{w}, \Psi(\vec{x}, y) \rangle $.
+    \item $ W = \{\vec{w} \in \mathbb{R}^{d}: {\Arrowvert \vec{w} \Arrowvert} \le B\} $
+    \item $ \mathcal{H}_{\Psi, W} = \left\{ \vec{x} \mapsto \arg\max_{y \in \mathcal{Y}} \langle \vec{w}, \Psi(\vec{x},y) \rangle: \vec{w} \in W \right\} $
+\end{enumerate}
+
+\subsubsection{How to Construct $ \Psi $}%
+
+\begin{enumerate}
+    \item The multivector construction: Let $ \mathcal{Y} = \left\{ 1, \ldots, k \right\} $ and let $ \mathcal{X} = \mathbb{R}^n $. Then $ \Psi: \mathcal{X} \times \mathcal{Y} \rightarrow \mathbb{R}^d $, where $ d = nk $,
+        \[
+            \Psi(\vec{x}, y) = [\underbrace{0, \ldots, 0}_{\in \mathbb{R}^{(y-1)n}}, \underbrace{x_1, \ldots, x_n}_{\in \mathbb{R}^n}, \underbrace{0, \ldots, 0}_{\in \mathbb{R}^{(k-y)n}}]
+        \]
+        This is sometimes equal to one-versus-all with hyperplane binary classification algorithms.
+    \item {TF-IDF}:
+        \begin{itemize}
+            \item Term-frequency: $ TF(j, \vec{x}) $ is the number of times the word corresponding index is j appears in the document $ \vec{x} $.
+            \item Document-frequency: $ DF(j, y) $ is the number of times the word corresponding index is j appears in the documents that are not on topic y.
+        \end{itemize}
+        \[
+            \Psi_j(\vec{x}, y) = TF(j,\vec{x}) \log\left( \frac{m}{DF(j,y)} \right)
+        \]
+\end{enumerate}
+
+\subsubsection{Cost-Sensitive Classification}%
+
+\begin{enumerate}
+    \item Loss function, $ \Delta: \mathcal{Y} \times \mathcal{Y} \rightarrow \mathbb{R}_+ $;
+    \item Zero-one loss, $ \Delta^{0-1} = 1_{[y' \ne y]} $;
+    \item We also can penalize different levels of loss for different mistakes, such as: mistaking tiger for cat and mistaking tiger for durk, which is called generalized zero-one loss, or zero-nozero loss.
+\end{enumerate}
+
+\subsubsection{ERM}%
+Empirical risk with respect to $ \Delta $: $ L_S(h) = \frac{1}{m} \sum^{m}_{i=1} \Delta(h(\vec{x}_i), y_i). $
+
+In realizable case, we can use multiclass batch perception to get a good hyperplane.
+\begin{algorithm}[H]
+    \caption{Multiclass Batch Perception}
+    \begin{algorithmic}
+        \Require{A training set $ S = ((\vec{x}_1, y_1), \ldots, (\vec{x}_m, y_m)) $; A class-sensitive feature mapping $ \Psi: \mathcal{X} \times \mathcal{Y} \rightarrow \mathbb{R}^d $.}
+        \Ensure{$ \vec{w}^{(1)} = (0, \ldots, 0) \in \mathbb{R}^d $}
+        \For{$ t = 1, 2, \ldots $}
+        \If{$ \exists i $ and $ y \ne y_i $ s.t. $ \langle \vec{w}^{(t)}, \Psi(\vec{x}_i, y_i) \rangle \le \langle \vec{w}^{(t)}, \Psi(\vec{x}_i, y) \rangle $} 
+            \State{$ \vec{w}^{(t+1)} = \vec{w}^{(t)} + \Psi(\vec{x}_i, y_i) - \Psi(\vec{x}_i, y) $}
+        \Else\State{break.}
+        \EndIf.
+        \EndFor.
+    \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Generalized Hinge Loss}%
+\begin{definition}
+    \textbf{(Generalized hinge loss).}
+    \[
+        l^{g-hinge}(\vec{w}, (\vec{x}, y)) = \max_{y' \in \mathcal{Y}} (\Delta(y', y) + \langle \vec{w}, \Psi(\vec{x}, y') - \Psi(\vec{x}, y) \rangle)
+    \]
+\end{definition}
+The definition of $ h_{\vec{w}}(\vec{x}) $ implies that $ \forall y \in \mathcal{Y}, \langle \vec{w}, \Psi(\vec{x}, y) \rangle \le \langle \vec{w}, \Psi(\vec{x}, h_{\vec{w}}(\vec{x})) \rangle. $ Therefore,
+\[
+    \Delta(h_{\vec{w}}(\vec{x}), y) \le \Delta(h_{\vec{w}}(\vec{x}), y) + \langle \vec{w}, \Psi(\vec{x}, h_{\vec{w}}(\vec{x})) - \Psi(\vec{x}, y) \rangle
+\]
+Because $ h_{\vec{w}}(\vec{x}) \in \mathcal{Y} $, we can easily get $ \Delta(h_{\vec{w}}(\vec{x}), y) \le l(\vec{w}, (\vec{x}, y)) $.
+
+If $ \mathcal{Y} \in \left\{ \pm 1 \right\} $ and $ \Psi(\vec{x}, y) = \frac{y \vec{x}}{2}  $, then the generalized hinge loss becomes the vanilla hinge loss for binary classification,
+\[
+    l^{hinge}(\vec{w}, (\vec{x}, y)) = \max\left\{ 0, 1-y\langle \vec{w}, \vec{x} \rangle \right\}
+\]
+
+In generalized hinge-loss, the correct condition ($ l(\vec{w}, (\vec{x}, y)) = 0 $) is: If $ y' = y $ then $ l(\vec{w}, (\vec{x}, y)) = 0$, else if $ y' \ne y $, we require $ \langle \vec{w}, \Psi(\vec{x}, y) \rangle \ge \langle \vec{w}, \Psi(\vec{x}, y') \rangle + \Delta(y', y) $.
+
+In preceeding vanilla hinge loss, we require that if $ y \ne y' $,$ \langle \vec{w}, y \vec{x} \rangle \ge 1 $.
+
+$ l(\vec{w}, (\vec{x}, y)) $ is $ \rho-Lipschitz $ with $ \rho = \sup_{\vec{x} \in \mathcal{X}}\max_{y' \in \mathcal{Y}} \Arrowvert \Psi(\vec{x}, y') - \Psi(\vec{x}, y) \Arrowvert $.
+
+\subsubsection{Multiclass SVM and SGD}%
+
+\begin{algorithm}[H]
+    \caption{Multiclass SVM}
+    \begin{algorithmic}
+        \Require{$ S, \lambda, \Delta, \Psi $}
+        \State{$ \min_{\vec{w} \in \mathbb{R}^d} \left( \lambda \Arrowvert \vec{w} \Arrowvert^2 + \frac{1}{m} \sum^{m}_{i=1} \max_{y' \in \mathcal{Y}} \left( \Delta(y', y_i) + \langle \vec{w}, \Psi(\vec{x_i}, y') - \Psi(\vec{x}_i, y_i) \rangle \right) \right) $}
+        \State{\Return{$ h_{\vec{w}}(\vec{x}) = \arg\max_{y \in \mathcal{Y}} \langle \vec{w}, \Psi(\vec{x}, y) \rangle $}}
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{corollary}
+    If $ \Arrowvert \Psi(\vec{x}, y) \Arrowvert \le \rho/2 $, $ \Arrowvert \vec{w} \Arrowvert \le B $, and the regularization $ \lambda = \sqrt{ \frac{2\rho^2}{B^2 m} } $, then we have:
+    \[
+        \mathbb{E}_{S\sim \mathcal{D}^m} \left[ L^\Delta_{\mathcal{D}}(h_{\vec{w}}) \right] \le \mathbb{E}_{S\sim \mathcal{D}^m} \left[ L^{g-hinge}{\mathcal{D}}(h_{\vec{w}}) \right] \le \min_{\vec{w}: \Arrowvert \vec{w} \Arrowvert \le B} L^{g-hinge}_{\mathcal{D}}(\vec{w}) + \sqrt{ \frac{8\rho^2 B^2}{m} }
+    \]
+\end{corollary}
+
+To use SGD, we need the subgradient of $ l^{g-hinge}(\vec{w}, (\vec{x}, y)) $:
+\[
+    \partial_{\vec{w}} l^{g-hinge}(\vec{w}, (\vec{x}, y)) = \Psi(\vec{x}, \hat y) - \Psi(\vec{x}, y), where\
+    \hat y \in \arg\max_{y' \in \mathcal{Y}} (\Delta(y', y) + \langle \vec{w}^{(t)}, \Psi(\vec{x}, y') - \Psi(\vec{x}, y) \rangle)
+\]
+\begin{corollary}
+    If $ \Arrowvert \Psi(\vec{x}, y) \Arrowvert \le \rho/2 $, $ \Arrowvert \vec{w} \Arrowvert \le B $, then
+    $ T \ge \frac{B^2\rho^2}{\epsilon^2}$ guarantees
+    \[
+        \mathbb{E}_{S\sim \mathcal{D}^m} \left[ L^\Delta_{\mathcal{D}}(h_{\vec{w}}) \right] \le \mathbb{E}_{S\sim \mathcal{D}^m} \left[ L^{g-hinge}{\mathcal{D}}(h_{\vec{w}}) \right] \le \min_{\vec{w}: \Arrowvert \vec{w} \Arrowvert \le B} L^{g-hinge}_{\mathcal{D}}(\vec{w}) + \epsilon
+    \]
+\end{corollary}
+
+\subsection{STRUCTURED OUTPUT PREDICTION}%
+\label{sub:structured_output_prediction}
+
+In multiclass problems, if $ \mathcal{Y} $ is very large but endowed with a predefined structure, we can use structured output prediction.
+
+In optical character recognition, the words in $ \mathcal{Y} $ are of length r, the size of alphabet is q. We defined $ \Delta(\vec{y}', \vec{y}) = \frac{1}{r} \sum^{r}_{i=1} 1_{[y_i \ne y'_i]} $.
+
+We also assume sample space is $ x \in \mathcal{X} \subset \mathbb{R}^{n \times r} $, where n is the number of pixels in each image, and r is the number of images in the sequence.
+
+Then, we construct class-sensitive feature mapping $ \Psi(\vec{x}, \vec{y}) \in \mathbb{R}^{nq + q^2} $:
+\begin{enumerate}
+    \item $ \Psi_{i, j, 1}(\vec{x}, \vec{y}) = \frac{1}{r} \sum^{r}_{t = 1} x_{i,t} 1_{[y_t = j]} $, which shows the gray level value of certain letter;
+    \item $ \Psi_{i, j, 2}(\vec{x}, \vec{y}) = \frac{1}{r} 1_{[y_t = i]} 1_{[y_{t-1} = j]} $, which shows the likelihood probability of ``qa'' (or ``rz'') in the words;
+\end{enumerate}
+\[
+    h_{\vec{w}}(\vec{x}) = \arg\max_{\vec{y} \in \mathcal{Y}} \langle \vec{w}, \Psi(\vec{x}, \vec{y}) \rangle
+\]
+
+We can rewrite $ \Psi(\vec{x}, \vec{y}) = \sum^{r}_{t=1} \phi(\vec{x}, y_t, y_{t-1}) $, where $ \phi_{i, j, 1} (\vec{x}, y_t, y_{t-1}) = x_{i,t} 1_{[y_t = j]} $ and $ \phi_{i, j, 2}(\vec{x}, y_t, y_{t-1}) = 1_{[y_t = i]} 1_{[y_{t-1} = j]} $.
+Then 
+\[h_{\vec{w}}(\vec{x}) = \arg\max_{\vec{y} \in \mathcal{Y}} \sum^{r}_{t=1} \langle \vec{w}, \phi(\vec{x}, y_t, y_{t-1}) \rangle \]
+by which we can use dynamic programming procedure to predict a new $x$.
+Such as: for $ y_{-1} $ is fixed, we can easily minimized $ y_0 $:
+\[
+    \arg\max_{y_0} \langle \vec{w}, \phi(\vec{x}, y_0, y_{-1}) \rangle
+\]
+
+\subsection{RANKING}%
+\label{sub:ranking}
+
+\begin{enumerate}
+    \item $ x = (\vec{x}_1, \ldots, \vec{x}_r) \in \mathcal{X} $;
+    \item $ \mathcal{Y} \in \mathbb{R}^{r} $, such as $ \vec{y} = (2, 1, 6, -1, 0.5) $ induces the permutaion $ \pi(\vec{y}) = (4, 3, 5, 1, 2) $ (ranking);
+    \item $ Z = \cup^{\infty}_{r=1}(\mathcal{X}^r \times \mathbb{R}^r) $;
+    \item $ \mathcal{H} $ is some set of ranking hypothesis.
+    \item Loss functions $ l(h, (\vec{x}, \vec{y})) = \Delta(h(\vec{x}), \vec{y}) $, where $ \Delta: \cup^{\infty}_{r=1}(\mathbb{R}^{r} \times \mathbb{R}^{r}) \rightarrow \mathbb{R}_{+} $.
+        \begin{itemize}
+            \item \textbf{$0-1$ Ranking Loss}: $ \Delta(\vec{y}', \vec{y}) = 1_{[\pi(\vec{y}') \ne \pi(\vec{y})]} $, neverused;
+            \item \textbf{Kendall-Tau Loss}:
+                \[
+                    \Delta(\vec{y}', \vec{y}) = \frac{2}{r(r-1)} \sum^{r-1}_{i=1} \sum^{r}_{j=i+1} 1_{[sign(y'_i - y'_j \ne sign(y_i - y_j))]}
+                \]
+            \item \textbf{Normalized Discounted Dumulative Gain (NDCG)}:
+                A monotonically nondecreasing discount function $ D: \mathbb{N} \rightarrow \mathbb{R}_+ $, a discounted cumulative gain measure:$ G(\vec{y}', \vec{y}) = \sum^{r}_{i=1} D(\pi{(\vec{y}')}_i) y_i $.
+                \[
+                \Delta(\vec{y}', \vec{y}) = 1 - \frac{G(\vec{y}', \vec{y})}{G(\vec{y}, \vec{y})} = \frac{1}{G(\vec{y}, \vec{y})} = \frac{1}{G(\vec{y}, \vec{y})} \sum^{r}_{i=1} (D({\pi(\vec{y})}_i) - D({\pi(\vec{y}')}_i)) y_i 
+                \]
+                A typical way to define the discount function is by
+                \[
+                    D(i) =
+                    \begin{cases}
+                        \frac{1}{\log_2(r - i + 2)} & i \in \left\{ r - k + 1, \ldots, r \right\}\\
+                        0,& otherwise
+                    \end{cases}
+                \]
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection{Linear Predictors for Ranking}%
+\label{ssub:linear_predictors_for_ranking}
+\[
+    \mathcal{H}_{W} = \left\{ h_{\vec{w}}: (\vec{x}_1, \ldots, \vec{x}_r) \rightarrow (\langle \vec{w}, \vec{x}_1 \rangle, \ldots, \langle \vec{w}, \vec{x}_r \rangle); \vec{w} \in W \right\}, \quad W = \left\{ w \in \mathbb{R}^{d}, \Arrowvert \vec{w} \Arrowvert \le B \right\} 
+\]
+\begin{enumerate}
+    \item A Hinge Loss for the Kendall Tau Loss Function:
+        \[
+            \Delta(\vec{y}', \vec{y}) \le \frac{2}{r(r-1)} \sum^{r-1}_{i=1} \sum^{r}_{j=i+1} \max \left\{ 0, 1-sign(y_i-y_j)\langle \vec{w}, \vec{x}_i - \vec{x}_j \rangle \right\}
+        \]
+    \item A Hinge Loss for the NDCG Loss Function:
+        Let V be the set of all permutations of $ [r] $ encoded as vectors, then $ \pi(\vec{y}') = \arg\max_{\vec{v} \in V} \sum^{r}_{i=1} v_i y'_i $. Denote $ \Psi(x, \vec{v}) = \sum^{r}_{i=1}  v_i \vec{x}_i $, and
+        \[
+            \pi(h_{\vec{w}}(x)) = \arg\max_{\vec{v}\in V} \sum^{r}_{i=1} v_i \langle \vec{w}, \vec{x}_i \rangle
+            = \arg\max_{\vec{v}\in V}\langle \vec{w}, \sum^{r}_{i=1} v_i \vec{x}_i \rangle
+            = \arg\max_{\vec{v}\in V} \langle \vec{w}, \Psi(x, \vec{v}) \rangle 
+        \]
+        \begin{align*}
+            \Delta(h_{\vec{w}}(\vec{x}), \vec{y})
+            \le& \Delta(h_{\vec{w}}(x), \vec{y}) + \langle \vec{w}, \Psi(x, \pi(h_{\vec{w}}(x))) \rangle - \langle \vec{w}, \Psi(x, \pi(\vec{y})) \rangle\\
+            \le& \max_{\vec{v}\in V}\left[ \Delta(\vec{v}, \vec{y}) + \langle \vec{w}, \Psi(x, \vec{v}) \rangle - \langle \vec{w}, \Psi(x, \pi(\vec{y})) \rangle \right]\\
+            =& \max_{\vec{v}\in V} \left[ \Delta(\vec{v}, \vec{y}) + \sum^{r}_{i=1} (v_i - {\pi(\vec{y})}_i) \langle \vec{w}, \vec{x}_i \rangle\right]
+        \end{align*}
+        To calculate the subgradient of the loss function, we need to find $ \vec{v} $ that minimize the hinge loss, which is equal to solve
+        \[
+            \arg\min_{\vec{v} \in V} \sum^{r}_{i=1} \left(-\langle \vec{w}, \vec{x}_i \rangle v_i + \frac{y_i D(v_i)}{G(\vec{y}, \vec{y})} \right) = \arg\min_{\vec{v} \in V} \sum^{r}_{i=1} \left( \alpha_i v_i + \beta_i D(v_i) \right)
+        \]
+        If we construct matrix $ A \in \mathbb{R}^{r, r} $, and $ A_{i, j} = j \alpha_i + D(j) \beta_i $, then we can think about each j as a ``worker'', each i as a ``task'', and $ A_{i,j} $ as the cost of assigning task i to worker j.
+        The discuss of doubly stochastic matrix for solving preceeding problem is interesting, please read the book.
+\end{enumerate}
+
+\subsection{BIPARTITE RANKING AND MULTIVARIATE PERFORMANCE MEASURES}%
+\label{sub:bipartite_ranking_and_multivariate_performance_measures} 
+
+Bipartite ranking problem: $ \vec{y} \in {\left\{ \pm 1 \right\}}^r $.
+
+The threshold transforms the vector $ \vec{y}' \in \mathbb{R}^r $ in to the vector $ (sign(y'_i - \theta), \ldots, sign(y'_r - \theta)) \in {\left\{ \pm 1 \right\}}^r $.
+
+\begin{enumerate}
+    \item 
+        \begin{itemize}
+            \item True positives: $ a = \left| \left\{ i: y_i = +1 \wedge sign(y'_i - \theta) = +1 \right\} \right| $
+            \item False positives: $ b = \left| \left\{ i: y_i = -1 \wedge sign(y'_i - \theta) = + 1 \right\} \right| $
+            \item False negatives: $ c = \left| \left\{ i: y_i = +1 \wedge sign(y'_i - \theta) = -1 \right\} \right| $
+            \item True negatives: $ d = \left| \left\{ i: y_i = -1 \wedge sign(y'_i - \theta) = -1 \right\} \right| $
+        \end{itemize}
+    \item 
+        \begin{itemize}
+            \item \textbf{recall, sensitivity}: $ \frac{a}{a+c} $;
+            \item \textbf{precision}: $ \frac{a}{a+b} $;
+            \item \textbf{specificity}: $ \frac{d}{d+b} $
+        \end{itemize}
+    \item
+        \begin{itemize}
+            \item \textbf{Averaging sensitivity and specificity}: $ \Delta(\vec{y}', \vec{y}) = 1 - \frac{1}{2} \left( \frac{a}{a+c} + \frac{d}{d+b} \right) $;
+            \item $ F_1-$\textbf{score}:$ \frac{2}{1/Precision + 1/Recall} $, $ \Delta(\vec{y}', \vec{y}) = 1 - F_1 = 1- \frac{2a}{2a+b+c} $;
+            \item $ F_\beta- $\textbf{score}: $ \frac{1+\beta^2}{1/Precision + \beta^2/Recall} $, $ \Delta(\vec{y}', \vec{y}) = 1 - F_\beta = 1 - \frac{(1+\beta^2) a}{(1+\beta^2)a + b + \beta^2 c}  $;
+            \item \textbf{Recall at k}: Set $ \theta $ so that $ a + b \le k $;
+            \item \textbf{Precision at k}: Set $ \theta $ so that $ a + b \ge k $.
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection{Linear Predictors for Bipartite Ranking}%
+
+\[
+    h_{\vec{w}}(x) = (\langle \vec{w}, \vec{x}_1 \rangle, \ldots, \langle \vec{w}, \vec{x}_r \rangle) = \vec{y}'.
+\]
+\[
+    \vec{b}_{\theta}(\vec{y}') = \left( sign(y'_1 - \theta), \ldots, sign(y'_r - \theta) \right) \in {\left\{ \pm 1 \right\}}^r.
+\]
+\[
+    V \subset {\left\{ \pm 1 \right\}}^r, \vec{b}_0(\vec{y}') = \arg\max_{\vec{v} \in V} \sum^{r}_{i=1} v_i y'_i.
+\]
+For any $ \theta $, let $ \vec{b}_{\theta}(\vec{y}) $ is recall at k, then $ \vec{b}_0(\vec{y}') = \arg\max_{\vec{v} \in V_{\ge k}} \sum^{r}_{i=1} v_i y'_i $;
+For any $ \theta $, let $ \vec{b}_{\theta}(\vec{y}) $ is precision at k, then $ \vec{b}_0(\vec{y}') = \arg\max_{\vec{v} \in V_{\le k}} \sum^{r}_{i=1} v_i y'_i $;
+
+Hinge-loss of preceeding loss:
+\begin{align*}
+    \Delta(h_{\vec{w}}(x), \vec{y}) =& \Delta(\vec{b}(h_{\vec{w}}(x)), \vec{y})\\
+    \le& \Delta(\vec{b}(h_{\vec{w}} (x)), \vec{y}) + \sum^{r}_{i=1} (b_i(h_{\vec{w}}(x)) - \vec{y})\langle \vec{w}, \vec{x}_i \rangle\\
+    \le& \max_{\vec{v} \in V} \left[ \Delta(\vec{v}, \vec{y}) + \sum^{r}_{i=1} (v_i - y_i) \langle \vec{w}, \vec{x}_i \rangle \right]
+\end{align*}
+
+If we want use SGD, we need to calculate the hinge-loss function's subgradient, the computational bottleneck is calculating the argmax $ \vec{v} \in V $.
+
+We denote:
+\[
+    \mathcal{Y}_{a,b} = \left\{ \vec{v}: \left| \left\{ i: v_i = 1 \wedge y_i = 1 \right\} \right| = a \wedge \left| \left\{ i: v_i = 1 \wedge y_i = -1 \right\} \right| = b \right\}
+\]
+if we fix some $ a, b $, then $ \Delta $ is fixed, and we only need to calculate $ \max_{\vec{v} \in \mathcal{Y}_{a,b}} \sum^{r}_{i=1} v_i \langle \vec{w}, \vec{x}_i \rangle $.
+
+The pseudocode to get maximum $ v \in V $ is left in the book.
+
+
+

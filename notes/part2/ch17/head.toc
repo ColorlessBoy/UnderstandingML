@@ -1,0 +1,13 @@
+\contentsline {section}{\numberline {17}Multiclass, Ranking and Complex prediction Problems}{2}
+\contentsline {subsection}{\numberline {17.1}ONE-VERSUS-ALL AND ALL-PAIRS}{2}
+\contentsline {subsection}{\numberline {17.2}LINEAR MULTICLASS PERDICTORS}{2}
+\contentsline {subsubsection}{\numberline {17.2.1}How to Construct $ \Psi $}{3}
+\contentsline {subsubsection}{\numberline {17.2.2}Cost-Sensitive Classification}{3}
+\contentsline {subsubsection}{\numberline {17.2.3}ERM}{3}
+\contentsline {subsubsection}{\numberline {17.2.4}Generalized Hinge Loss}{4}
+\contentsline {subsubsection}{\numberline {17.2.5}Multiclass SVM and SGD}{4}
+\contentsline {subsection}{\numberline {17.3}STRUCTURED OUTPUT PREDICTION}{4}
+\contentsline {subsection}{\numberline {17.4}RANKING}{5}
+\contentsline {subsubsection}{\numberline {17.4.1}Linear Predictors for Ranking}{6}
+\contentsline {subsection}{\numberline {17.5}BIPARTITE RANKING AND MULTIVARIATE PERFORMANCE MEASURES}{6}
+\contentsline {subsubsection}{\numberline {17.5.1}Linear Predictors for Bipartite Ranking}{7}
