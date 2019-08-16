@@ -1,0 +1,5 @@
+\contentsline {section}{\numberline {19}Nearest Neighbor}{2}
+\contentsline {subsection}{\numberline {19.1}NEAREST NEIGHBOR}{2}
+\contentsline {subsection}{\numberline {19.2}ANALYSIS {1-NN}}{2}
+\contentsline {subsection}{\numberline {19.3}Chernoff Bound}{3}
+\contentsline {subsection}{\numberline {19.4}Analysis {k-NN}}{4}

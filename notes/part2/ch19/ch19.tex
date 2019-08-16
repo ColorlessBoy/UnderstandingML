@@ -1,0 +1,233 @@
+% Chapter19 Nearest Neighbor, Understanding Machine Learning.
+
+\section{Nearest Neighbor}%
+
+\subsection{NEAREST NEIGHBOR}%
+
+\begin{enumerate}
+    \item Instance domain $ (\mathcal{X}, \mathcal{Y}) \sim \mathcal{D} $;
+    \item Metric function $ \rho: \mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R} $;
+    \item Training examples $ S = ((\vec{x}_1, y_1), \ldots, (\vec{x}_m, y_m)) $;
+    \item For each $ \vec{x} \in \mathcal{X} $, let $ (\pi_1(\vec{x}), \ldots, \pi_m(\vec{x})) = \pi(\rho(\vec{x}, \vec{x}_i), \ldots, \rho(\vec{x}, \vec{x}_m)) $
+    \item Rules of {k-NN} in classification: return the majority label among \\
+        $ \left\{ y_{i}: \pi_{i}(\vec{x}) \le k \right\} $
+    \item Rules of {k-NN} in regression: return $ h_S(\vec{x}) = \frac{\sum^{}_{\pi_i \le k} \rho(\vec{x}, \vec{x}_{i}) y_{i}}{ \sum^{}_{\pi_j \le k} \rho(\vec{x}, \vec{x}_{j})}  $
+\end{enumerate}
+
+\subsection{ANALYSIS {1-NN}}%
+
+\begin{enumerate}
+    \item $ \mathcal{X} = { [0, 1] }^d $, $ \mathcal{Y} = \left\{ 0, 1 \right\} $, $ l(h, (\vec{x}, y)) = 1 _{ [h(\vec{x})\ne y]} $, $ \rho $ is the Euclidean distance;
+    \item Define conditional probability: $ \eta(\vec{x}) = \mathbb{P}_{\mathcal{D}} \left[ y = 1 | \vec{x} \right] $;
+    \item Bayes optimal rule: $ h^*(\vec{x}) = 1_{[\eta(\vec{x}) > 1/2]} $;
+    \item Assume that $ \eta $ is c-Lipschitz: $ \forall \vec{x}, \vec{x}' \in \mathcal{X}, \left| \eta(\vec{x}) - \eta(\vec{x}') \right| \le c \Arrowvert \vec{x} - \vec{x}' \Arrowvert $
+\end{enumerate}
+
+\begin{lemma}
+    In {1-NN}:
+    \[
+        \mathbb{E}_{S \sim \mathcal{D}^m} [L_{\mathcal{D}}(h_S)] \le 2 L_{\mathcal{D}}(h^*) + c \mathbb{E}_{S \sim \mathcal{D}^m, \vec{x} \sim \mathcal{D}} \left[ \Arrowvert \vec{x} - \vec{x}_{i:\pi_i(\vec{x}) = 1} \Arrowvert \right]
+    \]
+    \begin{proof}
+        \begin{align*}
+            \mathbb{E}_{S\sim \mathcal{D}^m}\{L_{\mathcal{D}}(h_S)\} =& \mathbb{E}_{S \sim \mathcal{D}^m} \{\mathbb{E}_{(\vec{x}, y)\sim \mathcal{D}} [1_{[h_S(\vec{x}) \ne y]}] \} \\
+            =& \mathbb{E}_{S_x \sim \mathcal{D}^m_{\mathcal{X}}, \vec{x}\sim\mathcal{D}, y\sim\eta(\vec{x}), y' \sim \eta(x_{i:\pi_i(\vec{x}) = 1})} \left[ 1_{\left[ y\ne y' \right]} \right]\\
+            =& \mathbb{E}_{S_x \sim \mathcal{D}^m_{\mathcal{X}}, \vec{x}\sim\mathcal{D}} \left[ \mathbb{P}_{y \sim \eta(\vec{x}), y' \sim \eta(x_{i:\pi_i(\vec{x})=1})} \left[ y \ne y' \right] \right]\\
+        \end{align*}
+        For any two domain points $ \vec{x}, \vec{x}' $:
+        \begin{align*}
+            \mathbb{P}_{y \sim \eta(\vec{x}), y' \sim \eta(\vec{x}')} 
+            =& \eta(\vec{x}') (1 - \eta(\vec{x})) + (1 - \eta(\vec{x}')) \eta(\vec{x})\\
+            =& 2 \eta(\vec{x})(1 - \eta(\vec{x})) + (\eta(\vec{x}) - \eta(\vec{x}')) (2\eta(\vec{x}) - 1).
+        \end{align*}
+        Using $ \left| 2\eta(\vec{x}) - 1 \right| \le 1 $ and the assumption that $ \eta $ is $ c-Lipschitz $, then
+        \begin{align*}
+            \mathbb{P}_{y \sim \eta(\vec{x}), y' \sim \eta(\vec{x}')} 
+            = 2 \eta(\vec{x})(1 - \eta(\vec{x})) + c \Arrowvert \vec{x} - \vec{x}' \Arrowvert.
+        \end{align*}
+        \[
+            \mathbb{E}_{S \sim \mathcal{D}} \left[ L_{\mathcal{D}}(h_S) \right] \le \mathbb{E}_{\vec{x} \sim \mathcal{D}} \left[ 2\eta(\vec{x})(1-\eta(\vec{x})) \right] + c \mathbb{E}_{S_x \sim \mathcal{D}, \vec{x} \sim \mathcal{D}} \left[ \Arrowvert \vec{x} - \vec{x}_{i:\pi_i(\vec{x}) = 1} \Arrowvert \right]
+        \]
+        \[
+            L_{\mathcal{D}}(h^*) = \mathbb{E}_{\vec{x}\sim \mathcal{D}} \left[ \min \left\{ \eta(\vec{x}), 1-\eta(\vec{x}) \right\} \right] \ge \mathbb{E}_{\vec{x}} \left[ \eta(\vec{x})(1 - \eta(\vec{x})) \right].
+        \]
+    \end{proof}
+\end{lemma}
+
+Then we bound the second part of preceeding inequation's right side.
+
+\begin{lemma}
+    Let $ C_1, \ldots, C_r $ be a collection of subsets of some domain set $ \mathcal{X} $.Then,
+    \[
+        \mathbb{E}_{S \sim \mathcal{D}^m}\left[ \sum^{}_{i: C_i \cap S = \emptyset} \mathbb{P} [C_i] \right] \le \frac{r}{me} 
+    \]
+    \begin{proof}
+        \begin{align*} &\mathbb{E}_{S \sim \mathcal{D}^m}\left[ \sum^{}_{i: C_i \cap S = \emptyset} \mathbb{P} [C_i] \right]\\
+            =& \sum^{r}_{i=1} \mathbb{P}\left[ C_i \right]\mathbb{E}_{S\sim \mathcal{D}^m} \left[ 1_{\left[ C_i \cap S = \emptyset \right]} \right]
+            = \sum^{r}_{i=1} \mathbb{P}\left[ C_i \right] \mathbb{P}_{S \sim \mathcal{D}} \left[ C_i \cap S = \emptyset \right]\\
+            =& \sum^{r}_{i=1} \mathbb{P}\left[ C_i \right] {(1 - \mathbb{P}\left[ C_i \right])}^m \le \sum^{r}_{i=1} \mathbb{P}\left[ C_i \right] e^{-\mathbb{P}\left[ C_i \right] m}\\
+            \le& r \max_{i} \mathbb{P}\left[ C_i \right] e^{-\mathbb{P}\left[ C_i \right]m} \le \frac{r}{me} 
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\begin{theorem}
+    $ \mathbb{E}_{S \sim \mathcal{D}^m} \left[ L_{\mathcal{D}}(h_S) \right] \le 2 L_{\mathcal{D}}(h^*) + 2c \sqrt d m ^{- \frac{1}{d+1} }$
+    \begin{proof}
+        We cut $ \mathcal{X} = {\left[ 0, 1 \right]}^d $ into $ N\times \cdots \times N $ hypertable, which divide sample space into $ r = N^d $ pieces, $ C_1, \ldots, C_r $.
+
+        $ \forall \vec{x}, \vec{x}' $, if they are in the same box, we have $ \Arrowvert \vec{x} - \vec{x}' \Arrowvert \le \frac{\sqrt d}{T} $. Otherwise, $ \Arrowvert \vec{x} - \vec{x}' \Arrowvert \le \sqrt{d}$.
+        \begin{align*}
+            \mathbb{E}_{\vec{x}, S} \left[ \Arrowvert \vec{x} - \vec{x}_{i: \pi_i(\vec{x}) = 1}\Arrowvert \right]
+            \le& \mathbb{E}_{S} \left[ \mathbb{P}\left[ \cup _{i:C_i \cap S = \emptyset} C_i \right] \sqrt{d} + \mathbb{P}\left[ \cup_{i: C_i \cap S \ne \emptyset} C_i \right] \sqrt{d}/T \right]\\
+            \le& \sqrt{d} \left( \frac{T^d}{me} + \frac{1}{T} \right) \le \sqrt{d} {\left( \frac{me}{d} \right)}^{- \frac{1}{d+1}} \left\{ \frac{1}{d} +1 \right\} \\
+            \le& 2\sqrt d m^{-1/(d+1)}
+        \end{align*}
+    \end{proof}
+\end{theorem}
+
+The theorem shows that if we want the error gap is smaller than $ \epsilon $, the sample size $ m \ge {(2c \sqrt{d} /\epsilon)}^{d+1} $, we call it the ``curse of dimensionality''.
+
+$ \forall c > 1 $, guarantees $ \eta(\vec{x}) $ is c-Lipschitz. If $ m \le {(c+1)}^d /2 $, the true error of the rule L is greater than 1/8 with probability greater than 1/7. (The proof is in the book.)
+
+\subsection{Chernoff Bound}%
+\label{sub:chernoff_bound}
+
+Chebyshev's Inequality only requires the pairwise independence of the variables $ \left\{ X_i \right\} $. Donote $ Z = \sum^{}_{} X_i $, so the bound
+\[
+    \forall a > 0, \mathbb{P} \left[ \left| Z - \mathbb{E} \left[ Z \right] \right| \ge a \right]
+    = \mathbb{P} \left[ {(Z - \mathbb{E}\left[ Z \right])}^2 \ge a^2 \right] \le \frac{Var\left[ Z \right]}{a^2} 
+\]
+is not satisfying for {i.i.d.} variables $ {X_i} $.
+
+\begin{theorem}
+    Let $ X_1, \ldots, X_m $ be independent Bernoulli variables where for every i, $ \mathbb{P}\left[ X_i = 1 \right] = p_i $ and $ \mathbb{P} \left[ X_i = 0 \right] = 1-p_i $. Let $ Z = \sum^{m}_{i=1} X_i $ and $ p = \mathbb{E} \left[ Z  \right] = \sum^{m}_{i=1} p_i $.
+    \begin{enumerate}
+        \item Upper Tail: $ \forall \delta > 0, \mathbb{P}(Z \ge (1+\delta) \mu) \le e ^{-\frac{\delta^2}{2+\delta} \mu} $;
+        \item Lower Tail: $ \forall \delta \in (0,1), \mathbb{P}(Z \le (1-\delta) \mu) \le e ^{-\frac{\delta^2}{2+\delta} \mu}$
+    \end{enumerate}
+    \begin{proof}
+        Step1: $ \delta > 0 $:
+        \begin{align*}
+            \mathbb{E}\left[ e^{tZ} \right] =& \mathbb{E} \left[ e^{t \sum^{}_{i} X_i} \right] = \prod_i \mathbb{E} \left[ e^{tX_i} \right] = \prod_i \left( p_i e^t + (1 - p_i) \right) \le \prod_i e^{p_i (e^t - 1)} = e^{p(e^t - 1)}
+        \end{align*}
+        \begin{align*}
+            \mathbb{P}\left[ Z \ge (1+\delta) p \right] \le \min_{t > 0} \frac{\mathbb{E} \left[ e^{tZ} \right]}{e^{(1+\delta)tp}} \le \min_{t > 0} e^{p(e^t - 1) - (1+\delta) tp} = e ^{- p \left[ (1+\delta)\ln(1+\delta) - \delta \right]}
+        \end{align*}
+        Let's take a break, and study the function $ f(\delta) = \ln(1+\delta) - \frac{\delta}{1+k\delta} $:
+        $ f'(\delta) = \frac{k^2 \delta^2 + (2k - 1)\delta}{(1+\delta) {(1+ k \delta)}^2} $.
+        If $ k \ge \frac{1}{2} $, $ \forall \delta > 0, f(\delta) \ge f(0) = 0 \Rightarrow \ln(1+\delta) \ge \frac{\delta}{1+k \delta}$.
+        \[
+            \mathbb{P}\left[ Z \ge (1+\delta)p \right] \le e^{-p \cdot \frac{(1-k)\delta^2}{1+k\delta} } = e^{-p \frac{\delta^2}{2 + \delta} }
+        \]
+
+        Step2: $ \delta \in (0, 1) $:
+        \[
+            \mathbb{P} \left[ Z \le (1 - \delta) p \right] \le \min_{t > 0} \frac{\mathbb{E}\left[ e^{-tZ} \right]}{e ^{-tp(1-\delta)}} \le \min_{t > 0} e^{p(e^{-t} - 1) + tp(1 - \delta)} \le e^{-p ( (1 - \delta) \ln(1-\delta) + \delta )}
+        \]
+        \[
+            (1 - \delta)\ln(1-\delta)  + \delta = \sum^{\infty}_{i=1} \frac{\delta^{i+1}}{i(i+1)} \ge \sum^{\infty}_{i=1} \frac{{(-\delta)}^{i+1}}{i(i+1)} = ((1 + \delta) \ln(1 + \delta) - \delta) 
+        \]
+        Then, we can get the same bound:
+        \[
+            \mathbb{P}\left[ Z \le (1-\delta)p \right] \le e^{-p \cdot \frac{(1-k)\delta^2}{1+k\delta} } = e^{-p \frac{\delta^2}{2 + \delta} }
+        \]
+    \end{proof}
+\end{theorem}
+
+\subsection{Analysis {k-NN}}%
+
+\begin{lemma}
+    Let $ C_1, \ldots, C_r $ be a collection of subsets of some domain set, $ \mathcal{X} $. Then $ \forall k \ge 2 $,
+    \[
+        \mathbb{E}_{S \sim \mathcal{D}^m} \left[ \sum^{}_{i: \left| C_i \cap S \right| < k} \mathbb{P} \left[ C_i \right] \right] \le \frac{2rk}{m}.
+    \]
+    \begin{proof}
+        \begin{align*}
+            \mathbb{E}_{S \sim \mathcal{D}^m} \left[ \sum^{}_{i: \left| C_i \cap S \right| < k} \mathbb{P}_{\mathcal{D}} \left[ C_i \right] \right] 
+            =& \mathbb{E}_{S \sim \mathcal{D}^m} \left[ \sum^{r}_{i=1} \mathbb{P}_{\mathcal{D}}\left[ C_i \right] 1_{\left[ \left| C_i \cap S \right| < k \right]} \right]\\
+            =& \sum^{r}_{i=1} \mathbb{P}_{\mathcal{D}}\left[ C_i \right] \mathbb{P}_{S \sim \mathcal{D}}\left[ \left| C_i \cap S \right| < k \right]
+        \end{align*}
+        If $ k \ge \mathbb{P}\left[ C_i \right] m/2 $, 
+        \[
+            \mathbb{P}_{\mathcal{D}}\left[ C_i \right] \mathbb{P}_{S \sim \mathcal{D}}\left[ \left| C_i \cap S \right| < k \right] \le \mathbb{P}_{\mathcal{D}} \left[ C_i \right] \le \frac{2k}{m} 
+        \]
+        If $ k < \mathcal{P}_{\mathcal{D}}\left[ C_i \right] m/2 $, then
+        \[
+            \mathbb{P}_{S \sim \mathcal{D}}\left[ \left| C_i \cap S \right| < k \right]
+            \le \mathbb{P}_{S \sim \mathcal{D}}\left[ \left| C_i \cap S \right| < \left(1 - \frac{1}{2} \right)\mathbb{P}_{\mathcal{D}}\left[ C_i \right] m \right] \le e^{-\mathbb{P}_{\mathcal{D}} \left[ C_i \right] m / 10}
+        \]
+        \[
+            \mathbb{P}_{\mathcal{D}}\left[ C_i \right] \mathbb{P}_{S \sim \mathcal{D}}\left[ \left| C_i \cap S \right| < k \right] \le \mathbb{P}_{\mathcal{D}} \left[ C_i \right] e^{-P_{D}\left[ D_i \right] m/10} \le \frac{10}{me} \le \frac{4}{m} \le \frac{2k}{m} 
+        \]
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    Let $ p = \frac{1}{k} \sum^{k}_{i=1} p_i $, and $ p' = \frac{1}{k} \sum^{k}_{i=1} X_i $. Then
+    \[
+        \mathbb{E}_{X_1,\ldots, Z_k} \mathbb{P}_{y \sim p} \left[ y \ne 1_{\left[ p' > 1/2 \right]} \right]
+        \le \left( 1 + \sqrt{\frac{8}{k} } \right) \mathbb{P}_{y \sim p} \left[ y \ne 1 _{\left[ p > 1/2 \right]} \right]
+    \]
+    \begin{proof}
+        \begin{align*}
+            \mathbb{E}_{X_1,\ldots, X_k} \mathbb{P}_{y \sim p} \left[ y \ne 1_{\left[ p' > 1/2 \right]} \right]
+            =& p\left( 1 - \mathbb{P}_{X_1, \ldots, X_k} \left[ p' > 1/2 \right] \right)
+            + \left( 1 - p \right) \left( \mathbb{P}_{X_1, \ldots, X_k} \left[ p' > 1/2 \right] \right)\\
+            =& p + (1-2p) \left( \mathbb{P}_{X_1, \ldots, X_k} \left[ p' > 1/2 \right] \right)
+        \end{align*}
+        \[
+            \mathbb{P}_{X_1, \ldots, X_k} \left[ p' > 1/2 \right] 
+            = \mathbb{P}_{X_1, \ldots, X_k} \left[ \sum^{k}_{i=1} X_i \ge k/2 \right]
+            = \mathbb{P}_{X_1, \ldots, X_k} \left[ \sum^{k}_{i=1} X_i \ge (1 + \frac{1}{2p} -1 ) kp\right]
+        \]
+        If $ p \le \frac{1}{2} $, $ \mathbb{P}_{X_1, \ldots, X_k} \left[ p' > 1/2 \right] \le e ^{-kp h \left( \frac{1}{2p} - 1 \right)} = e^{-kp + \frac{k}{2} \left( \log(2p) + 1 \right)} $\\
+        (If $ p > \frac{1}{2} $, we study the random variables $ 1-X_1, \ldots, 1-X_k $, the error times keep unchanged.)
+
+        There is a inequation: $ (1 - 2p)e^{-kp + \frac{k}{2} (\log(2p) - 1)} \le p\sqrt{\frac{8}{k} }$
+        \[
+            \mathbb{E}_{X_1,\ldots, X_k} \mathbb{P}_{y \sim p} \left[ y \ne 1_{\left[ p' > 1/2 \right]} \right]
+            \le \left( 1 + \sqrt{\frac{8}{k} } \right) p
+        \]
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    $ \forall p, p' \in [0, 1], y' \in \left\{ y, y' \right\}, \mathbb{P}_{y \sim p} \left[ y \ne y' \right] - \mathbb{P}_{y \sim p'}\left[ y \ne y' \right] \le \left| p - p' \right| $.
+    \begin{proof}
+        If $ y' = 0 $, $  \mathbb{P}_{y \sim p} \left[ y \ne 0 \right] - \mathbb{P}_{y \sim p'}\left[ y \ne 0 \right] \le p - p$;\\
+        If $ y' = 1 $, $  \mathbb{P}_{y \sim p} \left[ y \ne 1 \right] - \mathbb{P}_{y \sim p'}\left[ y \ne 1 \right] \le (1 - p) - (1 - p') = p' - p $.
+    \end{proof}
+\end{lemma}
+
+\begin{theorem}
+    Let $ C_1, \ldots, C_r $ be the cover of the set $ \mathcal{X} $ using boxes of length $ \epsilon $.
+    \[
+        \mathbb{E}_S \left[ L_\mathcal{D} (h_S) \right] \le \left( 1 + \sqrt{\frac{8}{k} } \right) L_{\mathcal{D}}(h^*) + (3c \sqrt{d} + 2k) m ^{-1/(d+1)}.
+    \]
+    \begin{proof}
+        First we get a loose bound:
+        \begin{align*}
+            \mathbb{E}_{S\sim\mathcal{D}} \left[ L_{\mathcal{D}}(h_S) \right]
+            \le& \mathbb{E}_{S\sim\mathcal{D}} \left[ \sum^{}_{i: \left| C_i \cap S \right| < k} P_{\mathcal{D}} \left[ C_i \right] \right] \\
+            +& \max_{i} \mathbb{P}_{S, (\vec{x}, y)} \left[ h_{S}(\vec{x}) \ne y | \forall j \in [k], \Arrowvert \vec{x} - \vec{x}_{j: \pi_j(\vec{x}) \le k} \Arrowvert \le \epsilon \sqrt{d} \right]
+        \end{align*}
+        If a cell doesn't contain k instances from the training set and test point $ \vec{x} $ gets from this ``bad cell'', we think it's a kind of mistake.Only if test point $ \vec{x} $ gets from a ``good cell'', there is probability for correct prediction.
+
+        Let $ p = \frac{1}{k} \sum^{k}_{i=1} \eta(\vec{x}_i) < 1/2 $.
+        \begin{align*}
+            &\mathbb{E}_{y_1,\ldots, y_m} \mathbb{P}_{y \sim \eta(\vec{x})} \left[ h_S(\vec{x}) \ne y \right]
+            \le \mathbb{E}_{y_1, \ldots, y_m} \mathbb{E}_{y \sim p} \left[ h_S(\vec{x}) \ne y \right] + \left| p - \eta(\vec{x}) \right|\\
+            \le& \left( 1 + \sqrt{\frac{8}{k}} \right) \mathbb{P}_{y \sim p}\left[ 1_{\left[ p > 1/2 \right]} \ne y\right]+ \left| p - \eta(\vec{x}) \right|\\
+            \le& \left( 1 + \sqrt{\frac{8}{k}} \right) \left( \min\{\eta(\vec{x}), 1-\eta(\vec{x})\} + \left| p - \eta(\vec{x}) \right| \right)+ \left| p - \eta(\vec{x}) \right|\\
+            \le& \left( 1 + \sqrt{\frac{8}{k} } \right) L_{\mathcal{D}}(h^*) + \left( 2 + \sqrt{\frac{8}{k} } \right) \left| p - \eta(\vec{x}) \right|\\
+            \le& \left( 1 + \sqrt{\frac{8}{k} } \right) L_{\mathcal{D}}(h^*) + 3c \epsilon \sqrt{d}
+        \end{align*}
+        \begin{align*}
+            \mathbb{E}_{S \sim \mathcal{D}}\left[ L_{\mathcal{D}} \left( h_S \right) \right]
+            \le \left( 1 + \sqrt{\frac{8}{k} } \right) L_{\mathcal{D}}(h^*) + 3c \epsilon \sqrt{d} + \frac{2k}{m \epsilon^d} 
+        \end{align*}
+        If $ \epsilon = m ^{-1/(d+1)} $, $ \mathbb{E}_{S \sim \mathcal{D}} \left[ L_{\mathcal{D}} (h_S) \right] \le \left( 1 + \sqrt{\frac{8}{k} } \right) L_{\mathcal{D}}(h^*) + (3c \sqrt{d} + 2k) m ^{-1/(d+1)}$
+    \end{proof}
+\end{theorem}
+
