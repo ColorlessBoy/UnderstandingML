@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {21}Online Learning}{2}
+\contentsline {subsection}{\numberline {21.1}ONLINE CLASSIFICATION IN THE REALIZABLE CASE}{2}
+\contentsline {subsubsection}{\numberline {21.1.1}Online Learnability}{3}
+\contentsline {subsection}{\numberline {21.2}ONLINE CLASSFICATION IN THE UNREALIZABLE CASE}{3}
+\contentsline {subsubsection}{\numberline {21.2.1}Weighted-Majority}{4}
+\contentsline {subsection}{\numberline {21.3}ONLINE CONVEX OPTIMIZATION}{6}
+\contentsline {subsection}{\numberline {21.4}THE ONLINE PERCEPTRON ALGORITHM}{7}
