@@ -1,0 +1,166 @@
+% Chapter Clustering, Understanding Machine Learning
+
+\section{Clustering}%
+\label{sec:clustering}
+
+The basic problem of clustering is without rigorous definition, because:
+\begin{enumerate}
+    \item Similarity and dissimilar are not transitive relations: If a is similar to b, and b is similar to c, we can't get a is similar to c.
+    \item Unsupervised learning problem has no clear success evaluation procedure for clustering, even on the basis of full knowledge of the underlying data distribution.
+\end{enumerate}
+
+Hence, different clustering algorithms will output very different clusterings.
+
+\begin{definition}
+    \textbf{(A clustering model).}
+    \begin{enumerate}
+        \item \textbf{Input}:
+            \begin{itemize}
+                \item a set of elements $ S \in \mathcal{X}^m $; 
+                \item a distance function $ d:\mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R} $ (satisfies $ d(x_1, x_2) = d(x_2, x_1), d(x, x) = 0, d(x_1, x_2) \le d(x_1, x_3) + d(x_2, x_3)$);
+                \item clusters number k.
+            \end{itemize}
+        \item \textbf{Output}:
+            \begin{itemize}
+                \item Hard cluster: $ C = (C_1, \ldots, C_k) $, where $ \cup^k_{i=1} C_i = \mathcal{X} $, and $ i \ne j \Rightarrow C_i \cap C_j = \emptyset $;
+                \item Soft cluster: $ \forall x \in \mathcal{X}, P(x) = (p_1(x), \ldots, p_k(x)) $, where $ p_i(x) = \mathbb{P} \left[ x \in C_i \right] $.
+            \end{itemize}
+    \end{enumerate}
+\end{definition}
+
+\subsection{LINKAGE-BASED CLUSTERING ALGORITHMS}%
+\label{sub:linkage_based_clustering_algorithms}
+
+These kind of algorithms start from the trivial clustering that has each data point as a single-point cluster.
+Then, repeatedly merge the ``closest'' clusters of the previous clustering. 
+
+The distance between domain subsets:
+\begin{enumerate}
+    \item Single Linkage clustering: $ D(A, B) = \min \left\{ d(x, y): x \in A, y \in B \right\} $;
+    \item Average Linkage clustering: $ D(A, B) = \frac{1}{\left| A \right| \left| B \right|} \sum^{}_{x \in A, y \in B}  d(x, y) $;
+    \item Max Linkage clustering: $ D(A, B) = \max\left\{ d(x, y): x \in A, y \in B \right\} $.
+\end{enumerate}
+
+Stopping criteria:
+\begin{enumerate}
+    \item Fixed number of cluster;
+    \item Distance upper bound, fix some $ r \in \mathbb{R}_+ $.
+\end{enumerate}
+
+\subsection{k-MEANS AND OTHER COST MINIMIZATION CLUSTERINGS}%
+
+\begin{enumerate}
+    \item The centroid of $ C_i $ is defined to be: $ \mu_i(C_i) =  \arg\min_{\mu \in \mathcal{X}} \sum^{}_{s \in C_i} {d(s, \mu)}^2$;
+    \item $ G_{k-means}((S, d), (C_1, \ldots, C_k)) = \min_{\mu_1,\ldots, \mu_k \in \mathcal{X}} \sum^{k}_{i=1} \sum^{}_{ x \in C_i} {d(x, \mu_i)}^2 $;
+    \item $ G_{k-medoid}((S, d), (C_1, \ldots, C_k)) = \min_{\mu_1, \ldots, \mu_k \in S} \sum^{k}_{i=1} \sum^{}_{x \in C_i} {d(x, \mu_i)}^2 $;
+    \item $ G_{k-median}((S, d), (C_1, \ldots, C_k)) = \min_{\mu_1, \ldots, \mu_k \in S} \sum^{k}_{i=1} \sum^{}_{x \in C_i} {d(x, \mu_i)} $;
+    \item The sum of in-cluster distances (not center based): $ G_{k-SOD}((S, d), (C_1, \ldots, C_k)) = \sum^{k}_{i=1} \sum^{}_{x, y \in C_i} {d(x, y)} $;
+\end{enumerate}
+
+\begin{algorithm}[H]
+    \caption{k-Means}
+    \begin{algorithmic}
+        \Require{$ S \in \mathcal{X}^m $; number of cluster k.}
+        \Ensure{Randomly choose initial centroids $ \mu_1,\ldots, \mu_k $ }
+        \While{not convergence}
+        \State{$ \forall i \in [k], C_i = \left\{ x \in \mathcal{S}: i = \arg\min_{j} \Arrowvert x - \mu_j \Arrowvert \right\} $}
+        \State{$ \forall i \in [k] $, update $ \mu_i = \frac{1}{\left| C_i \right|} \sum^{}_{x \in C_i } x $}
+        \EndWhile.
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{lemma}
+    {K-means} algorithm does not increase the {k-means} objective function.
+    \begin{proof}
+        \[
+            \arg\min_{\mu \in \mathbb{R}^n} \sum^{}_{x \in C_i} \Arrowvert x - \mu \Arrowvert^2 = \frac{1}{\left| C_i \right|} \sum^{}_{x \in C_i} x 
+        \]
+        \[
+            G_{k-means}(C^{(t-1)}_1, \ldots, C^{(t-1)}_k) = \sum^{k}_{i=1} \sum^{}_{x \in C^{(t-1)}_{i}} \Arrowvert x - \mu^{(t-1)}_i \Arrowvert^2 
+        \]
+        \[
+            G_{k-means}(C^{(t)}_1, \ldots, C^{(t)}_{k}) \le \sum^{k}_{i=1} \sum^{}_{x \in C^{(t)}_{i}} \Arrowvert x - \mu^{(t-1)}_i \Arrowvert^2 \le \sum^{k}_{i=1} \sum^{}_{x \in C^{(t-1)}_{i}} \Arrowvert x - \mu^{(t-1)}_i \Arrowvert^2 
+        \]
+    \end{proof}
+\end{lemma}
+
+The k-means might converge to a point which is not even a local minimum.
+
+\subsection{SPECTRAL CLUSTERING}%
+
+\textbf{Similarity graph}: every two vertices are connected by an edge whose weight is their similarity $ W_{i,j} = s(x_i, x_j) $. Such as: $ W_{i,j} = \exp(-{d(x_i, x_j)}^2 / \sigma^2) $.
+
+The question becomes cutting the minimum weights edges.
+
+\subsubsection{Graph Cut}%
+
+Find the mincut:
+\begin{enumerate}
+    \item $ Cut(C_1, \ldots, C_k) = \sum^{k}_{i=1} \sum^{}_{r \in C_i, s \notin C_i} W_{r,s} $;
+    \item $ RatioCut(C_1, \ldots, C_k) = \sum^{k}_{i=1} \frac{1}{\left| C_i \right|} \sum^{}_{r \in C_i, s \notin C_i} W_{r,s} $. (Balance)
+\end{enumerate}
+
+\begin{definition}
+    \textbf{(Unnormalized Graph Laplacian).}
+    \[
+        L = D - W, \quad D_{ij} = \sum^{m}_{j=1} W_{i,j}
+    \]
+    Diagonal matrix D is called the degree matrix.
+\end{definition}
+
+\begin{lemma}
+    Let $ H_{i,j} = \frac{1}{\sqrt{\left| C_j \right|}} 1_{[i \in C_j]}$,where $ H \in \mathbb{R}^{m, k} $, then
+    \[
+        RatioCut(C_1, \ldots, C_k) = trace(H^T L H).
+    \]
+    \begin{proof}
+        \[
+            \vec{v}^T L \vec{v} = \sum^{m}_{i=1} \sum^{m}_{j=1} L_{i,j} v_i v_j = \frac{1}{2} \left( \sum^{}_{r} D_{r,r}v^{2}_{r} - 2 \sum^{}_{r,s} v_r v_s W_{r,s} + \sum^{}_{s} D_{s,s}v^{2}_{s} \right) = \frac{1}{2} \sum^{}_{r,s} W_{r,s}{(v_r - v_s)}^2
+        \]
+        \[
+            trace(H^T L H) = \sum^{k}_{i=1} h^T_{i} L h_i = \sum^{k}_{i=1} \frac{1}{2} \sum^{}_{r,s} W_{r,s}{(h_r - h_s)}^2 = \sum^{k}_{i=1} \frac{1}{\left| C_i \right|} \sum^{}_{r \in C_i, s \notin C_i} W_{r,s}
+        \]
+    \end{proof}
+\end{lemma}
+
+\begin{algorithm}[H]
+    \caption{Unnormalized Spectral Clustering}
+    \begin{algorithmic}
+        \Require{$ W \in \mathbb{R}^{m,m} $; Number of clusters k.}
+        \State{Compute Laplacian L.}
+        \State{Let $ U \in \mathbb{R}^{m,k} $ be the matrix whose columns are the eigenvectors of L corresponding to the k smallest eigenvalues.}
+        \State{Let $ v_1, \ldots, v_m $ be the rows of U.}
+        \State{Cluster the points $ v_1,\ldots, v_m $ using k-means.}
+        \State{\Return{Clusters $ C_1, \ldots, C_K $ of {k-means} algorithm.}}
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{INFORMATION BOTTLENECK}%
+
+\subsection{A HIGH LEVEL VIEW OF CLUSTERING}%
+
+Kleinberg tried to solve the question what is clustering. He think a clustering function F should have three properties:
+\begin{enumerate}
+    \item Scale Invariance (SI): $ F(\mathcal{X}, d) = F(\mathcal{X}, \alpha d) $;
+    \item Richness (Ri): $ \forall S \in \mathcal{X}^m, C = \left( C_1, \ldots, C_k \right), \exists d, F(S, d) = C $;
+    \item Consistency (Co): $ \forall d, d'$, if $ x,y $ belong to the same cluster in $ F(S,d) \Rightarrow d'(x,y) \le d(x,y) $, and if $ x,y $ belong to different clusters in $ F(S,d) \Rightarrow d'(x,y) \ge d(x,y) $, then $ F(S, d) = F(S, d') $
+\end{enumerate}
+
+\begin{theorem}
+    There exists no function, F, that satisfies all the three properties: Scale Invvariance, Richness, and Consistency.
+    \begin{proof}
+        Assume that $ F $ does satisfy all three properties.
+
+        We choost $ S $ with at least 3 points. By Richness, $ \exist d_1, d_2 $ satisfy $ F(S, d_1) \ne F(S, d_2) $ and $ F(S, d_1) = \left\{ \left\{ x \right\}: x \in S \right\} $.
+
+        Then, $ \exists \alpha > 0 $, $ \forall x, y \in S, \alpha d_2(x, y) \ge d_1(x,y) $. With consistency property and the special structure of $ F(S, d_1) $, we have $ F(S, d_2) = F(S, \alpha d_2) = F(S, d_1) $.
+    \end{proof}
+\end{theorem}
+
+\begin{enumerate}
+    \item Center-based fails the consistency property.
+    \item If we fix k, and there exists F satisfying $ k-Richness $, Scale Invariance and Consistency.
+    \item One can come up with many other different properties of clustering functions by prior knowledge.
+    \item There is no ``ideal'' clustering function, as the No-Free-Lunch theorem in classification problems.
+\end{enumerate}
+
