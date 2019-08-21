@@ -1,0 +1,280 @@
+% Chapter23 Dimensionality Reduction, Understanding Machine Learning
+
+\section{Dimensionality Reduction}%
+\label{sec:dimensionality_reduction}
+
+In this chapter, we discuss linear transformation.
+
+\subsection{PRINCIPAL COMPONENT ANALYSIS (PCA)}%
+\label{sub:principal_component_analysis_pca_}
+
+\begin{definition}
+    \textbf{(PCA target).}
+    For a data $ S = (x_1, \ldots, x_m) \in \mathbb{R}^d $, finding a compression matrix W and a recovering matrix U, satisfy
+\end{definition}
+
+\begin{lemma}
+    \[
+        \arg\min_{W \in \mathbb{R}^{n,d}, U \in \mathbb{R}^{d,n}} \sum^{m}_{i=1} \Arrowvert x_i - U W x_i \Arrowvert^2_2.
+        = \arg\min_{V \in \mathbb{R}^{d, n}: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x_i - V^T V x_i \Arrowvert^2_2
+    \]
+    \[
+        = \arg\max_{V \in \mathbb{R}^{d, n}: V^T V = I^n} trace\left( V^T \sum^{m}_{i=1} x_i x_i^T V \right)
+    \]
+    And if V's column is the matrix $ \sum^{m}_{i=1} x_i x_i^T $'s n leading eigenvectors, we reach the maximum.
+    
+    \begin{proof}
+        Let $ V \in \mathbb{R}^{d, n} $ be a matrix whose columns form an orthonormal basis of this subspace, then
+        $ \left\{ UWx: x \in S \right\} \subset \left\{ Vy: y \in \mathbb{R}^{n} \right\}$, then
+        \[
+            \forall V \in \left\{ V^T V = I^n, \mathbb{R}^{d,n} \right\}, \quad \arg\min_{y_i} \Arrowvert x_i - Vy_i \Arrowvert^2 = V^T x_i
+        \]
+        \begin{align*}
+            &\min_{W \in \mathbb{R}^{n,d}, U \in \mathbb{R}^{d,n}} \sum^{m}_{i=1} \Arrowvert x_i - U W x_i \Arrowvert^2_2 \ge \min_{V: V^T V = I^n} \min_{y_1, \ldots, y_m} \sum^{m}_{i=1} \Arrowvert x_i - V y_i \Arrowvert^2 \\
+            =&\min_{V: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x_i - V V^T x_i \Arrowvert
+            = \min_{V: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x \Arrowvert^2 - 2x^T V V^T x + x^T V V^T V V^T x\\
+            =& \min_{V: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x \Arrowvert^2 - x^T V V^T x = \min_{V: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x \Arrowvert^2 - trace(V^T x x^T V)\\
+            =& \max_{V \in \mathbb{R}^{d,n}: V^T V = I^n} trace\left( V^T \sum^{m}_{i=1} x_i x_i^T V \right)
+        \end{align*}
+        Let $ A = \sum^{m}_{i=1} x_i x_i^T $. The matrix A is symmetric and therefore it can be written using spectral decomposition as $ A = U D U^T $, where $ D $ is diagonal and $ U^T U = U U^T = I^d $.
+        \begin{align*}
+            &\max_{V \in \mathbb{R}^{d,n}: V^T V = I^n} trace\left( V^T \sum^{m}_{i=1} x_i x_i^T V \right)
+            = \max_{V \in \mathbb{R}^{d,n}: V^T V = I^n} trace\left( V^T U D U^T V \right) \\
+            =& \max_{W \in \mathbb{R}^{d,n}: W^T W = I^n} trace\left( W^T D W \right) 
+            = \sum^{d}_{i=1} D_{i,i} \sum^{n}_{j=1} W^2_{i,j}
+        \end{align*}
+        First we have $ \sum^{d}_{i=1} \sum^{n}_{j=1} W^2_{i,j} = n $.
+
+        Second, We expand W tobe $ \tilde{W} $, whose first n columns are the columns of $ W $, and $ \tilde{W}^T \tilde{W} = I^d $.Then $ \sum^{d}_{j=1} \tilde{W}^2_{i,j} = 1 \Rightarrow \sum^{n}_{j=1} W^2_{i,j} \le 1$. ($ (\tilde{W} \tilde{W}^T - I^d) \tilde{W} = 0 \Rightarrow  \tilde{W} \tilde{W}^T = I^d$).Then,if $ D_{1,1} \ge D_{2,2} \ge \ldots \ge D_{d,d} $,
+        \[
+            \max_{W \in \mathbb{R}^{d,n}: W^T W = I^n} \sum^{d}_{i=1} D_{i,i} \sum^{n}_{j=1} W^2_{i,j} \le \max_{\beta \in {[0, 1]}^d: \Arrowvert \beta \Arrowvert_1 \le n} \sum^{d}_{i=1} D_{i,i} \beta_{i} = \sum^{n}_{i=1} D_{i,i}
+        \]
+        It's easy to varify that if $ V $'s column is $ U $'s first n columns, then 
+        \[
+            \max_{V \in \mathbb{R}^{d,n}: V^T V = I^n} trace\left( V^T U D U^T V \right) = \sum^{n}_{i=1} D_{i,i}
+        \]
+    \end{proof}
+\end{lemma}
+
+Because $ \sum^{m}_{i=1} \Arrowvert x_i \Arrowvert^2 = trace(A) = \sum^{d}_{i=1} D_{i,i} $, so we obtain that
+\[
+    \min_{V: V^T V = I^n} \sum^{m}_{i=1} \Arrowvert x \Arrowvert^2 - trace(V^T x x^T V) = \sum^{d}_{i = n+1} D_{i,i}
+\]
+
+\subsubsection{A More Efficient Solution for the Case $ d \gg m $}%
+
+In previous section, constructing the matrix A need $ O(md^2) $ and calculating eigenvalues of A need $ O(d^3) $.
+If $ d \gg m $, we can calculate the PCA solution more efficiently.
+
+Instead of analysing $ A = X^T X $, we consider $ B = XX^T $. The B's eigenvector $ u $ satisfies $ B u = \lambda u \Rightarrow X^T X X^T u = \lambda X^T u \Rightarrow \frac{X^T u}{ \Arrowvert X^T u \Arrowvert} $ is an eigenvector of A with eigenvalue of $ \lambda $. Then the complexity is $ O(m^3) + O(m^2 d) $.
+
+\subsection{RANDOM PROJECTIONS}%
+
+For a random matrix $ W $, we want $ \frac{ \Arrowvert W x_1 - W x_2 \Arrowvert}{ \Arrowvert x_1 - x_2  \Arrowvert} \approx 1 $.
+
+\begin{lemma}
+    Fix some $ x \in \mathbb{R}^{d} $. Let $ W \in \mathbb{R}^{n,d} $ be a random matrix such that each $ W_{i,j} $ is an independent normal random variable. Then for every $ \epsilon \in (0, 3) $ we have
+    \[
+        \mathbb{P}\left[ \left| \frac{ \Arrowvert (1/\sqrt n) W x \Arrowvert^2 }{ \Arrowvert x \Arrowvert^2 } - 1 \right| > \epsilon \right] \le 2 e^{-\epsilon^2 n/6}
+    \]
+    \begin{proof}
+        Wlog we can assume that $ \Arrowvert x \Arrowvert^2 = 1 $.Then we need to proof
+        \[
+            \mathbb{P}\left[ (1 - \epsilon) n \le \Arrowvert W x \Arrowvert^2 \le (1+\epsilon)n \right] \ge 1 - 2 e^{-\epsilon^2 n / 6}
+        \]
+
+        Let $ w_i $ be the ith row of W. The random variable $ \langle w_i, x \rangle $ is a combination of d independent normal random variables, which is still normal random variable.
+        Then $ \Arrowvert W x \Arrowvert^2 = \sum^{n}_{i=1} {\left( \langle w_i, x \rangle \right)}^2 \sim \chi^2_n$
+
+        So we can use the measure concentration property of $ \chi^2 $ random variables.
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    Let $ Z \sim \chi^2_k $. Then
+    \[
+        \forall \epsilon > 0, \quad \mathbb{P}\left[ Z \le (1-\epsilon) k \right] \le e^{-\epsilon^2 k/6}
+    \]
+    \[
+        \forall \epsilon \in (0,3), \quad \mathbb{P}\left[ Z \ge (1+\epsilon) k \right] \le e^{-\epsilon^2 k/6}
+    \]
+    \begin{proof}
+        For normally distributed random variable, $ \mathbb{E}[X] = 0, \mathbb{E}[X^2] = 1, \mathbb{E} [X^4] = 3 $.
+        Since $ \forall a \ge 0,  e^{-a} \le 1 - a + \frac{a^2}{2} $, then
+        \[
+            \mathbb{E}\left[ e^{-\lambda X^2} \right] \le 1 - \lambda \mathbb{E}\left[ X^2 \right] + \frac{\lambda^2}{2} \mathbb{E}\left[ X^4 \right] = 1 - \lambda + \frac{3}{2}\lambda^2 \le e^{-\lambda + \frac{3}{2} \lambda^2}
+        \]
+        \begin{align*}
+            \mathbb{P}\left[ -Z \ge -(1 - \epsilon) k \right] =& \mathbb{P} \left[ e^{-\lambda Z} \ge e^{-(1-\epsilon) k \lambda} \right] \le e^{(1 - \epsilon) k \lambda} \mathbb{E} \left[ e^{-\lambda Z} \right]\\
+            =& e^{(1 - \epsilon) k \lambda} \prod_{i=1}^{k}\left( \mathbb{E} \left[ e^{-\lambda X^2_i} \right] \right)\\
+            \le& e^{(1 - \epsilon) k \lambda} e^{-\lambda k + \frac{3}{2} \lambda^2 k} = e^{-\epsilon k\lambda + \frac{3}{2} k \lambda^2} (=  e^{-\epsilon^2 k/6}\ if\ \lambda = \epsilon/3)
+        \end{align*}
+        Here is a closed form expression for $ \chi^2_k $ distributed random variable:
+        \[
+            \forall \lambda < \frac{1}{2}, \mathbb{E}\left[ e^{\lambda Z^2} \right] =  {(1 - 2\lambda)}^{-k/2}
+        \]
+        \begin{align*}
+            &\mathbb{P} \left[ Z \ge (1 + \epsilon) k \right] = \mathbb{P} \left[ e^{\lambda Z} \ge e^{(1+\epsilon) k \lambda} \right] \le e^{-(1+\epsilon)k\lambda}\mathbb{E}\left[ e^{\lambda Z} \right]\\
+            =& e^{-(1+\epsilon)k\lambda} {(1 - 2\lambda)}^{-k/2} \le e^{-(1+\epsilon)k\lambda}e^{k\lambda} = e^{-\epsilon k \lambda} ( = e^{-\epsilon^2 k / 6}, \ if\ \lambda = \epsilon/6)
+        \end{align*}
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}
+    \textbf{(Johnson-Lindenstrauss Lemma).}
+    Let $ x \in S $, then
+    \[
+        \mathbb{P}\left[ \sup_{x \in S} \left| \frac{ \Arrowvert (1/\sqrt n)W x \Arrowvert^2 }{ \Arrowvert x \Arrowvert^2 } - 1 \right| > \epsilon \right] \le 2 \left| S \right| e^{-\epsilon^2 n / 6} \le \delta \Rightarrow 
+        \epsilon \ge \sqrt{ \frac{6 \ln(2 |S| /\delta )}{n} } \in (0, 3)
+    \]
+\end{lemma}
+
+The preceeding lemma does not depend on the original dimension of $ x $.
+
+\subsection{COMPRESSED SENSING}%
+\label{sub:compressed_sensing}
+
+\begin{enumerate}
+    \item Prior assumption: the original vector is sparse in some basis;
+    \item Denote: $ \Arrowvert \vec{x} \Arrowvert_0 = \left| \left\{ i: x_i \ne 0 \right\} \right|$;
+    \item If $ \Arrowvert x \Arrowvert_0 \le s $, we can represent it using s (index, value) pairs;
+    \item Further assume: $ \vec{x} = U \vec{\alpha} $, where $ \Arrowvert  \vec{\alpha}  \Arrowvert_0 \le s$, and U is a fixed orthonormal matrix; 
+    \item Compressed sensing: get $ \vec{x} $, compress $ \vec{x} $ into $ \vec{\alpha} = U^T x $ and represent $ \vec{\alpha} $ by its s (index, value) pairs.
+\end{enumerate}
+
+The key result:
+\begin{enumerate}
+    \item It is possible to reconstruct any sparse signal fully if it wars compressed by $ x \mapsto Wx $, where W is a matrix which satisfies a condition called the Restricted Isoperimentric Property.
+    \item The reconstruction can be calculated in polynomial timee by solving a linear program.
+    \item A random $ n\times d $ matrix is likely to satisfy the RIP condition provided that n is greater than an order of $ s\log(d) $
+\end{enumerate}
+
+\begin{definition}
+    \textbf{(Restricted Isoperimentric Property).}
+    A matrix $ W \in \mathbb{R}^{n,d} $ is $ (\epsilon,s) -RIP $ if $ x \ne 0 $ {s.t.} $ \Arrowvert x \Arrowvert_0 \le s$
+    \[
+        \forall \vec{x} \in \left\{ \Arrowvert \vec{x} \Arrowvert_0 \le s \wedge \vec{x} \in \mathbb{R}^{d} \right\},
+        \quad \left| \frac{ \Arrowvert W \vec{x} \Arrowvert^2_2}{ \Arrowvert \vec{x} \Arrowvert^2_2}  - 1 \right| \le \epsilon.
+    \]
+\end{definition}
+
+\begin{theorem}
+    Let $ \epsilon < 1 $ and W be a $ (\epsilon, 2s)-RIP $ matrix. Let $ \vec{x} \in \left\{ \Arrowvert \vec{x} \Arrowvert_0 \le s \wedge \vec{x} \in \mathbb{R}^{d} \right\} $ and $ \vec{y} = W \vec{x} $. Then,
+    \[
+        \vec{x} = \vec{z} \in \arg\max_{\vec{z}: W \vec{z} = \vec{y}} \Arrowvert \vec{z} \Arrowvert_0
+    \]
+    \begin{proof}
+        If $ \vec{x} \ne \vec{z} $, we can get $ \Arrowvert \vec{z} \Arrowvert_0 \le \Arrowvert \vec{x} \Arrowvert_0 \le s $, so $ \Arrowvert \vec{x} - \vec{z} \Arrowvert \le 2s $.$ \left| \frac{ \Arrowvert W (\vec{x} - \vec{z}) \Arrowvert^2_2}{ \Arrowvert \vec{x} - \vec{z} \Arrowvert^2_2} -1 \right| \le \epsilon $ which leads to a contradiction.
+    \end{proof}
+\end{theorem}
+
+\begin{theorem}
+    Further assume that $ \epsilon < \frac{1}{1 + \sqrt 2} $, then
+    \[
+        \vec{x} = \arg\min_{\vec{v}: W \vec{v} = \vec{y}} \Arrowvert \vec{v} \Arrowvert_0 = \arg\min_{\vec{v}: W \vec{v} = \vec{y}} \Arrowvert \vec{v} \Arrowvert_1.
+    \]
+\end{theorem}
+
+A stronger theorem follows
+
+\begin{theorem}
+    Let $ \epsilon < \frac{1}{1 + \sqrt 2}  $ and let $ W \in \mathbb{R}^{n, d} $ be a $ (\epsilon, 2s)-RIP $ matrix. Let $ \vec{x} \in \mathbb{R}^d $ and denote
+    \[
+        \vec{x}_s \in \arg\min_{\vec{v}: \Arrowvert \vec{v} \Arrowvert_0 \le s} \Arrowvert \vec{x} - \vec{v} \Arrowvert_1.
+    \]
+    note that $ \vec{x}_s $ is the vector which equals $ \vec{x} $ on the s leargest elements of $ \vec{x} $ and equals 0 elsewhere. Let $ \vec{y} = W \vec{x} $ be the compression of $ \vec{x} $ and let
+    \[
+        \vec{x}^* \in \arg\min_{\vec{v}: W \vec{v} = \vec{y}} \Arrowvert \vec{v} \Arrowvert_1
+    \]
+    Then,
+    \[
+        \Arrowvert \vec{x}^* - \vec{x} \Arrowvert_2 \le 2 \frac{1+\rho}{1-\rho} s^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1
+    \]
+    where $ \rho = \sqrt 2 \epsilon / (1 - \epsilon) $.
+    \begin{proof}
+        Let $ \vec{h} = \vec{x}^* - \vec{x} $. Given a vector $ \vec{v} $ and a set of indices I we denote by $ \vec{v}_I $ the vector whose ith element is $ v_i $ if $ i \in I $ and 0 otherwise.
+        
+        Then we partition the set of indices $ [d] = \left\{ 1, \ldots, d \right\} $ into disjoint sets of size s, $ [d] = T_0 \cup T_1 \cup T_2 \ldots T_{d/s-1} $.We assume d/s is an integer, then $ \left| T_i \right| = s $.
+
+        $ T_0 $ has the s indices corresponding to the s largest elements in absolute values of $ \vec{x} $.
+        Let $ T^c_0 = [d] \backslash T_0 $. Next, $ T_1 $ will be the s indices corresponding to the s largest elements in absolute value of $ h_{T^c_0} $. Let $ T_{0,1} = T_0 \cup T_1 $ and $ T^{c}_{0,1} = [d] \backslash T_{0,1} $. Next, $ T_2 $ will correspond to the s largest elements in absolute value of $ h_{T^c_{0,1}} $. And soon on.
+        \begin{lemma}
+            If W is an $ (\epsilon, 2s)-RIP $ matrix. Then, for any two disjoint sets I,J, both of size at most s, and for any vector $ \vec{u} $ we have that $ \langle W u_I, W u_J \rangle \le \epsilon \Arrowvert u_I \Arrowvert_2 \Arrowvert u_J \Arrowvert $
+            \begin{proof}
+                \begin{align*}
+                    &\left| \frac{\Arrowvert W (\vec{u}_I + \vec{u}_J) \Arrowvert^2_2}{\Arrowvert \vec{u}_I + \vec{u}_J \Arrowvert^2_2} - 1 \right| \le \epsilon\\
+                    \langle W \vec{u}_I, W \vec{u}_J \rangle
+                    =& \frac{1}{4} \left( \Arrowvert W \vec{u}_I + W \vec{u}_J \Arrowvert^2_2 - \Arrowvert W \vec{u}_I - W \vec{u}_J \Arrowvert^2_2 \right)\\
+                    \le& \frac{1}{4} \left( (1+\epsilon) \Arrowvert \vec{u}_I + \vec{u}_J \Arrowvert^2_2  + (\epsilon - 1) \Arrowvert \vec{u}_I - \vec{u}_J \Arrowvert^2_2\right) \\
+                    =& \frac{\epsilon}{2} \left( \Arrowvert \vec{u}_I \Arrowvert^2_2 + \Arrowvert \vec{u}_J \Arrowvert^2_2 \right)
+                \end{align*}
+                {W.l.o.g} we assume $ \Arrowvert \vec{u}_I \Arrowvert  = k \Arrowvert \vec{u}_J \Arrowvert$, then
+                \begin{align*}
+                    \langle W \vec{u_I}, kW \vec{u_J} \rangle \le& \frac{\epsilon}{2} \left( \Arrowvert \vec{u}_I \Arrowvert^2_2 + k^2 \Arrowvert \vec{u}_J \Arrowvert^2_2 \right) = k \epsilon \Arrowvert \vec{u}_I \Arrowvert \Arrowvert \vec{u}_J \Arrowvert\\
+                    \langle W \vec{u}_I, W \vec{u}_J \rangle \le& \epsilon \Arrowvert \vec{u}_I \Arrowvert \Arrowvert \vec{u}_J \Arrowvert
+                \end{align*}
+            \end{proof}
+        \end{lemma}
+        Clearly, $ \Arrowvert h \Arrowvert_2 = \Arrowvert h_{T_{0,1}} + h_{T^c_{0,1}}\Arrowvert_2 \le \Arrowvert h_{T_{0,1}} \Arrowvert_2 + \Arrowvert h_{T^{c}_{0,1}} \Arrowvert_2 $.
+
+        If we have following two claims:
+        \begin{enumerate}
+            \item $ \Arrowvert h_{T^c_{0,1}} \Arrowvert_2 \le \Arrowvert h_{T_0} \Arrowvert_2 + 2s^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1 $;
+                \item $ \Arrowvert h_{T_{0,1}} \Arrowvert_2 \le \frac{2\rho}{1-\rho} s^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1 $.
+        \end{enumerate}
+        Then we can proof the theorem
+        \begin{align*}
+            \Arrowvert h \Arrowvert_2 \le& \Arrowvert h_{T_{0,1}} \Arrowvert_2 + \Arrowvert h_{T^{c}_{0,1}} \Arrowvert_2 \le 2 \Arrowvert h_{T_{0,1}} \Arrowvert_2 + 2 s^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1 \\
+            \le& 2 \left( \frac{2\rho}{1 - \rho} + 1 \right) s^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1
+            = 2 \frac{1 + \rho}{1 - \rho} s ^{-1/2} \Arrowvert \vec{x} - \vec{x}_s \Arrowvert_1
+        \end{align*}
+        Now we prove claims1:
+        $ \forall i \in T_j, i' \in T_{j-1} $, we have $ \left| h_i \right| \le \left| h_i' \right| $. Therfore, 
+        \begin{align*}
+           &\Arrowvert h_{T_j} \Arrowvert_\infty \le \Arrowvert h_{T_{j-1}} \Arrowvert_1 /s  \\
+           \Rightarrow& {\Arrowvert h_{T_j} \Arrowvert}_2 \le s^{1/2} \Arrowvert h_{T_j} \Arrowvert_\infty \le s^{-1/2} \Arrowvert h_{T_{j-1}} \Arrowvert_1 \\
+            \Rightarrow& \Arrowvert h_{T^{c}_{0,1}} \Arrowvert\le \sum^{}_{j\ge 2} \Arrowvert h_{T_j} \Arrowvert_2 \le s^{-1/2} \Arrowvert h_{T_0^c} \Arrowvert_1 
+        \end{align*}
+        \[
+            \Arrowvert \vec{x} \Arrowvert_1 \ge \Arrowvert \vec{x} + \vec{h} \Arrowvert_1 = \sum^{}_{i \in T_0} \left| x_i + h_i \right| + \sum^{}_{i \in T^c_{0}} \left| x_i + h_i \right| \ge \Arrowvert x_{T_0} \Arrowvert_1 - \Arrowvert h_{T_0} \Arrowvert_1 + \Arrowvert h_{T^c_{0}} \Arrowvert_1 - \Arrowvert x_{T^c_0} \Arrowvert_1
+        \]
+        \[
+            \Arrowvert h_{T^c_{0}} \Arrowvert_1 \le \Arrowvert \vec{x} \Arrowvert_1 - \Arrowvert x_{T_0} \Arrowvert_1 + \Arrowvert x_{T^c_0} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert_1 = 2 \Arrowvert x_{T^c_0} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert_1
+        \]
+        \[
+            \Arrowvert h_{T^c_{0,1}} \Arrowvert_2 \le s^{-1/2} \left( 2 \Arrowvert x_{T^c_{0}} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert \right) \le \Arrowvert h_{T_0} \Arrowvert_2 + 2s^{-1/2} \Arrowvert x - x_s \Arrowvert
+        \]
+        Then we prove claim2:
+        For RIP condition,
+        \begin{align*}
+            &(1-\epsilon) \Arrowvert h_{T_{0,1}} \Arrowvert^2_2 \le \Arrowvert W h_{T_{0,1}} \Arrowvert^2_2
+            = \Arrowvert Wh - \sum^{}_{j \ge 2} W h_{T_j} \Arrowvert^2_2 = \Arrowvert \sum^{}_{j \ge 2} W h_{T_j} \Arrowvert^2_2 \\
+            =& \sum^{}_{j \ge 2} \langle W h_{T_0} + W h_{T_1}, W h_{T_j} \rangle \le \epsilon ( \Arrowvert h_{T_0} \Arrowvert_2 + \Arrowvert h_{T_1} \Arrowvert_2)\sum^{}_{j \ge 2} \Arrowvert h_{T_j} \Arrowvert_2 \\
+            \le& \sqrt{2} \epsilon \Arrowvert h_{T_{0,1}} \Arrowvert_2 {\Arrowvert h_{T^c_{0,1}} \Arrowvert}_2
+            \le \sqrt{2} \epsilon \Arrowvert h_{T_{0,1}} \Arrowvert_2 s^{-1/2} \Arrowvert h_{T^c_0} \Arrowvert_1
+        \end{align*}
+        \begin{align*}
+            &{\Arrowvert h_{T_{0,1}} \Arrowvert}_2 
+            \le \frac{\sqrt 2 \epsilon}{1- \epsilon} s^{-1/2} \Arrowvert h_{T^c_{0}} \Arrowvert_1 
+            \le \frac{\sqrt 2 \epsilon}{1- \epsilon} s^{-1/2} \left( \Arrowvert h_{T_0} \Arrowvert_1 + 2 \Arrowvert x_{T^c_0} \Arrowvert_1 \right)\\
+            \le& \frac{\sqrt 2 \epsilon}{1- \epsilon} \left( \Arrowvert h_{T_{0,1}} \Arrowvert_1 + 2 s^{-1/2} \Arrowvert x_{T^c_{0}} \Arrowvert_1 \right) 
+            \le \frac{2 \rho}{1 - \rho}  s^{-1/2} \Arrowvert x_{T^c_0} \Arrowvert_1, \quad \rho = \frac{\sqrt 2 \epsilon}{1 - \epsilon}, \epsilon \le \frac{1}{\sqrt 2 + 1}  
+        \end{align*}
+    \end{proof}
+\end{theorem}
+
+\begin{theorem}
+    Let U be an arbitrary fixed $ d\times d $ orthonormal matrix, let $ \epsilon, \delta $ be scalars in $ (0,1) $, let s be an integer in $ [d] $, and let n be an integer that satisfies
+    \[
+        n \ge 100 \frac{s \log(40d / (\delta \epsilon))}{\epsilon^2} 
+    \]
+    Let $ W \in \mathbb{R}^{n,d} $ be a matrix {s.t.} each element of W is distributed normally with zero mena and variance of 1/n. Then, with probability of at least $ 1 - \delta $ over the choice of W, the matrix WU is $ (\epsilon, s)-RIP $
+\end{theorem}
+
+\subsection{PAC OR COMPRESSED SENSING}%
+
+\begin{enumerate}
+    \item PCA assumes that the set of examples is contained in an n dimensional subspace of $ \mathbb{R}^d $;
+    \item Compressed sensing assumes the set of examples is sparse (in some basis).
+\end{enumerate}
+
