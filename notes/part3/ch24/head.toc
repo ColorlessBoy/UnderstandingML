@@ -1,0 +1,6 @@
+\contentsline {section}{\numberline {24}Generative Models}{2}
+\contentsline {subsection}{\numberline {24.1}MAXIMUM LIKELIHOOD ESTIMATOR}{2}
+\contentsline {subsection}{\numberline {24.2}NAIVE BAYES}{3}
+\contentsline {subsection}{\numberline {24.3}LINEAR DISCRIMINANT ANALYSIS}{4}
+\contentsline {subsection}{\numberline {24.4}LATENT VARIABLES AND THE EM ALGORITHM}{4}
+\contentsline {subsection}{\numberline {24.5}BAYESIAN REASONING}{6}
