@@ -1,0 +1,252 @@
+% Chapter25 Feature Selection and Generation, Understanding Machine Learning
+
+\section{Feature Selection and Generation}%
+\label{sec:feature_selection_and_generation}
+
+\begin{enumerate}
+    \item Feature selection: we have a large pool of features and our goal is to select a small number of features that will be used by predictor;
+    \item Feature manipulations, normalization: decrease the sample complexity of our learning algorithm, bias or computational complexity.
+    \item Feature learning.
+    \item note: the {No-Free-Lunch} theorem implies that there is no ultimate feature learner. Any feature learning algorithm might fail on some problem. The success of each feature learner relies on some form of prior assumption on the data distribution, and depends on the learning algorithm that uses these features.
+\end{enumerate}
+
+\subsection{FEATURE SELECTION}%
+\label{sub:feature_selection}
+
+\subsubsection{Filters}%
+
+Filters: score individual features, and choose k features that achieve the highest score.
+
+Let $ X = \left[ \vec{x}_1, \vec{x}_2, \ldots, \vec{x}_m \right] = {\left[ \vec{v}_1, \vec{v}_2, \ldots, \vec{v}_n \right]}^T $.
+Consider a linear regression problem, we score these features by using individual empirical squared loss.
+
+\[
+    Score(\vec{v}) = \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a \vec{v} + b - \vec{y} \Arrowvert^2 
+\]
+
+We can simplify this score.
+
+First, let $ \bar v = \frac{1}{m} \sum^{m}_{i=1} v_i $, and $ \bar y = \frac{1}{m} \sum^{m}_{i=1} y_i $, then
+\[
+    Score(\vec{v}) = \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a \vec{v} + b - \vec{y} \Arrowvert^2 
+    = \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a (\vec{v} - \bar v) + b - (\vec{y} - \bar y) \Arrowvert^2 
+\]
+\begin{proof}
+    Let $ a^*, b^* $ satisfy $ \min_{a, b}\in\mathbb{R} \frac{1}{m} \Arrowvert a \vec{v} + b - \vec{y} \Arrowvert^2 $,
+    then let $ a' = a^*, b' = b^* + a^* \bar v - \bar y $, then
+    \[
+        \frac{1}{m} \Arrowvert a'(\vec{v} - \bar v) + b' - (\vec{y} - \bar y) \Arrowvert^2 = \frac{1}{m} \Arrowvert a^* \vec{v} + b^* - \vec{y} \Arrowvert
+    \]
+    which implies that 
+    \[
+        \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a \vec{v} + b - \vec{y} \Arrowvert^2 
+        \ge \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a (\vec{v} - \bar v) + b - (\vec{y} - \bar y) \Arrowvert^2 
+    \]
+    Doing the same for the other direction, we get the target equation.
+\end{proof}
+When we solve the problem $ \min_{a, b \in \mathbb{R}} \frac{1}{m} \Arrowvert a (\vec{v} - \bar v) + b - (\vec{y} - \bar y) \Arrowvert^2  $, we can get $ b = 0 $, $ a = \langle \vec{v} - \bar v, \vec{y} - \bar y \rangle/ \Arrowvert \vec{v} - \bar v \Arrowvert^2 $, then
+\[
+    Score(\vec{v}) = \Arrowvert \vec{y} - \bar y \Arrowvert^2 - \frac{{(\langle \vec{v} - \bar v, \vec{y} - \bar y \rangle)}^2}{ \Arrowvert \vec{v} - \bar v \Arrowvert^2} 
+\]
+So we can define a new score function
+\[
+    Score(\vec{v}) = \frac{\frac{1}{m} \langle \vec{v} - \bar v, \vec{y} - \bar y \rangle}{ \sqrt{\frac{1}{m} \Arrowvert \vec{v} - \bar v \Arrowvert^2} \sqrt{\frac{1}{m} \Arrowvert \vec{y} - \bar y \Arrowvert^2}} 
+\]
+The preceeding expression is know as {Pearson's correlation coeffcient}.
+
+Note: If $ Score(\vec{v}) = 0 $ means that the optimal linear function from $ \vec{v} $ to $ \vec{y} $ is the {all-zeors} function, which means that $ \vec{v} $ alone is useless for predicting $ \vec{y} $. However, this does not mean that $ \vec{v} $ is a bad feature, as it might be the case that together with other features $ \vec{v} $ can perfectly predict $ \vec{y} $.
+
+\subsubsection{Greedy Selection Approaches}%
+Forward greedy selection: start with an empty set of features, and then we gradually add one feature at a time to the set of selected features.
+\[
+    j_t = \arg\min_j \min_{\vec{w} \in \mathbb{R}^t} \Arrowvert X_{I_{t-1} \cup \left\{ j \right\}} \vec{w} - \vec{y} \Arrowvert
+\]
+\[
+    I_t = I_{t-1} \cup \left\{ j_t \right\}.
+\]
+
+\begin{example}
+\textbf{(Orthogonal Matching Pursuit).}
+Let $ V_t $ be a matrix whose columns form an orthonormal basis of the columns of $ X_{I_t} $, clearly,
+\[
+    \min_{\vec{w}} \Arrowvert X_{I_t} \vec{w} - \vec{y} \Arrowvert^2 = \min_{\vec{\theta} \in \mathbb{R}^t} \Arrowvert V_t \vec{\theta} - \vec{y} \Arrowvert^2
+\]
+We decompose $ X_j = V_{t-1}V_{t-1}^T X_j + \vec{u}_j $, it's easy to verify $ \langle \vec{u}_j, V_{t-1}\theta \rangle = 0 $.
+\begin{align*}
+    &\min_{\vec{w} \in \mathbb{R}^t} \Arrowvert X_{I_{t-1} \cup \left\{ j \right\}} \vec{w} - \vec{y} \Arrowvert^2
+    = \min_{\vec{\theta}, \alpha} \Arrowvert V_{t-1}\vec{\theta} + \alpha \vec{u}_j - \vec{y} \Arrowvert^2\\
+    =& \min_{\vec{\theta}, \alpha} \left[ \Arrowvert V_{t-1} \vec{\theta} - \vec{y} \Arrowvert^2 + \alpha^2 \Arrowvert \vec{u}_j \Arrowvert^2 + 2\alpha \langle \vec{u}_j, V_{t-1}\vec{\theta} - \vec{y} \rangle \right]\\
+    =& \min_{\vec{\theta}, \alpha} \left[ \Arrowvert V_{t-1} \vec{\theta} - \vec{y} \Arrowvert^2 + \alpha^2 \Arrowvert \vec{u}_j \Arrowvert^2 + 2\alpha \langle \vec{u}_j, - \vec{y} \rangle \right]\\
+    =& \min_{\vec{\theta}} \left[ \Arrowvert V_{t-1} \vec{\theta} - \vec{y} \Arrowvert^2 \right]+ \min_{\alpha}\left[ \alpha^2 \Arrowvert \vec{u}_j \Arrowvert^2 + 2\alpha \langle \vec{u}_j, - \vec{y} \rangle \right]\\
+    =& \Arrowvert V_{t-1}\vec{\theta}_{t-1} - \vec{y} \Arrowvert^2 + \min_{\alpha}\left[ \alpha^2 \Arrowvert \vec{u}_j \Arrowvert^2 + 2\alpha \langle \vec{u}_j, - \vec{y} \rangle \right]\\
+    =& \Arrowvert V_{t-1}\vec{\theta}_{t-1} - \vec{y} \Arrowvert^2 - \frac{{(\langle \vec{u}_j, \vec{y} \rangle)}^2}{\Arrowvert \vec{u}_j \Arrowvert^2} 
+\end{align*}
+So, we should select the feature $ j_t = \arg\max_{j} \frac{{(\langle \vec{u}_j, \vec{y} \rangle)}^2}{\Arrowvert \vec{u}_j \Arrowvert^2} $. The rest of the update is to set
+\[
+    V_t = \left[ V_{t-1}, \frac{\vec{u}_{j_t}}{ \Arrowvert \vec{u}_{j_t} \Arrowvert^2}  \right],
+    \vec{\theta}_t = \left[ \vec{\theta}_{t-1}; \frac{\langle \vec{u}_{j_t}, \vec{y} \rangle}{ \Arrowvert \vec{u}_{j_t} \Arrowvert}^2  \right]
+\]
+The preceeding procedure is often numerically unstable (Gram-Schmidt procedure).
+
+\begin{algorithm}[H]
+    \caption{Orthogonal Matching Pursuit (OMP)}
+    \begin{algorithmic}
+        \Require{$ X \in \mathbb{R}^{m,d}, \vec{y} \in \mathbb{R}^{m}$, features num $T$.}
+        \Ensure{$ I_1 = \emptyset $.}
+        \For{$t = 1, \ldots, T$}
+        \State{$ V = SVD(X_{I_t}) $ (If t = 1, V = \textbf{0}).}
+        \For{$ j \in [d] \backslash I_t $} 
+        \State{$ \vec{u}_j = X_j - V V^T X_j $}
+        \EndFor.
+        \State{$ j_t = \arg\max_{j \in I_{t}: \Arrowvert \vec{u}_j \Arrowvert > 0} \frac{{(\langle \vec{u}_j, \vec{y} \rangle)}^2}{ \Arrowvert \vec{u}_j \Arrowvert^2} $}
+        \State{$ I_{t+1} = I_t \cup \left\{ j_t \right\} $}
+        \EndFor.
+        \State{\Return{$ I_{T+1} $}}
+    \end{algorithmic}
+\end{algorithm}
+\end{example}
+
+\textbf{More Efficient Greedy Selection Criteria}
+\[
+    \arg\min_{j} \min_{\eta \in \mathbb{R}} R(\vec{w}_{t-1} + \eta \vec{e}_j)
+\]
+An even simpler approach is to upper bound $ R(\vec{w}) $. If R is a $ \beta- $smooth function, then
+\[
+    \min_{\eta \in \mathbb{R}} R(\vec{w} + \eta \vec{e}_j) 
+    \le \min_{\eta \in \mathbb{R}}R(\vec{w}) + \eta \frac{\partial{R(\vec{w})}}{\partial{w_j}} + \beta \eta^2/2
+    = R(\vec{w}) - \frac{1}{2\beta} {\left( \frac{\partial{R(\vec{w})}}{\partial{w_j}} \right)}^2
+\]
+then
+\[
+    j_{t+1} = \arg\max_{j}{\left( \frac{\partial{R(\vec{w})}}{\partial{w_j}} \right)}^2
+\]
+
+\textbf{Backward Elimination}
+Another popular greedy selection approach is backward elimination. It is also possible to combine forward and backward greedy steps.
+
+\begin{example}
+    \textbf{(AdaBoost as a Forward Greedy Selection Algorithm).}
+    \begin{proof}
+        $ f_{\vec{w}}(\cdot) = \sum^{d}_{i=1} w_i h_i(\cdot) $, $ D_i = \frac{\exp(-y_i f_{\vec{w}}(\vec{x}_i))}{Z}  $, where $ Z = \sum^{m}_{i=1} \exp(-y_i f_{\vec{w}}(\vec{x}_i)) $.
+        \[
+            R(\vec{w}) = \log\left( \sum^{m}_{i=1} \exp\left( -y_i f_{\vec{w}}(\vec{x}_i) \right) \right) =  \log\left( \sum^{m}_{i=1} \exp\left( -y_i \sum^{d}_{j=1} w_j h_j(\vec{x}_j) \right) \right).
+        \]
+        \begin{align*}
+            & \frac{\partial{R(\vec{w})}}{\partial{w_j}} = - \sum^{m}_{i=1} D_i y_i h_j(\vec{x}_i)
+            = \sum^{m}_{i=1} \left\{ D_i 1_{\left[ h_j(\vec{x}_i) \ne y_i \right]} -D_i 1_{\left[ h_j(\vec{x}_i) = y_i \right]}\right\}\\
+            =& 2 \sum^{m}_{i=1} D_i 1_{\left[ h_j(\vec{x}_i) \ne y_i \right]} - 1 = 2 \epsilon_j - 1
+            \Rightarrow \left| \frac{\partial{R(\vec{w})}}{\partial{w_j}}  \right| \ge 2\gamma
+        \end{align*}
+    \end{proof}
+\end{example}
+The remaining is analogue in my note of chapter 10.
+
+\subsubsection{Sparsity-Inducing Norms}%
+
+\[
+    \min_{\vec{w}} L_{S}(\vec{w})\quad s.t. \quad \Arrowvert \vec{w} \Arrowvert_0 \le k.
+\]
+where
+\[
+    \Arrowvert \vec{w} \Arrowvert_0 = \left| \left\{ i: w_i \ne 0 \right\} \right|
+\]
+The preceeding problem is computationally hard. A possible relaxation is to solve
+\[
+    \min_{\vec{w}} L_{S}(\vec{w})\quad s.t. \quad \Arrowvert \vec{w} \Arrowvert_1 \le k.
+\]
+In some sense equivalent, the preceeding problem equals to
+\[
+     \min_{\vec{w}} L_{S}(\vec{w}) + \lambda \Arrowvert \vec{w} \Arrowvert_1
+\]
+\begin{example}
+    \[
+        \min_{w \in \mathbb{R}} \left( \frac{1}{2} w^2 - x w + \lambda \left| w \right| \right).
+    \]
+    \begin{proof}
+        \begin{align*}
+            &\min_{w \in \mathbb{R}} \left( \frac{1}{2} w^2 - x w + \lambda \left| w \right| \right)\\
+            =&\min \left\{ \min_{w > 0} \left\{ \frac{1}{2} w^2 - (x - \lambda) w \right\}, \min_{w < 0}\left\{ \frac{1}{2} w^2 - (x+\lambda) w \right\} \right\}\\
+            =& 
+            \begin{cases}
+                \min_{w > 0} \left\{ \frac{1}{2} w^2 - (x - \lambda)w \right\},\quad &x \ge \lambda\\
+                \min_{w < 0} \left\{ \frac{1}{2} w^2 - (x + \lambda)w \right\}, &x \le -\lambda\\
+                0, &otherwise.
+            \end{cases}
+        \end{align*}
+        \[
+            \arg\min_{w \in \mathbb{R}} \left( \frac{1}{2} w^2 - x w + \lambda \left| w \right| \right)=
+            \begin{cases}
+                x - \lambda, \quad &x \ge \lambda\\
+                x + \lambda, &x \le -\lambda\\
+                0, &otherwise
+            \end{cases}
+            = sign(x) {\left[ \left| x \right| - \lambda \right]}_+
+        \]
+    \end{proof}
+\end{example}
+
+\begin{definition}
+    \textbf{(LASSO algorithm).}
+    \[
+        \arg\min_{\vec{w}} \left( \frac{1}{2m} { \Arrowvert X \vec{w} - \vec{y} \Arrowvert^2}  + \lambda \Arrowvert \vec{w} \Arrowvert_1\right)
+    \]
+\end{definition}
+
+\subsection{FEATURE MANIPULATION AND NORMALIZATION}%
+\label{sub:feature_manipulation_and_normalization}
+
+In chapter13, we bound the error with $ \Arrowvert \vec{w}^* \Arrowvert $. If $ \Arrowvert \vec{w}^* \Arrowvert $ is large, the sample complexity is large. If we normalize the feature, we can let $ \Arrowvert \vec{w}^* \Arrowvert^2 = 1 $.
+
+If we normalize the feature, it can greatly decrease the runtime of {SGD}.
+
+\begin{example}
+    In data space, $ y \sim U\left\{ \pm 1 \right\} $, $ p[x = y | y] = 1 - 1/a $, and $ p[x = ay | y] = 1/a $, where $ a > 1 $.
+    \[
+        L_{\mathcal{D}}(w) = \mathbb{E} \frac{1}{2} {(wx - y)}^2
+        = \left( 1 - \frac{1}{a}  \right) \frac{1}{2} {(wy - y)}^2 + \frac{1}{a} \frac{1}{2} {(a wy - y)}^2
+    \]
+    Solving for $ w $ we obtain that $ w^* = \frac{2a - 1}{a^2 + a - 1} $. For $ a \rightarrow \infty $, $ w^* \rightarrow \infty $ and $ L_{\mathcal{D}}(w^*) \rightarrow 0.5 $.
+
+    If we transform $ x \mapsto sign(x) \min\left\{ 1, \left| x \right| \right\}. $ Then, $ w^* = 1 $ and $ L_{D}(w^*) = 0 $.
+\end{example}
+
+Of course, it is not hard to think of examples in which the same feature transformation acturally hurts performance and increases the approximation error.
+
+\subsubsection{Examples of Feature Transformations}%
+
+\begin{enumerate}
+    \item \textbf{Centering}: $ f_i \leftarrow f_i - \bar f $;
+    \item \textbf{Unit Range}: $ f_i \leftarrow \frac{f_i - f_{\min}}{f_{\max} - f_{\min}}  $ or $ f_i \leftarrow 2 \frac{f_i - f_{\min}}{f_{\max} - f_{\min}} - 1 $;
+    \item \textbf{Standardization}: $ \nu = \frac{1}{m} \sum^{m}_{i=1} {(f_i - \bar f)}^2 $ be the empirical variance of the feature, and $ f_i \leftarrow \frac{f_i - \bar f}{\sqrt \nu}  $;
+    \item \textbf{Clipping}: $ f_i \leftarrow sign(f_i) \max \left\{ b, \left| f_i \right| \right\} $;
+    \item \textbf{Sigmoidal Transformation}: $ f_i \leftarrow \frac{1}{1 + \exp{(b f_i)}}  $
+    \item \textbf{Logarithmic Transformation}: $ f_i \leftarrow \log(b + f_i) $.
+\end{enumerate}
+
+\subsection{FEATURE LEARNING}%
+
+Feature learning: learn a function $ \psi: \mathcal{X} \rightarrow \mathbb{R}^d $.
+
+The {No-Free-Lunch} theorem tells us that we must incorporate some prior knowledge on the data distribution in order to build a good feature representation.
+
+\subsubsection{Dictionary Learning Using Auto-Encoders}%
+
+\begin{enumerate}
+    \item Encoder function: $ \psi: \mathbb{R}^{d} \rightarrow \mathbb{R}^{k} $;
+    \item Decoder function: $ \phi: \mathbb{R}^{k} \rightarrow \mathbb{R}^{d} $;
+    \item Target: $ \min_{\phi, \psi}\sum^{m}_{i=1} \Arrowvert \vec{x}_i - \phi(\psi(\vec{x}_i)) \Arrowvert^2 $ with some constraints on $ \phi, \psi $.
+\end{enumerate}
+
+In {PAC}, we constrain $ k < d $ and $ \psi $ and $ \phi $ to be linear functions.
+
+In {k-means}, $ \psi, \phi $ rely on k centroids.$ \psi $ returns the index the closest centroid to $ \vec{x} $, and $ \phi $ returns the corresponding centroid. 
+On the other words, the k-means $ \psi $ returns a vector only a single coordinate of $ \psi(\vec{x}) $ is nonzero. An immediate extension of the k-means construction is
+\[
+    \psi(\vec{x}) = \arg\min_{\vec{v}} \Arrowvert \vec{x} - \phi(\vec{v}) \Arrowvert^2\quad s.t.\quad \Arrowvert \vec{v} \Arrowvert_0 \le s.
+\]
+We sometime use $ l_1 $ regularization
+\[
+    \psi(\vec{x}) = \arg\min_{\vec{v}} \Arrowvert \vec{x} - \phi(\vec{v}) \Arrowvert^2 + \lambda \Arrowvert \vec{v} \Arrowvert_1.
+\]
+
+
