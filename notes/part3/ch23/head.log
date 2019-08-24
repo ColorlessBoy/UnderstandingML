@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.6.25)  21 AUG 2019 21:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.6.25)  24 AUG 2019 20:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -424,40 +424,50 @@ Overfull \hbox (12.9096pt too wide) detected at line 38
 []
  []
 
-[2] [3]
-Overfull \hbox (10.45802pt too wide) detected at line 129
+[2]
+Overfull \hbox (26.53555pt too wide) in paragraph at lines 73--76
+\OT1/cmr/m/n/10 Any valid ker-nel $\OML/cmm/m/it/10 K\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x; x[]\OT1/cmr/m/n/10 )$ im-plies a map-ping $\OML/cmm/m/it/10 ^^^ \OT1/cmr/m/n/10 : \U/msb/m/n/10 R[] \OMS/cmsy/m/n/10 7! \U/msb/m/n/10 R[]$\OT1/cmr/m/n/10 , and $\OML/cmm/m/it/10 X \OT1/cmr/m/n/10 = []$.
+ []
+
+
+Overfull \hbox (35.32674pt too wide) detected at line 100
+[] [] \OML/cmm/m/it/10 Var [] \OT1/cmr/m/n/10 = [] [] [] [] [][] = [] [] \OML/cmm/m/it/10 trace []
+ []
+
+[3] [4]
+Overfull \hbox (10.45802pt too wide) detected at line 171
 \U/msb/m/n/10 P [] \OMS/cmsy/m/n/10 ^^T \OT1/cmr/m/n/10 2 [] \OML/cmm/m/it/10 e[] \OMS/cmsy/m/n/10 ^^T \OML/cmm/m/it/10 ^^N \OMS/cmsy/m/n/10 ) \OML/cmm/m/it/10 ^^O \OMS/cmsy/m/n/10 ^^U [] 2 \OT1/cmr/m/n/10 (0\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 3)
  []
 
-[4]
-Overfull \hbox (24.35985pt too wide) in paragraph at lines 162--163
+
+Overfull \hbox (24.35985pt too wide) in paragraph at lines 204--205
 []\OT1/cmr/bx/n/10 Theorem 1. []\OT1/cmr/m/it/10 Let $\OML/cmm/m/it/10 ^^O < \OT1/cmr/m/n/10 1$ \OT1/cmr/m/it/10 and W be a $\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^O; \OT1/cmr/m/n/10 2\OML/cmm/m/it/10 s\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 RIP$ \OT1/cmr/m/it/10 ma-trix. Let $[] \OMS/cmsy/m/n/10 2 []$
  []
 
-[5]
-Overfull \hbox (9.066pt too wide) detected at line 240
+[5] [6]
+Overfull \hbox (9.066pt too wide) detected at line 282
 \OMS/cmsy/m/n/10 k[]k[] ^^U k[] \OT1/cmr/m/n/10 + []\OMS/cmsy/m/n/10 k[] \OT1/cmr/m/n/10 = [] [] + [] [] \OMS/cmsy/m/n/10 ^^U k\OML/cmm/m/it/10 x[]\OMS/cmsy/m/n/10 k[] ^^@ k\OML/cmm/m/it/10 h[]\OMS/cmsy/m/n/10 k[] \OT1/cmr/m/n/10 + \OMS/cmsy/m/n/10 k\OML/cmm/m/it/10 h[]\OMS/cmsy/m/n/10 k[] ^^@ k\OML/cmm/m/it/10 x[]\OMS/cmsy/m/n/10 k[]
  []
 
 
-Overfull \hbox (9.41771pt too wide) detected at line 262
+Overfull \hbox (9.41771pt too wide) detected at line 304
 []
  []
 
-[6]) [7] (./head.aux) ) 
+[7] [8]) [9] (./head.aux) ) 
 Here is how much of TeX's memory you used:
  12292 strings out of 492982
  238677 string characters out of 6134896
- 292003 words of memory out of 5000000
+ 290003 words of memory out of 5000000
  15614 multiletter control sequences out of 15000+600000
  12208 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 54i,11n,73p,828b,346s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 54i,11n,73p,828b,349s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on head.pdf (7 pages, 221558 bytes).
+Output written on head.pdf (9 pages, 242086 bytes).
 PDF statistics:
- 103 PDF objects out of 1000 (max. 8388607)
- 75 compressed objects within 1 object stream
+ 109 PDF objects out of 1000 (max. 8388607)
+ 79 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

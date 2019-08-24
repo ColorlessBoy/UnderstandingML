@@ -68,6 +68,48 @@ If $ d \gg m $, we can calculate the PCA solution more efficiently.
 
 Instead of analysing $ A = X^T X $, we consider $ B = XX^T $. The B's eigenvector $ u $ satisfies $ B u = \lambda u \Rightarrow X^T X X^T u = \lambda X^T u \Rightarrow \frac{X^T u}{ \Arrowvert X^T u \Arrowvert} $ is an eigenvector of A with eigenvalue of $ \lambda $. Then the complexity is $ O(m^3) + O(m^2 d) $.
 
+\subsubsection{Kernel PCA}%
+
+Any valid kernel $ K(x, x') $ implies a mapping $ \phi: \mathbb{R}^d \mapsto \mathbb{R}^n $, and
+$ X = \left[ \phi(\vec{x}_1), \ldots, \phi(\vec{x}_m) \right] $.
+Then
+\[
+     A = \sum^{m}_{i=1} \phi(x_i) \phi^T(x_i) = X X^T = U D U^T
+\]
+We want use PCA without knowledge of $ \phi $. First, we can easily calculate the eigenvectors of $ K(X, X) = X^T X = U_{T} D_{T} U_{T}^T $. We already have $ U = X U_T = \left[ Xu_1, \ldots, Xu_m \right]$.Let $ V = \left[ Xu_1, \ldots, X u_k \right] $.
+By this kernel PAC, every sample $ \vec{x} $ transforms into
+\[
+    V^T \phi(\vec{x}) = 
+    \begin{pmatrix}
+       u_1^T\\ \vdots \\ u_k^T 
+    \end{pmatrix}
+    X^T \phi(\vec{x})
+    = {\left[ u_1, \ldots, u_k \right]}^T
+    \begin{pmatrix}
+        K(\vec{x}_1, \vec{x}) \\ \ldots \\ K(\vec{x}_m, \vec{x}) 
+    \end{pmatrix}
+\]
+
+\subsubsection{An Interpretation of PCA as Variance Maximization}%
+
+Target:
+\[
+    \arg\max_{\vec{w}: \Arrowvert \vec{w} \Arrowvert = 1} Var\left[ \langle \vec{w}, X \rangle \right] 
+    = \arg\max_{\vec{w}: \Arrowvert \vec{w} \Arrowvert} \frac{1}{m} \sum^{m}_{i=1} {\left( \langle \vec{w}, \vec{x}_i \rangle \right)}^2
+    = \arg\max_{\vec{w}: \Arrowvert \vec{w} \Arrowvert} trace \left( \vec{w}^T \sum^{m}_{i=1} \vec{x}_i \vec{x}^T_i \vec{w} \right) 
+\]
+Then the first principal component $ \vec{w}_1 $ is the eigenvector of matrix $ \sum^{m}_{i=1} \vec{x}_i \vec{x}^T_i $, coresponding to the larget eigenvalue.
+
+Then, we want get second principal component $ \vec{w}_2 $ satisfying
+\[
+    \arg\max_{\vec{w}: \Arrowvert \vec{w} \Arrowvert = 1, \mathbb{E}[\langle \vec{w}_1, \vec{x} \rangle \langle \vec{w}, \vec{x} \rangle] = 0} Var\left[ \langle \vec{w}, \vec{x} \rangle \right]
+\]
+\[
+    \vec{w}^* = \mathbb{E}[\langle \vec{w}_1, \vec{x} \rangle \langle \vec{w}, \vec{x} \rangle]
+    = \vec{w}^T_1 \mathbb{E}\left[ \vec{x} \vec{x}^T \right] \vec{w} = \lambda_1 \vec{w}^T_1 \vec{w} = 0
+\]
+Then $ \vec{w}^* $ is the second largest eigenvector $ \vec{w}_2 $.
+
 \subsection{RANDOM PROJECTIONS}%
 
 For a random matrix $ W $, we want $ \frac{ \Arrowvert W x_1 - W x_2 \Arrowvert}{ \Arrowvert x_1 - x_2  \Arrowvert} \approx 1 $.
@@ -242,7 +284,7 @@ A stronger theorem follows
             \Arrowvert h_{T^c_{0}} \Arrowvert_1 \le \Arrowvert \vec{x} \Arrowvert_1 - \Arrowvert x_{T_0} \Arrowvert_1 + \Arrowvert x_{T^c_0} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert_1 = 2 \Arrowvert x_{T^c_0} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert_1
         \]
         \[
-            \Arrowvert h_{T^c_{0,1}} \Arrowvert_2 \le s^{-1/2} \left( 2 \Arrowvert x_{T^c_{0}} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert \right) \le \Arrowvert h_{T_0} \Arrowvert_2 + 2s^{-1/2} \Arrowvert x - x_s \Arrowvert
+            \Arrowvert h_{T^c_{0,1}} \Arrowvert_2 \le s^{-1/2} \left( 2 \Arrowvert x_{T^c_{0}} \Arrowvert_1 + \Arrowvert h_{T_0} \Arrowvert_1 \right) \le \Arrowvert h_{T_0} \Arrowvert_2 + 2s^{-1/2} \Arrowvert x - x_s \Arrowvert
         \]
         Then we prove claim2:
         For RIP condition,
@@ -269,6 +311,84 @@ A stronger theorem follows
         n \ge 100 \frac{s \log(40d / (\delta \epsilon))}{\epsilon^2} 
     \]
     Let $ W \in \mathbb{R}^{n,d} $ be a matrix {s.t.} each element of W is distributed normally with zero mena and variance of 1/n. Then, with probability of at least $ 1 - \delta $ over the choice of W, the matrix WU is $ (\epsilon, s)-RIP $
+    \begin{proof}
+        \begin{lemma}
+            Let $ \epsilon \in (0, 1) $. There exists a finite set $ Q \subset \mathbb{R}^{d} $ of size $ \left| Q \right| \le {(3/\epsilon)}^{d} $ such that
+            \[
+                \sup_{\vec{x}: \Arrowvert \vec{x} \Arrowvert \le 1} \min_{\vec{v} \in Q} \Arrowvert \vec{x} - \vec{v} \Arrowvert \le \epsilon
+            \]
+            \begin{proof}
+                Let k be an integer and let
+                \[
+                    Q' = \left\{ \vec{x} \in \mathbb{R}^{d}: \forall j \in \left[ d \right], \exists i \in \left\{ -k, -k+1, \ldots, k \right\}\ s.t.\ x_j = \frac{i}{k}  \right\}
+                \]
+                Clearly, $ \Arrowvert Q' \Arrowvert = {(2k + 1)}^{d} $. We shall set $ Q = Q' \cap B_2(1) $, where $ B_{2}(1) $ is the unit $ l_2 $ ball of $ \mathbb{R}^{d} $. The volumn of $ B_2(1) $ is $ \frac{\pi^{d/2}}{\Gamma(1+d/2)}  $.
+                If d is even therefore $ \Gamma(1+d/2) = (d/2)! \ge {(\frac{d/2}{\epsilon} )}^{d/2} $. Then
+                \[
+                    \left| Q \right| \le {(2k+1)}^{d} {(\pi / e)}^{d/2} {(d/2)}^{-d/2} 2^{-d}
+                \]
+                $ \forall \vec{x} \in B_2(1) $ let $ \vec{v} \in Q $ that $ v_i = sign(x_i)\left\lfloor \left| x_i \right| k \right\rfloor /k $. We can gurantee $ \left| x_i - v_i \right| \le 1/k $ and thus
+                \[
+                    \Arrowvert \vec{x} - \vec{v} \Arrowvert_2 \le \frac{\sqrt d}{k} \le \epsilon 
+                    \Rightarrow k = \left\lceil \sqrt d / \epsilon \right\rceil.
+                \]
+                \[
+                    \left| Q \right| \le {(3\sqrt d / (2\epsilon))}^d{(\pi / e)}^{d/2} {(d/2)}^{-d/2} = {\left( \frac{3}{\epsilon} \sqrt{\frac{\pi}{2e} }\right)}^{d}  \le {\left( \frac{3}{\epsilon}  \right)}^d.
+                \]
+            \end{proof}
+        \end{lemma}
+        \begin{lemma}
+            Let $ U $ be an orthonormal $ d\times d $ matrix and let $ I \subset [d] $ be a set of indices of size $ \left| I \right| =  s$. Let $ S $ be the span of $ \left\{ U_i : i \in I \right\} $, where $ U_i $ is the ith column of U. Let $ \delta \in (0,1) $, $ \epsilon \in (0,1) $, and $ n\in\mathbb{N} $ such that 
+            \[
+                n \ge 24 \frac{\log(2/\delta) + s \log(12/\epsilon)}{\epsilon^2} 
+            \]
+            $ \forall W \in \mathbb{R}^{n,d} $ such that $ W_{ij} \sim N(0, 1/n) $, we have
+            \[
+                \mathbb{P}\left\{ \sup_{\vec{x} \in S} \left| \frac{ \Arrowvert W \vec{x} \Arrowvert}{ \Arrowvert \vec{x} \Arrowvert} - 1  \right| < \epsilon \right\} \ge 1-\delta
+            \]
+            \begin{proof}
+                It suffices to prove the lemma for all $ \vec{x} \in S $ with $ \Arrowvert \vec{x} \Arrowvert_2 = 1 $. We can write $ \vec{x} = U_I \vec{\alpha} $ where $ \vec{\alpha} \in \mathbb{R}^{s}, \Arrowvert \vec{\alpha} \Arrowvert_2 = 1 $
+                Then $ \exists Q $ of size $ \left| Q \right| \le {(12/\epsilon)}^{s} $ such that
+                \[
+                    \sup_{\vec{\alpha}: \Arrowvert \vec{\alpha} \Arrowvert_2 = 1}\min_{\vec{v} \in Q} \Arrowvert \vec{\alpha} - \vec{v} \Arrowvert \le \epsilon/4 \Rightarrow
+                    \sup_{\vec{\alpha}: \Arrowvert \vec{\alpha} \Arrowvert_2 = 1}\min_{\vec{v} \in Q} \Arrowvert \vec{U_I \alpha} - U_I \vec{v} \Arrowvert \le \epsilon/4.
+                \]
+                If $ n \ge 24 \frac{\log(2/\delta) + s \log(12/\epsilon)}{\epsilon^2}  $ then 
+                \[
+                    \mathbb{P} \left\{ \sup_{\vec{v} \in Q} \left| \frac{ \Arrowvert W U_I \vec{v} \Arrowvert^2}{ \Arrowvert U_I \vec{v} \Arrowvert^2} - 1  \right| \le \epsilon/2 \right\} \ge 1 - \delta
+                \]
+                \[
+                    \mathbb{P} \left\{ \sup_{\vec{v} \in Q} \left| \frac{ \Arrowvert W U_I \vec{v} \Arrowvert}{ \Arrowvert U_I \vec{v} \Arrowvert} - 1  \right| \le \sup_{\vec{v} \in Q} \left| \frac{ \Arrowvert W U_I \vec{v} \Arrowvert^2}{ \Arrowvert U_I \vec{v} \Arrowvert^2} - 1  \right| \le \epsilon/2 \right\} \ge 1 - \delta
+                \]
+                We denote $ \forall \vec{x} \in S $, $ \frac{ \Arrowvert W \vec{x} \Arrowvert}{ \Arrowvert \vec{x} \Arrowvert} \le 1 + a  $, where $ a $ is the smallest number satisfying the previous inequation.
+                Then
+                \[
+                    \Arrowvert W \vec{x} \Arrowvert \le \Arrowvert W U_I \vec{v} \Arrowvert + \Arrowvert W (\vec{x} - U_I \vec{v}) \Arrowvert \le 1 + \epsilon/2 + (1+a) \epsilon/4
+                \]
+                \[
+                    \forall \vec{x} \in S, \frac{ \Arrowvert W \vec{x} \Arrowvert}{ \Arrowvert \vec{x} \Arrowvert} \le 1 + \epsilon/2 + (1+a) \epsilon/4
+                \]
+                By the definition of $ a $, we have $ a \le \epsilon/2 + (1+a) \epsilon/4 \Rightarrow \le \frac{3\epsilon}{4 - \epsilon} \le \epsilon $.
+                Similarily, we difine b as minimum number satifies $ \forall \vec{x} \in S, \frac{ \Arrowvert W \vec{x} \Arrowvert}{ \Arrowvert \vec{x} \Arrowvert} \ge 1 - b$.
+                \[
+                    \Arrowvert W \vec{x} \Arrowvert \ge \Arrowvert W U_I \vec{v} \Arrowvert - \Arrowvert W (\vec{x} - U_I \vec{v}) \Arrowvert \ge 1 - \epsilon/2 - (1 - b) \epsilon/4.
+                \]
+                \[
+                    b \le \epsilon/2 + (1 - b) \epsilon/4 \Rightarrow b \le \frac{4}{4 + \epsilon} \epsilon \le \epsilon
+                \]
+            \end{proof}
+        \end{lemma}
+        The preceding lemma tells us that $ \forall \vec{x} \in S $ of unit norm we have
+        \[
+            (1 - \epsilon) \le \Arrowvert W \vec{x} \Arrowvert \le (1 + \epsilon)
+            \Rightarrow (1 - 2\epsilon) \le \Arrowvert W \vec{x} \Arrowvert^2 \le (1 + 3 \epsilon)
+        \]
+        The total number of indices of $ I $ is $ \mathbb{C}^s_d \le {(ed/s)}^s $, by union bound, we need
+        \[
+            n \ge 24 \frac{\log\left( \frac{2}{\delta} \cdot {\left( \frac{ed}{s}  \right)}^s \right) + s \log (36 / \epsilon)}{{(\epsilon/3)}^2} = 216 \frac{\log(2/\delta) + s \log \left( \frac{36ed}{s\epsilon}  \right)}{\epsilon^2} 
+        \]
+        
+    \end{proof}
 \end{theorem}
 
 \subsection{PAC OR COMPRESSED SENSING}%
