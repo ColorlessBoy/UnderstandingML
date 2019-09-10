@@ -1,0 +1,184 @@
+% Chapter31 PAC-Bayes, Understanding Machine Learning
+
+\section{PAC-Bayes}%
+
+We assign a prior distribution $ P $ on $ \mathcal{H} $.
+The $ PAC-Bayes $ returns a posterior probability $ Q $ over $ \mathcal{H} $.
+\begin{enumerate}
+    \item $ l(Q, z) = \mathbb{E}_{h \sim Q} \left[ l(h,z) \right] $;
+    \item $ L_S(Q) = \mathbb{E}_{h \sim Q} \left[ L_S(h) \right] $
+    \item $ L_\mathcal{D}(Q) = \mathbb{E}_{h \sim Q} \left[ L_{\mathcal{D}} (h) \right] $
+\end{enumerate}
+
+\begin{theorem}
+    \[
+        \mathbb{P}_{ S \sim \mathcal{D}^m} \left\{ \forall Q, L_{\mathcal{D}}(Q) \le L_S(Q) + \sqrt{\frac{D_{KL}(Q \Arrowvert P) + \ln m/ \delta}{2(m-1)} } \right\} \ge 1 - \delta
+    \]
+    \begin{proof}
+        Let $ \Delta(h) = L_{\mathcal{D}}(h) - L_{S}(h) $. And construct function
+        \begin{align*}
+            f(S) =& \sup_{Q}\left( 2(m-1) \mathbb{E}_{h \sim Q}{(\Delta(h))}^2 - D_{KL}(Q \Arrowvert P) \right)\\
+            =& \sup_{Q}\left( \mathbb{E}_{h \sim Q} \left[ \ln \left( e^{2(m-1) \Delta^2(h)} P(h) / Q(h) \right) \right] \right)\\
+            \le& \sup_{Q} \left( \ln \mathbb{E}_{h \sim Q} \left[ e^{2(m-1) \Delta^2(h)} P(h) / Q(h) \right] \right)\\
+            =& \ln \mathbb{E}_{h \sim P} \left[ e^{2(m-1)\Delta^2(h)} \right]\\
+            \mathbb{E}_{S \sim \mathcal{D}^m}\left[ e^{f(S)} \right] 
+            \le& \mathbb{E}_{S \sim \mathcal{D}^m} \mathbb{E}_{h \sim P} \left[ e^{2(m-1) \Delta^2(h)} \right]\\
+            =& \mathbb{E}_{h \sim P} \mathbb{E}_{S \sim \mathcal{D}^m} \left[ e^{2(m-1) \Delta^2(h)} \right]
+        \end{align*}
+        If $ \mathbb{E}_{S \sim \mathcal{D}^{m}} \left[ e^{2(m-1) \Delta^2(h)} \right] \le m$,
+        \[
+            E_{S \sim \mathcal{D}^m} \left[ e^{f(S)} \right] \le m
+            \Rightarrow
+            \mathbb{P}_{S \sim \mathcal{D}^m} \left[ f(S) \ge \epsilon \right] \le \frac{m}{e^{\epsilon}} 
+        \]
+        \[
+            \mathbb{P}_{S \sim \mathcal{D}^m} \left\{ 2(m-1) \mathbb{E}_{h \sim Q} {(\Delta (h))}^2 - D_{KL}(Q \Arrowvert P) \le \ln(m/\delta)\right\} \ge 1 - \delta
+        \]
+        \[
+            \mathbb{P}_{S \sim \mathcal{D}^{m}} \left\{ {\left( \mathbb{E}_{h \sim Q} \Delta(h) \right)}^2 \le \mathbb{E}_{h \sim Q} {(\Delta(h))}^2 \le \frac{\ln(m/\delta) + D_{KL}(Q\Arrowvert P)}{2(m-1)}   \right\} \ge 1 - \delta
+        \]
+    \end{proof}
+\end{theorem}
+
+\textbf{(PAC-Bayes rules)}
+\[
+    \min_{Q} \left( L_S(Q) + \sqrt{\frac{D_{KL}(Q \Arrowvert P) + \ln(m/\delta)}{2(m-1)} } \right)
+\]
+
+\begin{lemma}
+    \[
+        \mathbb{P}\left[ X \ge \epsilon \right] \le e^{-2m \epsilon^2} \Rightarrow
+        \mathbb{E}\left[ e^{2(m-1) X^2} \right] \le m
+    \]
+    \begin{proof}
+        I have no idea at all.
+    \end{proof}
+\end{lemma}
+
+I have doubt on this theorem.
+
+\subsection{General PAC-Bayesian Theorem}%
+
+\begin{theorem}
+    Let $ \Delta: [0,1] \times [0,1] \rightarrow \mathbb{R} $,
+    \[
+        \mathbb{P}_{S \sim \mathcal{D}^m} \left\{ \forall Q \in \mathcal{H}, \Delta(L_S(Q), L_{\mathcal{D}}(Q)) \le \frac{1}{m} \left[ KL(Q \Arrowvert P) + \ln \frac{\mathcal{I}_{\Delta}(m)}{\delta}  \right] \right\} \le \delta
+    \]
+    where
+    \[
+        \mathcal{I}_{\Delta}(m) = \sup_{r \in [0,1]} \left[ \sum^{m}_{k=0} \mathbb{C}^k_{m} r^{k} {(1 - r)}^{m-k} e^{m\Delta(\frac{k}{m}, r)} \right]
+    \]
+    \begin{proof}
+        \begin{itemize}
+            \item $ \forall \phi: \mathcal{H} \rightarrow \mathbb{R}, \mathbb{E}_{h \sim Q} \phi(h) \le KL(Q \Arrowvert P) + \ln \left( \mathbb{E}_{h \sim P} e^{\phi(h)} \right)$
+            \item $ \mathbb{P}_{S \sim \mathcal{D}^m} \left\{ L_S(h) = \frac{k}{m} \right\} = \mathbb{C}^k_m {(L _{\mathcal{D}}(h))}^k {(1 - L_{\mathcal{D}}(h))}^{m-k} = Bin(k; m, L_{\mathcal{D}}(h))$ 
+        \end{itemize}
+        \begin{align*}
+            &m \Delta(\mathbb{E}_S(Q), \mathbb{E}_{\mathcal{D}}(Q)) \le m\mathbb{E}_{h \sim Q}\Delta(L_S(h), L_\mathcal{D}(h)) \le KL(Q \Arrowvert P) + \ln \mathbb{E}_{h \sim P} e^{m \Delta(L_S(h), L_{\mathcal{D}}(h))}\\
+            \le&_{1 - \delta} KL(Q \Arrowvert P) + \ln \frac{1}{\delta} \mathbb{E}_{S' \sim \mathcal{D}^m} \mathbb{E}_{h \sim P} e^{m \cdot \Delta(L_S(h), L_{\mathcal{D}}(h))}\\
+            \le& KL(Q \Arrowvert P) + \ln \frac{1}{\delta} \mathbb{E}_{h \sim P} \mathbb{E}_{S' \sim \mathcal{D}^m}  e^{m \cdot \Delta(L_S(h), L_{\mathcal{D}}(h))}\\
+            =&  KL(Q \Arrowvert P) + \ln \frac{1}{\delta} \mathbb{E}_{h \sim P} \sum^{m}_{k=0} Bin(k;m, L_{\mathcal{D}}(h)) e^{m\cdot \Delta(\frac{k}{m} , L_{\mathcal{D}}(h))}\\
+            \le& KL(Q \Arrowvert P) + \ln \frac{1}{\delta} \sup_{r \in [0,1]} \sum^{m}_{k=0} Bin(k;m,r) e^{m\cdot \Delta(\frac{k}{m} , r)}\\
+            =& KL(Q \Arrowvert P) + \ln \frac{1}{\delta} \mathcal{I}_{\Delta}(m).
+        \end{align*}
+    \end{proof}
+\end{theorem}
+
+\begin{corollary}
+    \textbf{(Langford and Seeger).}
+    $ \Delta(L_S(Q), L_{\mathcal{D}}(Q)) = kl(L_S(Q), L_{\mathcal{D}}(Q)) $, where $ kl(q,p) = q \ln \frac{q}{p} + (1 - q)\ln \frac{1 - q}{1 - p}  $.
+    \[
+        \mathbb{P}_{S \sim \mathcal{D}^{m}}\left\{ kl(L_{S}(Q), L_{\mathcal{D}}(Q)) \le \frac{1}{m} \left[ KL(Q \Arrowvert P) + \ln \frac{2 \sqrt m}{\delta}  \right] \right\} \ge 1 - \delta
+    \]
+    \begin{proof}
+        \begin{align*}
+            &\mathbb{E}_{S' \sim \mathcal{D}^m} \mathbb{E}_{h \sim P} e^{m \cdot kl(L_S(h), L_{\mathcal{D}}(h))}\\
+            =& \mathbb{E}_{h \sim P} \mathbb{E}_{S' \sim \mathcal{D}^m} {\left( \frac{L_S(h)}{L_{\mathcal{D}}(h)}  \right)}^{m L_{S}(h)} {\left( \frac{1 - L_{S}(h)}{1 - L_{\mathcal{D}}(h)}  \right)}^{m(1 - L_{S}(h))}\\
+            =& \mathbb{E}_{h \sim P} \sum^{m}_{k=0} \mathbb{P}_{S \sim \mathcal{D}^m} \left(L_{S}(h) = \frac{k}{m} \right){\left( \frac{\frac{k}{m} }{L_{\mathcal{D}}(h)}  \right)}^{k} {\left( \frac{1 - \frac{k}{m}}{1 - L_{\mathcal{D}}(h)}  \right)}^{m - k}\\
+            =& \sum^{m}_{k=0}  \mathbb{C}^{k}_{m} {\left( \frac{k}{m}  \right)}^{k} {\left(1 - \frac{k}{m} \right)}^{m-k}
+            \le 2\sqrt m
+        \end{align*}
+    \end{proof}
+\end{corollary}
+
+\begin{corollary}
+    \textbf{(Cartoni).}
+    $ \Delta(L_{S}(Q), L_{\mathcal{D}}(Q)) = \mathcal{F}(L_{\mathcal{D}}(Q)) - C L_{S}(Q) $.
+    \[
+        \mathbb{P}_{S\sim\mathcal{D}^m}\left\{ \forall Q\ on\ \mathcal{H}, L_{\mathcal{D}}(Q) \le \frac{1}{1 - e^{-C}} \left\{ 1 - \exp \left[ - \left( C L_{S}(Q) + \frac{1}{m} \left[ KL(Q \Arrowvert P) + \ln \frac{1}{\delta}  \right] \right) \right] \right\} \right\} \ge 1 - \delta
+    \]
+    \begin{proof}
+        \begin{align*}
+            &\mathbb{E}_{h \sim P} \mathbb{E}_{S' \sim \mathcal{D}^m} e^{m(\mathcal{F}(L_{\mathcal{D}}(h)) - C L_{S'}(h))}\\
+            =& \mathbb E_{h \sim P} \sum^{m}_{k=0} \mathbb{P}_{S' \sim \mathcal{D}^m}\left(L_{S'}(h) = \frac{k}{m} \right) e^{m(\mathcal{F}(L_{\mathcal{D}}(h)) - C L_{S'}(h))}\\
+            =& \mathbb E_{h \sim P} e^{m(\mathcal{F}(L_{\mathcal{D}}(h)))}\sum^{m}_{k=0} \mathbb{C}^{k}_m {\left( L_{\mathcal{D}} \right)}^k {\left( 1 - L_{\mathcal{D}}(h)  \right)}^{m-k}e^{-Ck}\\
+            =& \mathbb{E}_{h \sim P} e^{m \mathcal{F}(L_{\mathcal{D}}(h))} {\left( L_{\mathcal{D}}(h) e^{-C} + 1 - L_\mathcal{D}(h) \right)}^m
+        \end{align*}
+        We choose $ \mathcal{F}(R) $ satisfies
+        \[
+            e^{\mathcal{F}(R)}(R e^{-C} + 1 - R) = 1,
+        \]
+        then, with probability larger than $ 1 - \delta $, we have
+        \[
+            \mathcal{F}(L_{\mathcal{D}}(Q)) - C L_{S}(Q) \le \frac{1}{m} \left( KL(Q\Arrowvert P) + \ln \frac{1}{\delta}  \right),
+        \]
+    \end{proof}
+\end{corollary}
+
+The preceeding corollary gives us a new cost function:
+\[
+    mCL_{S}(Q) + KL(Q \Arrowvert P)
+\]
+
+\subsection{Applications}%
+
+\begin{definition}
+   \textbf{(Majority vote and majority vote risk).}
+    \[
+        B_{Q}(x) = sign\left( \mathbb{E}_{h \sim Q} h(x) \right)
+    \]
+    \[
+        L_{\mathcal{D}} (B_Q) = \mathbb{P}_{(x, y) \sim \mathcal{D}} \left( B_{Q}(x) \ne y \right)
+        = \mathbb{E}_{(x,y)\sim \mathcal{D}} \mathbb{E}_{h \sim Q} \left[ y h(x) \le 0 \right]
+    \]
+\end{definition}
+\begin{corollary}
+    \[
+        L_{\mathcal{D}}(B_Q) = \mathbb{P}_{(x, y) \sim \mathcal{D}} ( 1 - y h(x) \ge 1)
+        \le \mathbb{E}_{(x,y)\sim D}(1 - y B_Q(x)) = 2 L_{\mathcal{D}}(Q)
+    \]
+\end{corollary}
+
+The following is an example of linear classifiers.
+\begin{enumerate}
+    \item $ \phi(x) = (\phi_1(x), \ldots, \phi_N(x)) $, or implicitly given by $ k(x,x') = \phi(x) \cdot \phi(x') $;
+    \item $ h_v(x) = sign(\langle v, \phi(x) \rangle) \in \mathcal{H} $;
+    \item $ Q_w(v) = {\left( \frac{1}{\sqrt{2\pi}}  \right)}^N \exp \left( - \frac{1}{2} \Arrowvert v - w \Arrowvert^2 \right) $
+    \item $ B_{Q_{w}}(x) = sign(\mathbb{E}_{v \sim Q_{w}} sign( \langle v, \phi(x) \rangle) ) = sign(\langle w, \phi(x) \rangle) = h_{w}(x) $
+    \item The prior $ P_{w_{p}} $ is also an isotorpic Gaussian centered on $ w_{p} $. Consequently:
+        \[
+            KL(Q_{w} \Arrowvert P_{w_p}) = \frac{1}{2} \Arrowvert w - w_p \Arrowvert^2
+        \]
+    \item Gibbs's risk ({0--1} risk):
+        \[
+            L_{(x, y)}(Q_w) = \int Q_w(v) 1_{[y v^T \phi(x) < 0]} dv
+            = \Phi\left( \frac{y w^T \phi(x)}{ \Arrowvert \phi(x) \Arrowvert}  \right)
+        \]
+        where
+        \[
+            \Phi(a) = \frac{1}{\sqrt{2\pi}} \int^\infty_a \exp\left( -\frac{1}{2} x^2 \right) dx.
+        \]
+       \item The cost function is
+       \[
+           Cm L_{S}(Q_w) + KL(Q_w \Arrowvert P_{w_p}) = 
+           C \sum^{m}_{i=1} \Phi\left( \frac{y_i w^T \phi(x_i)}{ \Arrowvert \phi(x_i) \Arrowvert}  \right) + \frac{1}{2} \Arrowvert w - w_p \Arrowvert^2
+       \]
+   \item If $ w_p = 0 $ (absence of prior knowledge), we get the cost function alike
+       \[
+           C \sum^{m}_{i=1} \max \left( 0, 1 - y_i w^T \phi(x_i) \right) + \frac{1}{2} \Arrowvert w \Arrowvert^2,
+       \]
+       which is SVM minimizes.
+\end{enumerate}
+
+
+
